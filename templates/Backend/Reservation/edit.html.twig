@@ -1,0 +1,36 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Modifier la réservation - Admin{% endblock %}
+
+{% block header_title %}Modifier le statut de la réservation{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Modifier le statut de la réservation</h1>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="form-group">
+                <label for="status" class="form-label">Statut</label>
+                <select id="status" name="status" class="form-control" required>
+                    <option value="pending" {% if reservation.status.value == 'pending' %}selected{% endif %}>En attente</option>
+                    <option value="confirmed" {% if reservation.status.value == 'confirmed' %}selected{% endif %}>Confirmée</option>
+                    <option value="cancelled" {% if reservation.status.value == 'cancelled' %}selected{% endif %}>Annulée</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

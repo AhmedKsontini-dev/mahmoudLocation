@@ -1,0 +1,11 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}{{ 'auth.profile'|trans }}{% endblock %}
+
+{% block body %}
+    {% include 'Frontend/Components/_navbar.html.twig' %}
+    <main class="auth-profile-page">
+        <h1>{{ 'auth.profile'|trans }}</h1>
+        <p>{{ app.user.userIdentifier }}</p>
+    </main>
+{% endblock %}

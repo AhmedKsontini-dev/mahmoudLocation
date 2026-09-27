@@ -1,0 +1,85 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Dashboard - Admin{% endblock %}
+
+{% block header_title %}Dashboard{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-header-description">Vue d'ensemble de votre administration</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <a href="{{ path('admin_transfere_index') }}" class="stats-card clickable">
+        <div class="stats-card-icon primary">
+            <span>🚐</span>
+        </div>
+        <div class="stats-card-value">{{ stats.transferts.total }}</div>
+        <div class="stats-card-label">Transferts</div>
+        <div class="stats-card-description">{{ stats.transferts.actifs }} actifs • {{ stats.transferts.inactifs }} inactifs</div>
+    </a>
+
+    <a href="{{ path('admin_saison_index') }}" class="stats-card clickable">
+        <div class="stats-card-icon success">
+            <span>📆</span>
+        </div>
+        <div class="stats-card-value">{{ stats.saisons.total }}</div>
+        <div class="stats-card-label">Saisons</div>
+        <div class="stats-card-description">{{ stats.saisons.active }} saison active</div>
+    </a>
+
+    <a href="{{ path('admin_currency_index') }}" class="stats-card clickable">
+        <div class="stats-card-icon warning">
+            <span>💰</span>
+        </div>
+        <div class="stats-card-value">{{ stats.devises.total }}</div>
+        <div class="stats-card-label">Devises</div>
+        <div class="stats-card-description">Taux de change configurés</div>
+    </a>
+
+    <a href="{{ path('admin_contact_index') }}" class="stats-card clickable">
+        <div class="stats-card-icon info">
+            <span>📧</span>
+        </div>
+        <div class="stats-card-value">{{ stats.contacts.total }}</div>
+        <div class="stats-card-label">Contacts</div>
+        <div class="stats-card-description">Messages reçus</div>
+    </a>
+
+    <a href="{{ path('admin_reservation_index') }}" class="stats-card clickable">
+        <div class="stats-card-icon primary">
+            <span>📋</span>
+        </div>
+        <div class="stats-card-value">{{ stats.reservations.total }}</div>
+        <div class="stats-card-label">Réservations</div>
+        <div class="stats-card-description">{{ stats.reservations.pending }} en attente • {{ stats.reservations.confirmed }} confirmées</div>
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Réservations par statut</h3>
+    </div>
+    <div class="card-body">
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <span class="badge badge-pending">En attente</span>
+                    <span style="font-weight: 600; color: var(--color-on-surface);">{{ stats.reservations.pending }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <span class="badge badge-confirmed">Confirmées</span>
+                    <span style="font-weight: 600; color: var(--color-on-surface);">{{ stats.reservations.confirmed }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="badge badge-cancelled">Annulées</span>
+                    <span style="font-weight: 600; color: var(--color-on-surface);">{{ stats.reservations.cancelled }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

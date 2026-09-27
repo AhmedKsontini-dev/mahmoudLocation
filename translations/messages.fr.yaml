@@ -1,0 +1,363 @@
+transfer:
+    form:
+        one_way: 'Aller simple'
+        return: Aller-retour
+        pickup_location: 'Lieu de prise en charge'
+        dropoff_location: 'Destination finale'
+        pickup_date: 'Date aller'
+        pickup_time: 'Heure aller'
+        return_pickup_location: 'Lieu de départ retour'
+        return_dropoff_location: 'Destination retour'
+        return_date: 'Date retour'
+        return_time: 'Heure retour'
+        full_name: 'Nom et prénom'
+        email: 'Adresse email'
+        phone: 'Téléphone / WhatsApp'
+        passengers: 'Nombre de passagers'
+        luggage: 'Nombre de bagages'
+        message: Message
+        type: 'Type de trajet'
+        airline: Compagnie
+        flight_number: 'N° de vol'
+        optional: Optionnel
+        step1_title: 'Le Trajet & Véhicule'
+        step1_desc: 'Sélectionnez la destination et le véhicule idéal pour votre transfert.'
+        step2_title: 'Passagers & Vol'
+        step2_desc: 'Précisez les voyageurs et votre vol pour le suivi en direct gratuit.'
+        step3_title: 'Coordonnées du passager'
+        step3_desc: "Pour l'envoi instantané de votre bon de confirmation et contact chauffeur."
+        flight_tracking: 'Suivi des vols inclus'
+        flight_tracking_desc: 'Les informations de trajet sont conservées dans votre réservation.'
+        contact_notice: 'Vos coordonnées seront utilisées pour confirmer la demande.'
+        additional_info: 'Informations complémentaires'
+        summary_title: Récapitulatif
+        instant_quote: 'Devis instantané'
+        summary_transfer: Transfert
+        summary_type: Type
+        summary_passenger: Passager
+        summary_name: 'Nom et prénom :'
+        summary_email: 'Email :'
+        summary_phone: 'Téléphone :'
+        summary_outbound: Aller
+        summary_return: Retour
+        summary_pickup: Pickup
+        summary_destination: Destination
+        summary_date: 'Date :'
+        summary_time: 'Heure :'
+        summary_vehicle: 'Véhicule :'
+        summary_passengers: 'Passagers & Bagages'
+        summary_passengers_label: 'Passagers :'
+        summary_luggage: 'Valises :'
+        summary_flight: Vol
+        summary_airline: 'Compagnie :'
+        summary_flight_number: 'Numéro de vol :'
+        total_due: 'Total à régler'
+        pay_driver: 'Auprès du chauffeur'
+        conversion_included: 'Conversion incluse'
+        accept_conditions: "J'accepte les conditions (annulation sans frais jusqu'à 12h avant le trajet)."
+        confirm_booking: 'Confirmer ma réservation'
+        no_payment_required: "Aucun paiement en ligne requis aujourd'hui"
+        support_request: 'Une demande particulière ?'
+        support_available: 'Centrale disponible 24h/7j'
+        call: Appeler
+        flight_tracking_feature: 'Suivi des vols offert'
+        flight_tracking_feature_desc: 'Horaires actualisés automatiquement.'
+        payment_feature: 'Paiement sur place'
+        payment_feature_desc: 'Réglez directement au chauffeur.'
+        cancellation_feature: 'Annulation flexible'
+        cancellation_feature_desc: "Sans frais jusqu'à 12h avant."
+        modal_title: 'Réservation Enregistrée !'
+        modal_desc: "Votre confirmation vient d'être préparée."
+        modal_trip: Trajet
+        modal_total: 'Total à régler'
+        modal_close: 'Terminer et revenir au site'
+        breadcrumb_home: Accueil
+        breadcrumb_transfers: Transferts
+        breadcrumb_direct: 'Réservation directe'
+        page_title: 'Réserver votre navette privée'
+        direct_payment: 'Paiement direct au chauffeur'
+        free_cancellation: "Annulation gratuite jusqu'à 12h"
+        flight_included: 'Suivi des vols inclus'
+        fixed_rates: 'Tarifs fixes et garantis • Zéro frais cachés'
+        success_message: 'Votre demande de réservation a été enregistrée.'
+    detail:
+        title: 'Détails du transfert'
+        departure: 'Lieu de départ'
+        arrival: "Lieu d'arrivée"
+        duration: Durée
+        price: Prix
+        passengers: Passagers
+        luggage: Bagages
+        book_now: 'Réserver maintenant'
+        transfer_info: 'Informations du transfert'
+home:
+    guarantee: 'Agrément Touristique Officiel • Zéro frais cachés • Annulation flexible'
+    currency_label: 'Devise :'
+    hero:
+        pill: 'Transport VTC & Flotte Privée Tunisie 2026'
+        title: 'Découvrez la Tunisie, simplement.'
+        subtitle: 'Location de voitures, transferts aéroport sécurisés et excursions exclusives partout en Tunisie. Confort certifié, prix fixes et assistance locale 24h/7.'
+        btn_reserve_now: 'Réserver maintenant'
+        btn_discover_services: 'Découvrir nos services'
+    booking:
+        tab_transfer: 'Transfert Privé'
+        tab_rental: 'Location de voiture'
+        tab_excursion: 'Excursions & Circuits'
+        lbl_departure: 'Lieu de Départ'
+        lbl_destination: Destination
+        lbl_date: 'Date & Heure'
+        lbl_passengers: Passagers
+        btn_search_transfer: Rechercher
+        lbl_pickup: 'Lieu de prise en charge'
+        lbl_pickup_date: 'Date de départ'
+        lbl_return_date: 'Date de retour'
+        btn_search_cars: 'Voir les véhicules'
+        lbl_excursion_choice: 'Destination ou Thème'
+        lbl_excursion_date: 'Date souhaitée'
+        lbl_participants: Participants
+        btn_search_excursions: "Découvrir l'excursion"
+    services:
+        pill: 'Mobilité Intégrale'
+        title: 'Nos services'
+        sub: 'Des solutions de mobilité flexibles, sécurisées et sur mesure à travers toute la Tunisie.'
+        rental_title: Circuits
+        rental_desc: 'Louez une voiture fiable et confortable pour explorer la Tunisie en toute liberté. Flotte récente, kilométrage illimité, climatisation garantie et assistance dépannage 24/7.'
+        btn_view_cars: 'Voir les voitures'
+        transfer_title: 'Transferts Privés'
+        transfer_desc: "Profitez d'un transfert privé tout confort entre l'aéroport, votre hôtel et les principales villes de Tunisie. Chauffeurs professionnels ponctuels avec suivi du vol en temps réel."
+        btn_view_transfers: 'Voir les transferts'
+        excursions_title: 'Excursions & Circuits'
+        excursions_desc: "Découvrez les plus beaux trésors de Tunisie avec nos excursions soigneusement sélectionnées : dunes du Sahara, colisée d'El Jem, oasis verdoyantes et médinas pittoresques."
+        btn_view_excursions: 'Voir les excursions'
+    why:
+        title: 'Pourquoi nous choisir ?'
+        item1_title: 'Voitures fiables et bien entretenues'
+        item1_desc: 'Flotte moderne de moins de 2 ans, révisée et désinfectée minutieusement après chaque location avec contrat clair.'
+        item2_title: 'Transferts ponctuels et confortables'
+        item2_desc: 'Accueil personnalisé avec pancarte nominative dès la sortie douane. Chauffeurs professionnels parlant français et anglais.'
+        item3_title: 'Excursions dans toute la Tunisie'
+        item3_desc: 'Guides officiels agréés, véhicules climatisés spacieux et itinéraires flexibles conçus pour vivre le meilleur du patrimoine.'
+        item4_title: 'Réservation simple et transparente'
+        item4_desc: "Confirmation instantanée, tarif tout inclus sans surprise à l'arrivée et paiement sécurisé par carte ou en espèces sur place."
+        btn_learn_fleet: 'En savoir plus sur notre flotte'
+    fleet:
+        pill: 'Flotte Récente 2026'
+        title: 'Nos voitures populaires'
+        subtitle: 'Des citadines agiles aux SUV familiaux pour parcourir les autoroutes et pistes de Tunisie en toute sérénité.'
+    transfers:
+        pill: 'Prix Fixes & Tout Compris'
+        title: 'Transferts populaires'
+        sub: "Tarifs fixes et transparents, péages inclus, sans mauvaise surprise ni frais d'attente à l'aéroport."
+    excursions:
+        pill: 'Circuits Privés & Immersion'
+        title: 'Explorez la Tunisie'
+        sub: "Circuits d'une journée ou excursions sur mesure au départ direct de votre hôtel avec véhicule climatisé."
+    how:
+        pill: 'Simplicité & Rapidité'
+        title: 'Comment ça marche ?'
+        sub: 'Votre réservation confirmée en 3 étapes simples sans paperasse complexe.'
+        step1_title: '1. Choisissez votre service'
+        step1_desc: 'Location de véhicule sans caution démesurée, navette aéroport ponctuelle ou excursion privée guidée selon vos dates et vos envies.'
+        step2_title: '2. Réservez en quelques clics'
+        step2_desc: 'Sélectionnez vos options (siège bébé, GPS, deuxième conducteur gratuit). Confirmation instantanée par e-mail et WhatsApp.'
+        step3_title: '3. Profitez de votre voyage'
+        step3_desc: "Chauffeur attentif au terminal avec pancarte ou remise expresse des clés en moins de 5 minutes à l'aéroport. Nous veillons sur votre mobilité."
+    dest:
+        pill: 'Sur Tout le Territoire'
+        title: 'Nos destinations phares'
+        sub: 'Agences et chauffeurs permanents dans toutes les métropoles et zones touristiques tunisiennes.'
+    reviews:
+        title: 'Ce que nos clients disent'
+        sub: 'Des retours authentiques de vacanciers, professionnels et membres de la diaspora.'
+    cta:
+        title: 'Prêt à découvrir la Tunisie ?'
+        sub: "Réservez votre voiture, votre transfert aéroport ou votre excursion en quelques clics. Annulation gratuite jusqu'à 24h avant le départ et support WhatsApp dédié."
+        btn_cta_book: 'Réserver maintenant'
+        btn_cta_whatsapp: 'Assistance WhatsApp 24/7'
+navbar:
+    home: Accueil
+    rental: 'Location de voitures'
+    transfers: Transferts
+    excursions: Excursions
+    about: 'À propos'
+    contact: Contact
+footer:
+    brand: 'Tunisia Travel'
+    description: 'Mobilité exécutive, location de véhicules premium et transferts privés sécurisés sur toute la Tunisie. Agrément national & certification ISO transport touristique.'
+    license: 'Licence A n°7482'
+    insurance: 'Assurance AXA Pro'
+    services_title: Services
+    service_rental: 'Location de voitures'
+    service_transfers: 'Transferts aéroport & inter-villes'
+    service_excursions: 'Excursions privées & circuits'
+    service_vip: 'Service Chauffeur VIP'
+    service_corp: 'Mobilité corporate & événementiel'
+    dest_title: Destinations
+    dest_tunis: 'Tunis & Carthage'
+    dest_sousse: 'Sousse & Port El Kantaoui'
+    dest_hammamet: 'Hammamet & Nabeul'
+    dest_monastir: 'Monastir & Enfidha'
+    dest_djerba: 'Djerba la Douce'
+    dest_tozeur: 'Tozeur & Grand Sud Saharien'
+    support_title: 'Assistance 24/7'
+    support_callcenter: "Centrale d'appels"
+    support_whatsapp: 'WhatsApp VIP Direct'
+    support_client: 'Service Client'
+    support_hq: 'Siège Central'
+    support_address: 'Avenue Habib Bourguiba, Tunis'
+    copyright: 'Copyright © 2026 Tunisia Travel & Mobility. Tous droits réservés.'
+    legal: 'Mentions Légales'
+    cgv: 'Conditions Générales de Vente'
+    privacy: Confidentialité
+auth:
+    account: 'Mon compte'
+    connect: Connecter
+    open_login: 'Ouvrir la connexion'
+    close: Fermer
+    welcome: 'Bon retour'
+    login_title: 'Connectez-vous à votre compte'
+    login_subtitle: 'Retrouvez vos réservations et préparez votre prochain voyage.'
+    email: 'Adresse e-mail'
+    password: 'Mot de passe'
+    remember_me: 'Se souvenir de moi'
+    login_submit: 'Se connecter'
+    no_account: 'Vous n’avez pas encore de compte ?'
+    register_link: Inscrivez-vous
+    join: Bienvenue
+    register_title: 'Créer votre compte'
+    register_subtitle: 'Inscrivez-vous pour gérer vos réservations facilement.'
+    accept_terms: 'J’accepte les conditions d’utilisation.'
+    register_submit: 'Créer mon compte'
+    has_account: 'Vous avez déjà un compte ?'
+    login_link: Connectez-vous
+    profile: 'Mon profil'
+    logout: Déconnexion
+    registration_success: 'Votre compte a été créé avec succès. Connectez-vous maintenant.'
+    registration_error: 'Impossible de créer le compte. Vérifiez les informations saisies.'
+    login_error: 'La connexion est impossible. Vérifiez vos informations.'
+    account_not_found: 'Aucun compte ne correspond à cette adresse email.'
+    invalid_password: 'Mot de passe incorrect.'
+contact:
+    page_title: Contact
+    breadcrumb_home: Accueil
+    breadcrumb_contact: 'Contact & Agences'
+    hero:
+        badge: 'Support Client & Réseau National'
+        title: 'Contactez Nos Équipes & Trouvez Votre Agence en Tunisie'
+        subtitle: 'Une question sur une réservation, un transfert aéroport urgent ou un circuit sur-mesure ? Nos conseillers basés en Tunisie vous répondent 24h/24 et 7j/7 avec rigueur et hospitalité méditerranéenne.'
+        response_time: 'Temps moyen de réponse : <strong class="text-primary font-semibold">&lt; 15 min</strong>'
+        feature1_title: 'Réponse garantie &lt; 15 min'
+        feature1_desc: 'Prise en compte prioritaire de votre demande'
+        feature2_title: 'Assistance 24/7 Téléphone & WhatsApp'
+        feature2_desc: 'Interlocuteurs bilingues français & anglais'
+        feature3_title: 'Comptoirs dans tous les aéroports'
+        feature3_desc: 'Tunis, Enfidha, Djerba & Monastir'
+    form:
+        badge: 'Formulaire Express'
+        title: 'Transmettez-nous votre message'
+        subtitle: 'Choisissez la nature de votre demande pour un acheminement vers le département dédié.'
+        tab_general: 'Demande de renseignement'
+        tab_reservation: 'Réservation en cours'
+        tab_quote: 'Devis Groupe / Sur-mesure'
+        tab_partner: Partenariat
+        first_name: Prénom
+        first_name_placeholder: 'Ex: Mohamed'
+        last_name: Nom
+        last_name_placeholder: 'Ex: Trabelsi'
+        email: 'Adresse e-mail'
+        email_placeholder: contact@domaine.com
+        phone: 'Téléphone / WhatsApp'
+        phone_placeholder: '98 123 456'
+        service_category: 'Service concerné'
+        service_location: 'Location de véhicules'
+        service_transfer: 'Transfert Aéroport VIP'
+        service_excursion: 'Excursion Saharienne / Tour Privé'
+        service_group: 'Transport & Logistique Événementielle'
+        service_other: 'Autre demande'
+        reservation_number: 'Numéro de réservation'
+        reservation_number_placeholder: 'Ex: TV-2025-9481'
+        reservation_optional: Optionnel
+        subject: 'Objet du message'
+        subject_placeholder: "Ex: Modification horaire vol d'arrivée ou demande siège enfant"
+        message: 'Détails de votre demande'
+        message_placeholder: 'Précisez votre demande, les dates prévues, le nombre de passagers ou toute consigne particulière...'
+        whatsapp_consent: "J'accepte d'être recontacté en priorité par WhatsApp pour un suivi instantané de ma réservation."
+        submit: 'Envoyer mon message sécurisé'
+        security_note: 'Vos données sont protégées par chiffrement SSL. Aucune utilisation commerciale non sollicitée.'
+        first_name_required: 'Le prénom est requis'
+        last_name_required: 'Le nom est requis'
+        email_required: "L'email est requis"
+        email_invalid: "L'email n'est pas valide"
+        phone_required: 'Le téléphone est requis'
+        service_category_required: 'Le service est requis'
+        subject_required: 'Le sujet est requis'
+        message_required: 'Le message est requis'
+        success_message: 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.'
+        error_message: "Une erreur est survenue lors de l'envoi du message. Veuillez réessayer."
+        request_type: 'Type de demande'
+        request_type_required: 'Veuillez sélectionner un type de demande.'
+        type_information: 'Demande de renseignement'
+        type_reservation: 'Réservation en cours'
+        type_group_quote: 'Devis groupe / sur mesure'
+        type_partnership: Partenariat
+    urgent:
+        badge: 'Canal Prioritaire 24/7'
+        title: "Besoin d'une assistance immédiate ?"
+        subtitle: 'Retard de vol inopiné, localisation de chauffeur au terminal ou modification de dernière minute ? Nos équipes au sol interviennent sans délai.'
+        phone_label: "Ligne d'urgence 24/7"
+        whatsapp_label: 'Discussion WhatsApp Directe'
+        whatsapp_status: 'En ligne actuellement • Réponse ~2 min'
+        support_general: 'Support Général'
+        support_airport: 'Cellule Aéroports'
+    agent:
+        name: 'Amina Ben Salem'
+        role: 'Responsable Relation Client'
+        verified_title: 'Conseiller certifié'
+        quote: '« Nous coordonnons nos chauffeurs et nos agences en temps réel dès la confirmation de votre vol. Vous ne serez jamais seul à destination. »'
+    vip:
+        title: 'Accueil Personnalisé VIP'
+        desc: 'Pour tout transfert aéroport, votre chauffeur vous attend à la porte de sortie des douanes avec une tablette nominative à vos noms ou au nom de votre entreprise.'
+    agencies:
+        badge: 'Implantation Territoriale'
+        title: 'Nos Agences & Comptoirs Aéroports'
+        subtitle: "Retrouvez nos agents sur les principaux pôles aéroportuaires et dans le centre d'affaires de Tunis pour la remise immédiate de vos clés ou le départ de vos circuits."
+        count: '4 Agences Clés en Tunisie'
+        maps: 'Itinéraire Google Maps'
+        tunis_title: 'Aéroport Tunis-Carthage (TUN)'
+        tunis_location: 'Terminal 1 • Hall Arrivées Porte 4'
+        tunis_address: 'Rez-de-chaussée public, face aux loueurs internationaux'
+        tunis_schedule: 'Permanence continue non-stop'
+        tunis_hours: 'Ouvert 24h/24 • 7j/7'
+        enfidha_title: 'Aéroport Enfidha-Hammamet (NBE)'
+        enfidha_location: 'Hall Principal • Sortie Bagages'
+        enfidha_address: 'Comptoir officiel N° 12 face au tapis à bagages 3'
+        enfidha_schedule: 'Service synchronisé aux vols charters'
+        enfidha_hours: 'Ouvert 24h/24 • 7j/7'
+        djerba_title: 'Aéroport Djerba-Zarzis (DJE)'
+        djerba_location: 'Zone Loueurs • Terminal International'
+        djerba_address: 'Esplanade extérieure parking loueurs professionnels'
+        djerba_schedule: 'Tous les jours sans interruption'
+        djerba_hours: '06h00 – 00h00'
+        central_title: 'Agence Centrale • Berges du Lac'
+        central_location: 'Boulevard du Lac 2, Tunis'
+        central_address: 'Immeuble Carthage Business Center, 1er étage'
+        central_schedule: 'Lun - Sam : 08h00 - 19h00 (Fermé Dimanche)'
+        central_hours: 'Siège • 08h – 19h'
+    email:
+        title: 'Nouveau message de contact'
+        new_message: 'Vous avez reçu un nouveau message de contact via le site web.'
+        name: Nom
+        email: Email
+        phone: Téléphone
+        subject: Sujet
+        message: Message
+        footer: 'Cet email a été envoyé automatiquement depuis le formulaire de contact du site Tunisia Travel.'
+        new_message_title: 'Nouveau message de contact'
+        visitor_info: 'Informations du visiteur'
+        send_date: "Date d'envoi"
+        message_details: 'Détails du message'
+        footer_auto: 'Ce message a été envoyé automatiquement depuis le formulaire de contact du site LocationMahmoud.'
+        rights: 'Tous droits réservés.'
+    invalid_email: 'Veuillez entrer une adresse email valide.'
+    email_required: "L'adresse email est obligatoire."
+    password_required: 'Le mot de passe est obligatoire.'

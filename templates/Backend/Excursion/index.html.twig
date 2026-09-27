@@ -1,0 +1,133 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Excursions - Admin{% endblock %}
+
+{% block header_title %}Excursions{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Excursions</h1>
+        <p class="page-header-description">Gérez vos excursions et leurs détails</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_excursion_new') }}" class="btn btn-primary">➕ Nouvelle excursion</a>
+    </div>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="card">
+    <div class="card-body">
+        <!-- Filtres -->
+        <form method="get" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-field">
+                    <label>Recherche</label>
+                    <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Titre, slug...">
+                </div>
+                <div class="filter-field">
+                    <label>Statut</label>
+                    <select name="status" class="form-control">
+                        <option value="">Tous</option>
+                        <option value="active" {{ status == 'active' ? 'selected' }}>Actif</option>
+                        <option value="inactive" {{ status == 'inactive' ? 'selected' }}>Inactif</option>
+                        <option value="draft" {{ status == 'draft' ? 'selected' }}>Brouillon</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-secondary">🔍 Filtrer</button>
+                </div>
+                <div class="filter-field">
+                    <label>&nbsp;</label>
+                    <a href="{{ path('admin_excursion_index') }}" class="btn btn-outline">Réinitialiser</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Tableau -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Titre (FR)</th>
+                        <th>Catégorie</th>
+                        <th>Destination</th>
+                        <th>Prix adulte</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for excursion in excursions %}
+                        <tr>
+                            <td>
+                                {% set mainImage = excursion.images|filter(i => i.isMain)|first %}
+                                {% if mainImage %}
+                                    <img src="{{ asset(mainImage.imagePath) }}" alt="" class="table-thumbnail">
+                                {% elseif excursion.images|length > 0 %}
+                                    <img src="{{ asset(excursion.images.first.imagePath) }}" alt="" class="table-thumbnail">
+                                {% else %}
+                                    <span class="no-image">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ excursion.getTranslation('fr')?.title ?? '-' }}</strong>
+                                {% if excursion.isBestSeller %}<span class="badge badge-success">Best Seller</span>{% endif %}
+                                {% if excursion.isFeatured %}<span class="badge badge-info">Mis en avant</span>{% endif %}
+                            </td>
+                            <td>{{ excursion.category?.name ?? '-' }}</td>
+                            <td>{{ excursion.destination?.name ?? '-' }}</td>
+                            <td>{{ excursion.priceAdult ? excursion.priceAdult|number_format(2) ~ ' TND' : '-' }}</td>
+                            <td>
+                                {% if excursion.status == 'active' %}
+                                    <span class="badge badge-success">Actif</span>
+                                {% elseif excursion.status == 'inactive' %}
+                                    <span class="badge badge-secondary">Inactif</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Brouillon</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ path('admin_excursion_show', {id: excursion.id}) }}" class="btn btn-sm btn-outline" title="Voir">👁️</a>
+                                    <a href="{{ path('admin_excursion_edit', {id: excursion.id}) }}" class="btn btn-sm btn-outline" title="Modifier">✏️</a>
+                                    <form method="post" action="{{ path('admin_excursion_delete', {id: excursion.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette excursion ?');" class="inline-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ excursion.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🏝️</div>
+                                    <div class="empty-state-title">Aucune excursion</div>
+                                    <div class="empty-state-text">Commencez par créer votre première excursion.</div>
+                                    <a href="{{ path('admin_excursion_new') }}" class="btn btn-primary">Créer une excursion</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if excursions|length > 0 %}
+            <div class="table-footer">
+                <span class="table-count">{{ excursions|length }} excursion(s)</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block header_title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/currencyrate/form.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-header-description">Configurez le taux de change pour cette devise.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_currency_index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form) }}
+        
+        <div class="form-section">
+            <h2 class="form-section-title">Informations de la devise</h2>
+            
+            <div class="form-row form-row-2">
+                <div class="form-group">
+                    {{ form_label(form.code) }}
+                    {{ form_widget(form.code, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.code) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.symbol) }}
+                    {{ form_widget(form.symbol, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.symbol) }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2 class="form-section-title">Taux de change</h2>
+            <p class="form-section-description">Ce taux convertit les prix enregistrés en TND vers cette devise.</p>
+            
+            <div class="form-group">
+                {{ form_label(form.rate) }}
+                {{ form_widget(form.rate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.rate) }}
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{{ path('admin_currency_index') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+        
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

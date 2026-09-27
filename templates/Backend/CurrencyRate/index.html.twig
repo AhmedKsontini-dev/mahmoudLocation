@@ -1,0 +1,53 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Taux de change - Admin{% endblock %}
+
+{% block header_title %}Taux de change{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/currencyrate/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Taux de change</h1>
+        <p class="page-header-description">Gérez les taux de change pour les devises supportées.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_transfere_index') }}" class="btn btn-secondary">Retour aux transferts</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p class="info-note">Les taux convertissent toujours les prix enregistrés en TND.</p>
+        
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Symbole</th>
+                        <th>1 TND vaut</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for currency in currencies %}
+                        <tr>
+                            <td>{{ currency.code }}</td>
+                            <td>{{ currency.symbol }}</td>
+                            <td>{{ currency.rate }}</td>
+                            <td>
+                                <a href="{{ path('admin_currency_edit', {id: currency.id}) }}" class="btn btn-sm btn-outline">Modifier</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

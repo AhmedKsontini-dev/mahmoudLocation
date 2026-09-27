@@ -1,0 +1,66 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Contact - Admin{% endblock %}
+
+{% block header_title %}Détails du contact{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Détails du contact</h1>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_contact_index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Nom</span>
+                <span class="detail-value">{{ contact.firstName }} {{ contact.lastName }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ contact.email }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Téléphone</span>
+                <span class="detail-value">{{ contact.phone }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Catégorie de service</span>
+                <span class="detail-value">{{ contact.serviceCategory }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Numéro de réservation</span>
+                <span class="detail-value">{{ contact.reservationNumber ?? 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Type de demande</span>
+                <span class="detail-value">{{ contact.requestType }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Sujet</span>
+                <span class="detail-value">{{ contact.subject }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date de réception</span>
+                <span class="detail-value">{{ contact.createdAt|date('d/m/Y H:i') }}</span>
+            </div>
+            <div class="detail-item full-width">
+                <span class="detail-label">Message</span>
+                <span class="detail-value">{{ contact.message }}</span>
+            </div>
+        </div>
+        
+        <div class="form-actions" style="margin-top: 2rem;">
+            <form method="post" action="{{ path('admin_contact_delete', {id: contact.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce contact ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

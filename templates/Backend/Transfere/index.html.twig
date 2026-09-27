@@ -1,0 +1,73 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Transferts - Admin{% endblock %}
+
+{% block header_title %}Transferts{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/transfere/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Transferts</h1>
+        <p class="page-header-description">Gérez les transferts disponibles sur votre site.</p>
+        <div class="quick-actions">
+            <a href="{{ path('admin_saison_index') }}" class="btn btn-sm btn-secondary">Configurer les saisons</a>
+            <a href="{{ path('admin_currency_index') }}" class="btn btn-sm btn-secondary">Configurer les devises</a>
+        </div>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_transfere_new') }}" class="btn btn-primary">Ajouter un transfert</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Départ</th>
+                        <th>Arrivée</th>
+                        <th>Prix normal</th>
+                        <th>Prix saison forte</th>
+                        <th>Langues</th>
+                        <th>Actif</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transfere in transferts %}
+                        <tr>
+                            <td>{{ transfere.getLieuDepartTranslated(app.request.locale) }}</td>
+                            <td>{{ transfere.getLieuArriveeTranslated(app.request.locale) }}</td>
+                            <td>{{ transfere.prixNormal }}</td>
+                            <td>{{ transfere.prixSaisonForte }}</td>
+                            <td>{{ transfere.translations|length }}/5</td>
+                            <td>
+                                {% if transfere.actif %}
+                                    <span class="badge badge-success">Oui</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Non</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_transfere_edit', {id: transfere.id}) }}" class="btn btn-sm btn-outline">Modifier</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-state-text">Aucun transfert.</div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

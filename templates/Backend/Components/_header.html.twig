@@ -1,0 +1,17 @@
+<header class="admin-header">
+    <div class="header-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <h2 class="header-title">{% block header_title %}Administration{% endblock %}</h2>
+    </div>
+    
+    <div class="header-right">
+        <div class="header-user">
+            <span class="user-name">{{ app.user ? app.user.email|split('@')[0]|capitalize : 'Admin' }}</span>
+            <a href="{{ path('app_logout') }}" class="btn btn-outline btn-sm">Déconnexion</a>
+        </div>
+    </div>
+</header>

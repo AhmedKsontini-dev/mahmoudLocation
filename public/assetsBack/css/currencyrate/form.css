@@ -1,0 +1,34 @@
+/* CurrencyRate Form Styles */
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-surface-container);
+}
+
+.form-section-description {
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-surface-container);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.required-indicator {
+    color: var(--color-error);
+    margin-left: 0.25rem;
+}

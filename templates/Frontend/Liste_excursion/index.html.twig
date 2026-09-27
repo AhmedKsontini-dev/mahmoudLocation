@@ -1,0 +1,501 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}Excursions - Tunisie Travel{% endblock %}
+
+{% block stylesheets %}
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('assetsFront/js/tailwind.config.js') }}"></script>
+    <link href="{{ asset('assetsFront/css/home.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsFront/css/excursions.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('assetsFront/js/navbar.js') }}?v=2"></script>
+{% endblock %}
+
+{% block body_class %}bg-surface text-on-surface antialiased{% endblock %}
+
+{% block body %}
+{% include 'Frontend/Components/_navbar.html.twig' %}
+
+<div class="page-excursions">
+
+    <div class="container">
+        {# ---------- Fil d'Ariane ---------- #}
+        <div class="breadcrumb">
+            <a href="{{ path('app_home') }}">Accueil</a>
+            <span>›</span>
+            <span class="breadcrumb__current">Excursions</span>
+        </div>
+
+        {# ---------- En-tête de page ---------- #}
+        <div class="hero-excursions">
+            <h1 class="hero-excursions__title">Découvrez la Tunisie</h1>
+            <p class="hero-excursions__subtitle">
+                Explorez les plus belles destinations de Tunisie avec nos excursions
+                sélectionnées et circuits privatifs ou en petit groupe d'exception.
+            </p>
+        </div>
+
+        {# ---------- Filtres + Liste ---------- #}
+        <div class="excursions-layout">
+
+            {# ===== Sidebar filtres ===== #}
+            <aside class="filter-panel">
+                <div class="filter-panel__header">
+                    <h2 class="filter-panel__title">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M7 12h10M10 18h4" />
+                        </svg>
+                        Filtrer
+                    </h2>
+                    <a href="{{ path('app_liste_excursion') }}" class="filter-panel__reset">Réinitialiser</a>
+                </div>
+
+                {# --- Destinations --- #}
+                <div class="filter-group">
+                    <h3 class="filter-group__title">DESTINATIONS</h3>
+                    <div class="filter-list">
+                        <div class="filter-item">
+                            <label><input type="checkbox" checked> Tunis & Carthage</label>
+                            <span class="filter-item__count">5</span>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox" checked> Sidi Bou Said</label>
+                            <span class="filter-item__count">4</span>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox"> Hammamet & Cap Bon</label>
+                            <span class="filter-item__count">3</span>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox"> Sousse & Monastir</label>
+                            <span class="filter-item__count">3</span>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox"> El Jem & Kairouan</label>
+                            <span class="filter-item__count">4</span>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox" checked> Sahara & Douz</label>
+                            <span class="filter-item__count">3</span>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox"> Djerba la Douce</label>
+                            <span class="filter-item__count">2</span>
+                        </div>
+                    </div>
+                </div>
+
+                {# --- Type d'expérience --- #}
+                <div class="filter-group">
+                    <h3 class="filter-group__title">TYPE D'EXPÉRIENCE</h3>
+                    <div class="filter-list">
+                        <div class="filter-item">
+                            <label><input type="checkbox" checked> Culture & Histoire</label>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox" checked> Désert & Aventure</label>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox"> Plage & Détente côtière</label>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox" checked> Excursion privée VIP</label>
+                        </div>
+                        <div class="filter-item">
+                            <label><input type="checkbox"> Petit groupe (max 8)</label>
+                        </div>
+                    </div>
+                </div>
+
+                {# --- Durée --- #}
+                <div class="filter-group">
+                    <h3 class="filter-group__title">DURÉE</h3>
+                    <div class="filter-pills">
+                        <button class="filter-pill">1/2 Journée</button>
+                        <button class="filter-pill is-active">1 Journée</button>
+                        <button class="filter-pill">2 Jours</button>
+                        <button class="filter-pill">3+ Jours</button>
+                    </div>
+                </div>
+
+                {# --- Budget --- #}
+                <div class="filter-group" style="border:none;">
+                    <div class="filter-range__values">
+                        <span>BUDGET / PERS.</span>
+                        <span><span class="price-val" data-base="50">{{ 50|price }}</span> - <span class="price-val" data-base="500">{{ 500|price }}</span></span>
+                    </div>
+                    <div class="filter-range">
+                        <input type="range" min="50" max="1000" value="500">
+                    </div>
+                    <div class="filter-range__scale">
+                        <span class="price-val" data-base="50">{{ 50|price }}</span>
+                        <span class="price-val" data-base="1000">{{ 1000|price }}</span>
+                    </div>
+                </div>
+            </aside>
+
+            {# ===== Liste des excursions ===== #}
+            <main class="excursions-main">
+                {# --- Barre d'outils --- #}
+                <div class="toolbar">
+                    <div class="toolbar__left">
+                        <span class="toolbar__count">18 excursions</span>
+                        <span class="toolbar__tag is-active">Circuits phares</span>
+                        <span class="toolbar__tag">Privatisables</span>
+                    </div>
+                    <div class="toolbar__right">
+                        <select class="toolbar__select">
+                            <option>Trier par : Plus populaires</option>
+                        </select>
+                        <div class="view-toggle">
+                            <button class="view-toggle__btn is-active">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                                    <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                                </svg>
+                            </button>
+                            <button class="view-toggle__btn">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {# --- Grille de cartes --- #}
+                <div class="excursions-grid">
+
+                    {# Carte 1 #}
+                    <article class="excursion-card">
+                        <div class="excursion-card__media">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDIFvgbEBp5xHkipa4K5xyE5DyZoDXY3t4aUjtEzazRI_rOMCCLuKN_kIxFA0jKjDPJY64X1Q5Hi-1aTWWzaxRKMQlwcm21b9uSuHx_TRyIGnAeysCMSgIZHauqIjtPH96ZDUnzM4LgoNzNkR9o5tlREJ4VRapxR2NstAx6ZUn_iZkSwzs9-iA0ILldDMxsZvzT1yYL9S3meS1Dy4LfHHyI-WbYw_CU5V2Pcmqe0hvxZzDS9ituASQkw" alt="Sidi Bou Saïd & Carthage">
+                            <span class="excursion-card__badge" style="background-color: var(--color-primary);">Populaire</span>
+                            <span class="excursion-card__status">
+                                <span class="excursion-card__status-dot"></span> Disponible
+                            </span>
+                            <div class="excursion-card__location">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-4.5-7-8-7-11a7 7 0 1114 0c0 3-3 6.5-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                Tunis & Côtes de Carthage
+                            </div>
+                        </div>
+                        <div class="excursion-card__body">
+                            <div class="excursion-card__meta">
+                                <div class="excursion-card__rating">★ 4.9 <span>(142 avis)</span></div>
+                                <div class="excursion-card__duration">Journée</div>
+                            </div>
+                            <h3 class="excursion-card__title">
+                                <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}">Sidi Bou Said & Carthage Antique</a>
+                            </h3>
+                            <p class="excursion-card__desc">Explorez les vestiges puniques et romains de Carthage avant de flâner dans les ruelles bleues et blanches de Sidi Bou Said.</p>
+                            <div class="excursion-card__details">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg> 1 jour</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> 2-8 pers.</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg> Guide FR</span>
+                            </div>
+                            <div class="excursion-card__footer">
+                                <p class="excursion-card__price">À partir de <span class="excursion-card__price-value price-val" data-base="150">{{ 150|price }}</span> / pers.</p>
+                                <div class="excursion-card__actions">
+                                    <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}" class="btn btn--outline">Détails</a>
+                                    <button class="btn btn--primary">Réserver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    {# Carte 2 #}
+                    <article class="excursion-card">
+                        <div class="excursion-card__media">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa4FwMoPi1c-k3ICU5oktObMAsC-iUFw7q0bhazR8KF9EwDxrL-n67GSr1CxGFrmh5W1GuwlRh7f5NZo-XwABZ_8VBU1sUDoZndV_WOS8rglqKLhkSvFjGQ-8C3jSUkcynOjcl4vmPZfiOofSqXGdzOgNpq7LmZHRZ2FQzf9cuVSu7FQIaax5P_Rl9mslN5XXL-S4EMrDG8cPJHGB9d1DJEaK1_t2m0-SMVlcF2c0lBvoUlAYlPt1IKQ" alt="Sahara & Douz">
+                            <span class="excursion-card__badge excursion-card__badge--olive">Aventure & Bivouac</span>
+                            <span class="excursion-card__status">
+                                <span class="excursion-card__status-dot"></span> Disponible
+                            </span>
+                            <div class="excursion-card__location">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-4.5-7-8-7-11a7 7 0 1114 0c0 3-3 6.5-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                Douz & Désert du Sahara
+                            </div>
+                        </div>
+                        <div class="excursion-card__body">
+                            <div class="excursion-card__meta">
+                                <div class="excursion-card__rating">★ 4.95 <span>(98 avis)</span></div>
+                                <div class="excursion-card__duration" style="background:#F1F3F9; padding: 2px 8px; border-radius: 4px; font-weight:600; font-size:11px;">2J / 1N</div>
+                            </div>
+                            <h3 class="excursion-card__title">
+                                <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}">Grand Sud & Dunes du Sahara</a>
+                            </h3>
+                            <p class="excursion-card__desc">Traversée en 4x4, nuit féérique sous tente berbère de luxe au milieu des dunes de...</p>
+                            <div class="excursion-card__details">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg> 2J / 1N</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 19v-4h8v4m-9-4h10a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg> 4x4 Privé</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg> Bivouac VIP</span>
+                            </div>
+                            <div class="excursion-card__footer">
+                                <p class="excursion-card__price">À partir de <span class="excursion-card__price-value price-val" data-base="450">{{ 450|price }}</span> / pers.</p>
+                                <div class="excursion-card__actions">
+                                    <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}" class="btn btn--outline">Détails</a>
+                                    <button class="btn btn--primary">Réserver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    {# Carte 3 #}
+                    <article class="excursion-card">
+                        <div class="excursion-card__media">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY9dvJSYYdVjtyEvDpFPUAvdeHOkAr_ZonAmq0Wa5LxStK0fs2-oytt9Ke-h5j5Wpjy-Uc8-2FPSccTWtKey_dcfbxjORPBYFIpHXARzgpfHZ02ZW-Yxws0Iv89oBqbFyYnFHTwhycFkRrdg-QNWPQDjJnjy4BVca9Keoj7K7Dv1aoqTgmfTcWEFAIb0CXTwKlrIfhStkXi-NXPOnc0GsOrXL5C7fsm5Rdo5liN-ntDTZMYbScSNtBBg" alt="El Jem & Monastir">
+                            <span class="excursion-card__badge" style="background-color: #0077b6;">Meilleure vente</span>
+                            <span class="excursion-card__status">
+                                <span class="excursion-card__status-dot"></span> Disponible
+                            </span>
+                            <div class="excursion-card__location">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-4.5-7-8-7-11a7 7 0 1114 0c0 3-3 6.5-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                El Jem & Sahel
+                            </div>
+                        </div>
+                        <div class="excursion-card__body">
+                            <div class="excursion-card__meta">
+                                <div class="excursion-card__rating">★ 4.8 <span>(86 avis)</span></div>
+                                <div class="excursion-card__duration">Journée</div>
+                            </div>
+                            <h3 class="excursion-card__title">
+                                <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}">Colisée d'El Jem & Ribat de Monastir</a>
+                            </h3>
+                            <p class="excursion-card__desc">Visitez le troisième plus grand amphithéâtre romain du monde remarquablement...</p>
+                            <div class="excursion-card__details">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg> 1 jour</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg> Billets inclus</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Petit groupe</span>
+                            </div>
+                            <div class="excursion-card__footer">
+                                <p class="excursion-card__price">À partir de <span class="excursion-card__price-value price-val" data-base="180">{{ 180|price }}</span> / pers.</p>
+                                <div class="excursion-card__actions">
+                                    <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}" class="btn btn--outline">Détails</a>
+                                    <button class="btn btn--primary">Réserver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    {# Carte 4 #}
+                    <article class="excursion-card">
+                        <div class="excursion-card__media">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNe2PNmhhiyjlVz2uZ9ly1DN8HOjfdVCxr7VQddwlYhrPfDW5vOPi7WbQ8Zn0aZ09Sgmy9OF5afgBuXPzhBGFLAP0T_EGD4TQJV54zgmjLdrgytdTGCdAGe-eVBKNqxH1vtOrh5wSF9Ffp47kpkI6uLCsK8US6y2I9w0P0bxFUgnJGxMOTN_fwJf-b9TsoLWwmCOyzt-IDYCZGkx04laM75MYPiGkpDJLCMinCRo2KSdDKlXsVzvnxdw" alt="Djerba">
+                            <span class="excursion-card__badge excursion-card__badge--maroon">Culture & Île</span>
+                            <span class="excursion-card__status excursion-card__status.is-limited" style="color:var(--color-limited);">
+                                <span class="excursion-card__status-dot"></span> Places limitées
+                            </span>
+                            <div class="excursion-card__location">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-4.5-7-8-7-11a7 7 0 1114 0c0 3-3 6.5-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                Île de Djerba
+                            </div>
+                        </div>
+                        <div class="excursion-card__body">
+                            <div class="excursion-card__meta">
+                                <div class="excursion-card__rating">★ 4.9 <span>(115 avis)</span></div>
+                                <div class="excursion-card__duration">Journée</div>
+                            </div>
+                            <h3 class="excursion-card__title">
+                                <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}">Djerba la Douce & Guellala</a>
+                            </h3>
+                            <p class="excursion-card__desc">Immersion artisanale à Guellala, visite de la synagogue de la Ghriba, street-art...</p>
+                            <div class="excursion-card__details">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg> 1 jour</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 19v-4h8v4m-9-4h10a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg> Minivan Clim</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Djerbahood</span>
+                            </div>
+                            <div class="excursion-card__footer">
+                                <p class="excursion-card__price">À partir de <span class="excursion-card__price-value price-val" data-base="200">{{ 200|price }}</span> / pers.</p>
+                                <div class="excursion-card__actions">
+                                    <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}" class="btn btn--outline">Détails</a>
+                                    <button class="btn btn--primary">Réserver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    {# Carte 5 #}
+                    <article class="excursion-card">
+                        <div class="excursion-card__media">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwuPsCIAPscIh9RXi8t3_ycqdpHA0P2125xKZHWLhGzRkPj4s4Y9CrfAkNqyb03SQWPAXBLpiFcyIu-NmwOByaNgXSlfiOHIIM60e0qi9bz6xM3OCL4UVgwGFto-W0JpOAXCeZi6LJY54SjpL3Eom84Js5psUv-v_oW_NbAoQuLkQC828teXMdYit4joX5SSevlF1TtFs_05O4YU1A0uTxJHq8TqKiye32RUCFhrI9lLdfGWRDitN_lQ" alt="Kairouan">
+                            <span class="excursion-card__badge excursion-card__badge--teal">Patrimoine UNESCO</span>
+                            <span class="excursion-card__status">
+                                <span class="excursion-card__status-dot"></span> Disponible
+                            </span>
+                            <div class="excursion-card__location">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-4.5-7-8-7-11a7 7 0 1114 0c0 3-3 6.5-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                Kairouan la Sainte
+                            </div>
+                        </div>
+                        <div class="excursion-card__body">
+                            <div class="excursion-card__meta">
+                                <div class="excursion-card__rating">★ 4.7 <span>(64 avis)</span></div>
+                                <div class="excursion-card__duration">Journée</div>
+                            </div>
+                            <h3 class="excursion-card__title">
+                                <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}">Kairouan & Médina Historique</a>
+                            </h3>
+                            <p class="excursion-card__desc">Découverte de la Grande Mosquée Okba, des bassins aghlabides, des maîtres...</p>
+                            <div class="excursion-card__details">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg> 1 jour</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg> Guide historien</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/></svg> Dégustation</span>
+                            </div>
+                            <div class="excursion-card__footer">
+                                <p class="excursion-card__price">À partir de <span class="excursion-card__price-value price-val" data-base="170">{{ 170|price }}</span> / pers.</p>
+                                <div class="excursion-card__actions">
+                                    <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}" class="btn btn--outline">Détails</a>
+                                    <button class="btn btn--primary">Réserver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    {# Carte 6 #}
+                    <article class="excursion-card">
+                        <div class="excursion-card__media">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYWiAI3fj15Cqr-Jn4qcrOsx1IZkhrn3pTLTbzHpwckNQnYfbyMoNn5Phbuu3o-ni1Q_Azy23df0c8qK1E7ms2G0AORI5cha7TElZ-MVGiQNSh_arkbYGkS_8H5SrVnJZtc3EKWgth_EYbUIc5vTGeuIjgmxH-mY_5p9VlEbp7Dnx3yOMilmltTp-sw7Jmy1_d9nCyzdTR-nTfx_D2-EsRF0CGCyxGFgJxDsuCiPFRWK53AzVMbtj0jA" alt="Tozeur">
+                            <span class="excursion-card__badge excursion-card__badge--orange">Canyon & Cinéma</span>
+                            <span class="excursion-card__status">
+                                <span class="excursion-card__status-dot"></span> Disponible
+                            </span>
+                            <div class="excursion-card__location">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-4.5-7-8-7-11a7 7 0 1114 0c0 3-3 6.5-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                Tozeur & Chott El Jerid
+                            </div>
+                        </div>
+                        <div class="excursion-card__body">
+                            <div class="excursion-card__meta">
+                                <div class="excursion-card__rating">★ 4.9 <span>(78 avis)</span></div>
+                                <div class="excursion-card__duration" style="background:#F1F3F9; padding: 2px 8px; border-radius: 4px; font-weight:600; font-size:11px;">2J / 1N</div>
+                            </div>
+                            <h3 class="excursion-card__title">
+                                <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}">Tozeur, Oasis & Ong Jemel</a>
+                            </h3>
+                            <p class="excursion-card__desc">Canyons de Chebika, cascades de Tamerza, traversée du Chott El Jerid et...</p>
+                            <div class="excursion-card__details">
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg> 2 jours</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 19v-4h8v4m-9-4h10a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg> Canyons 4x4</span>
+                                <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Ong Jemel</span>
+                            </div>
+                            <div class="excursion-card__footer">
+                                <p class="excursion-card__price">À partir de <span class="excursion-card__price-value price-val" data-base="480">{{ 480|price }}</span> / pers.</p>
+                                <div class="excursion-card__actions">
+                                    <a href="{{ path('app_detail_excursion', {'_locale': app.request.locale}) }}" class="btn btn--outline">Détails</a>
+                                    <button class="btn btn--primary">Réserver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+
+                {# --- Pagination --- #}
+                <div class="pagination">
+                    <a href="#" class="pagination__more">
+                        Afficher plus d'excursions (12 restantes) 
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                    </a>
+                    <div class="pagination__pages">
+                        <a href="#" class="page-link is-active">1</a>
+                        <a href="#" class="page-link">2</a>
+                        <a href="#" class="page-link">3</a>
+                        <a href="#" class="page-link page-link--next">
+                            Suivant 
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    {# ---------- Explorez par destination ---------- #}
+    <section class="section-destinations">
+        <div class="container">
+            <p class="section-eyebrow">INSPIRATIONS RÉGIONALES</p>
+            <div class="section-heading">
+                <h2 class="section-heading__title">Explorez par destination</h2>
+                <p class="section-heading__desc">
+                    Chaque région tunisienne possède sa propre signature : vestiges
+                    puniques, dunes sahariennes ou villages côtiers.
+                </p>
+            </div>
+            <div class="destinations-grid">
+                <a href="#" class="destination-card">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDIFvgbEBp5xHkipa4K5xyE5DyZoDXY3t4aUjtEzazRI_rOMCCLuKN_kIxFA0jKjDPJY64X1Q5Hi-1aTWWzaxRKMQlwcm21b9uSuHx_TRyIGnAeysCMSgIZHauqIjtPH96ZDUnzM4LgoNzNkR9o5tlREJ4VRapxR2NstAx6ZUn_iZkSwzs9-iA0ILldDMxsZvzT1yYL9S3meS1Dy4LfHHyI-WbYw_CU5V2Pcmqe0hvxZzDS9ituASQkw" alt="Tunis & Sidi Bou Said">
+                    <div class="destination-card__info">
+                        <h3 class="destination-card__name">Tunis & Sidi Bou Said</h3>
+                        <p class="destination-card__count">5 excursions</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuClae7JD7XJUm1LiGS2yoPkfITp159KmfXilTL5Ds7-a2H8LdfE6Eake5mn4dxCNVg76Qqxh_iv77USUZExuHR4QmvEkqgDVUjL63xzVOHmQ2FZFDG865VizG6ABboEfWbQhyBTJQH_DWzYYgVx9_sB1AKeCzXudey0oiAMnyw1gzjgcmW4bAicjrymZvxdOnwfSYrqP_POKS-jvHGHgg4FIQR3PVYJfAlFBq3FTWfQhNgezE1y2JcXig" alt="Hammamet & Cap Bon">
+                    <div class="destination-card__info">
+                        <h3 class="destination-card__name">Hammamet & Cap Bon</h3>
+                        <p class="destination-card__count">4 excursions</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAthhtHkIdLkhPyF4OT1uKcnLU9NtpWd4pNXakzzwJ03UO2wU5Muk7InTqbtrELzokf1Avpk0qJT2GQ5QTSnwVpfHSNB98UlEHtY5lEC-WjT6GtY-b2hWjSNkMl7tEFD36w5Wlknp8qpm2eT9ckPq2vridCGAGzfu1lKK_9RzdRGOcOrGP0c3t-__JwFZZW8vONfSRh0t5RpmnCFJQqL9m0d2R-iUUkenQ55vXPUCdafPEgbjXvWsSNhA" alt="Sousse & Kantaoui">
+                    <div class="destination-card__info">
+                        <h3 class="destination-card__name">Sousse & Kantaoui</h3>
+                        <p class="destination-card__count">3 excursions</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwuPsCIAPscIh9RXi8t3_ycqdpHA0P2125xKZHWLhGzRkPj4s4Y9CrfAkNqyb03SQWPAXBLpiFcyIu-NmwOByaNgXSlfiOHIIM60e0qi9bz6xM3OCL4UVgwGFto-W0JpOAXCeZi6LJY54SjpL3Eom84Js5psUv-v_oW_NbAoQuLkQC828teXMdYit4joX5SSevlF1TtFs_05O4YU1A0uTxJHq8TqKiye32RUCFhrI9lLdfGWRDitN_lQ" alt="Monastir & Mahdia">
+                    <div class="destination-card__info">
+                        <h3 class="destination-card__name">Monastir & Mahdia</h3>
+                        <p class="destination-card__count">3 excursions</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRRmiiOHH-kdOfPl6yj3uemBeg5S5m5J7KFZSfaPdpIz5b7ae8OAhQswSRnP2n4mA2wBbvxQ7n7Y5m8fDktWmffBe9-44vTgkErmFRYYbFJXPgzWFDU_ZNFhOykprmeScBa-tHMn7Z0iTmTftGGEqD5ZgmACGmK6P5DEc5st_tM5doFDFCQf18SZ-XpO0PhPCOKvF0siOB5e4DeW0yl0CPX-Yk2k80cbelObHkM_cRIeNsiff_0iWQWA" alt="Djerba & Zarzis">
+                    <div class="destination-card__info">
+                        <h3 class="destination-card__name">Djerba & Zarzis</h3>
+                        <p class="destination-card__count">4 excursions</p>
+                    </div>
+                </a>
+                <a href="#" class="destination-card">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYWiAI3fj15Cqr-Jn4qcrOsx1IZkhrn3pTLTbzHpwckNQnYfbyMoNn5Phbuu3o-ni1Q_Azy23df0c8qK1E7ms2G0AORI5cha7TElZ-MVGiQNSh_arkbYGkS_8H5SrVnJZtc3EKWgth_EYbUIc5vTGeuIjgmxH-mY_5p9VlEbp7Dnx3yOMilmltTp-sw7Jmy1_d9nCyzdTR-nTfx_D2-EsRF0CGCyxGFgJxDsuCiPFRWK53AzVMbtj0jA" alt="Tozeur & Grand Sud">
+                    <div class="destination-card__info">
+                        <h3 class="destination-card__name">Tozeur & Grand Sud</h3>
+                        <p class="destination-card__count">4 excursions</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    
+
+</div>
+
+{% include 'Frontend/Components/_footer.html.twig' %}
+{% endblock %}

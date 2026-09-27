@@ -1,0 +1,7 @@
+/* Saison Index Page Styles */
+
+.page-header-description {
+    color: var(--color-on-surface-variant);
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}

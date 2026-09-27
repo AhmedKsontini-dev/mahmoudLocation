@@ -1,0 +1,293 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}{{ excursion.getTranslation('fr')?.title ?? 'Excursion' }} - Admin{% endblock %}
+
+{% block header_title %}{{ excursion.getTranslation('fr')?.title ?? 'Excursion' }}{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ excursion.getTranslation('fr')?.title ?? 'Excursion' }}</h1>
+        <p class="page-header-description">Détails de l'excursion</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_excursion_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+        <a href="{{ path('admin_excursion_edit', {id: excursion.id}) }}" class="btn btn-primary">✏️ Modifier</a>
+    </div>
+</div>
+
+<div class="excursion-detail">
+    <!-- Informations principales -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">📋 Informations générales</h3>
+        </div>
+        <div class="card-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Catégorie</span>
+                    <span class="detail-value">{{ excursion.category?.name ?? '-' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Destination</span>
+                    <span class="detail-value">{{ excursion.destination?.name ?? '-' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Type</span>
+                    <span class="detail-value">{{ excursion.type|capitalize }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Statut</span>
+                    <span class="detail-value">
+                        {% if excursion.status == 'active' %}
+                            <span class="badge badge-success">Actif</span>
+                        {% elseif excursion.status == 'inactive' %}
+                            <span class="badge badge-secondary">Inactif</span>
+                        {% else %}
+                            <span class="badge badge-warning">Brouillon</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Best Seller</span>
+                    <span class="detail-value">{{ excursion.isBestSeller ? '✅ Oui' : '❌ Non' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Mis en avant</span>
+                    <span class="detail-value">{{ excursion.isFeatured ? '✅ Oui' : '❌ Non' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Durée</span>
+                    <span class="detail-value">
+                        {% if excursion.durationHours or excursion.durationMinutes %}
+                            {{ excursion.durationHours ?: 0 }}h {{ excursion.durationMinutes ?: 0 }}min
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Horaires</span>
+                    <span class="detail-value">
+                        {% if excursion.startTime or excursion.endTime %}
+                            {{ excursion.startTime ? excursion.startTime|date('H:i') : '-' }} - {{ excursion.endTime ? excursion.endTime|date('H:i') : '-' }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Prix adulte</span>
+                    <span class="detail-value">{{ excursion.priceAdult ? excursion.priceAdult|number_format(2) ~ ' TND' : '-' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Prix enfant</span>
+                    <span class="detail-value">{{ excursion.priceChild ? excursion.priceChild|number_format(2) ~ ' TND' : '-' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Participants</span>
+                    <span class="detail-value">
+                        {% if excursion.minParticipants or excursion.maxParticipants %}
+                            {{ excursion.minParticipants ?: '-' }} - {{ excursion.maxParticipants ?: '-' }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Annulation gratuite</span>
+                    <span class="detail-value">{{ excursion.cancellationHours ? excursion.cancellationHours ~ 'h avant' : '-' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Slug</span>
+                    <span class="detail-value">{{ excursion.slug ?? '-' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Images -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">🖼️ Images ({{ excursion.images|length }})</h3>
+        </div>
+        <div class="card-body">
+            {% if excursion.images|length > 0 %}
+                <div class="images-grid">
+                    {% for image in excursion.images|sort((a, b) => a.position <=> b.position) %}
+                        <div class="image-item {{ image.isMain ? 'main-image' : '' }}">
+                            <img src="{{ asset(image.imagePath) }}" alt="{{ image.imageAlt }}">
+                            {% if image.isMain %}<span class="image-badge">Principale</span>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune image</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Traductions -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">🌍 Traductions</h3>
+        </div>
+        <div class="card-body">
+            <div class="translations-grid">
+                {% for translation in excursion.translations|sort((a, b) => a.locale <=> b.locale) %}
+                    <div class="translation-item">
+                        <h4 class="translation-locale">
+                            {% if translation.locale == 'fr' %}🇫🇷 Français
+                            {% elseif translation.locale == 'en' %}🇬🇧 English
+                            {% elseif translation.locale == 'es' %}🇪🇸 Español
+                            {% elseif translation.locale == 'de' %}🇩🇪 Deutsch
+                            {% elseif translation.locale == 'it' %}🇮🇹 Italiano
+                            {% endif %}
+                        </h4>
+                        <div class="translation-content">
+                            <p><strong>Titre :</strong> {{ translation.title ?? '-' }}</p>
+                            <p><strong>Sous-titre :</strong> {{ translation.subtitle ?? '-' }}</p>
+                            <p><strong>Description :</strong> {{ translation.description|slice(0, 200) ~ (translation.description|length > 200 ? '...' : '') }}</p>
+                            <p><strong>Lieu :</strong> {{ translation.location ?? '-' }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Itinéraire -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">🗺️ Itinéraire ({{ excursion.itineraries|length }} étapes)</h3>
+        </div>
+        <div class="card-body">
+            {% if excursion.itineraries|length > 0 %}
+                <div class="itinerary-list">
+                    {% for itinerary in excursion.itineraries|sort((a, b) => a.stepNumber <=> b.stepNumber) %}
+                        <div class="itinerary-item">
+                            <div class="itinerary-header">
+                                <span class="itinerary-step">Étape {{ itinerary.stepNumber }}</span>
+                                {% if itinerary.time %}<span class="itinerary-time">{{ itinerary.time|date('H:i') }}</span>{% endif %}
+                                {% if itinerary.duration %}<span class="itinerary-duration">{{ itinerary.duration }} min</span>{% endif %}
+                            </div>
+                            <div class="itinerary-content">
+                                <p><strong>{{ itinerary.getTranslation('fr')?.title ?? '-' }}</strong></p>
+                                <p>{{ itinerary.getTranslation('fr')?.description ?? '-' }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucun itinéraire</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Caractéristiques -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">⭐ Caractéristiques ({{ excursion.features|length }})</h3>
+        </div>
+        <div class="card-body">
+            {% if excursion.features|length > 0 %}
+                <div class="features-list">
+                    {% for feature in excursion.features|sort((a, b) => a.position <=> b.position) %}
+                        <div class="feature-item">
+                            <span class="feature-icon">{{ feature.icon ?? '•' }}</span>
+                            <span class="feature-text">{{ feature.getTranslation('fr')?.title ?? '-' }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune caractéristique</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Inclusions/Exclusions -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">✓ Inclusions/Exclusions ({{ excursion.inclusions|length }})</h3>
+        </div>
+        <div class="card-body">
+            {% if excursion.inclusions|length > 0 %}
+                <div class="inclusions-list">
+                    {% for inclusion in excursion.inclusions|sort((a, b) => a.type <=> b.type or a.position <=> b.position) %}
+                        <div class="inclusion-item {{ inclusion.type }}">
+                            <span class="inclusion-icon">{{ inclusion.icon ?? (inclusion.type == 'included' ? '✓' : '✗') }}</span>
+                            <span class="inclusion-text">{{ inclusion.getTranslation('fr')?.text ?? '-' }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune inclusion/exclusion</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">❓ FAQ ({{ excursion.faqs|length }})</h3>
+        </div>
+        <div class="card-body">
+            {% if excursion.faqs|length > 0 %}
+                <div class="faq-list">
+                    {% for faq in excursion.faqs|sort((a, b) => a.position <=> b.position) %}
+                        <div class="faq-item {{ faq.isActive ? '' : 'inactive' }}">
+                            <div class="faq-question">
+                                <strong>Q:</strong> {{ faq.getTranslation('fr')?.question ?? '-' }}
+                                {% if not faq.isActive %}<span class="badge badge-secondary">Inactive</span>{% endif %}
+                            </div>
+                            <div class="faq-answer">
+                                <strong>R:</strong> {{ faq.getTranslation('fr')?.answer ?? '-' }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune FAQ</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">🏷️ Badges ({{ excursion.badges|length }})</h3>
+        </div>
+        <div class="card-body">
+            {% if excursion.badges|length > 0 %}
+                <div class="badges-list">
+                    {% for badge in excursion.badges %}
+                        <div class="badge-item {{ badge.isActive ? '' : 'inactive' }}">
+                            <span class="badge-type">{{ badge.badgeType|replace({'_': ' '})|capitalize }}</span>
+                            {% if badge.getTranslation('fr')?.text %}
+                                <span class="badge-text">{{ badge.getTranslation('fr').text }}</span>
+                            {% endif %}
+                            {% if not badge.isActive %}<span class="badge-status">Inactive</span>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Aucun badge</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card">
+        <div class="card-body">
+            <div class="detail-actions">
+                <a href="{{ path('admin_excursion_edit', {id: excursion.id}) }}" class="btn btn-primary">✏️ Modifier</a>
+                <form method="post" action="{{ path('admin_excursion_delete', {id: excursion.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette excursion ?');" class="inline-form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ excursion.id) }}">
+                    <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+                </form>
+                <a href="{{ path('admin_excursion_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

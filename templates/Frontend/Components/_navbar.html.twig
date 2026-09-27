@@ -1,0 +1,66 @@
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,78,162,0.06)]">
+    <div class="h-20 w-full px-margin-desktop flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <img alt="Tunisia Travel &amp; Mobility Brand Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X65xa4EZzCh388i5NcMK-mBxWcqPPdaxoLH45o46WJh3W3YfH83ZDTlUMEDwvufkp5rE5oViQKZl2jUlcbB8EcK2cljc6egYgIbVERAy1pwdV_YmNLuvufgRTjGYTbWn4Hf-TgbQhdqJmI-CxPWcOeF8Hef5iQxF2dENUEGkhjL7b80efPdxP39SZGCFQ2t07ASTi5a9cbuj3qOkYQ_loo8qCGQmfhder1kiVy0ukNgEh3n2CK75oGU7GA">
+        </div>
+        <nav class="hidden xl:flex items-center gap-6" data-active-classes="text-primary font-title-md">
+            <a aria-current="page" class="transition-colors text-primary font-title-md" href="{{ path('app_home') }}">{{ 'navbar.home'|trans }}</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="{{ path('app_liste_excursion') }}">{{ 'navbar.excursions'|trans }}</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">{{ 'navbar.about'|trans }}</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="{{ path('app_contact_locale', {'_locale': app.request.locale}) }}">{{ 'navbar.contact'|trans }}</a>
+            <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="{{ path('app_blog_index', {'_locale': app.request.locale}) }}">Blog</a>
+        </nav>
+        <div class="flex items-center gap-4">
+            <div class="relative" data-navbar-dropdown>
+                <button aria-expanded="false" aria-haspopup="true" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant" data-navbar-dropdown-toggle type="button">
+                    <span class="font-semibold text-on-surface">{{ app.request.locale|upper }}</span>
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+                <div class="absolute right-0 mt-2 w-36 py-2 bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(11,78,162,0.12)] opacity-0 pointer-events-none transition-all flex flex-col z-50" data-navbar-dropdown-menu>
+                    <a href="{{ (app.request.attributes.get('_route') starts with 'app_transfert_show' or app.request.attributes.get('_route') starts with 'app_transfer_show') ? path(app.request.attributes.get('_route') starts with 'app_transfer_show' ? 'app_transfer_show_locale' : 'app_transfert_show_locale', {'_locale': 'fr', 'slug': app.request.attributes.get('slug') ?? transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'fr'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'fr'}) : path('app_home_locale', {'_locale': 'fr'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'fr' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
+                        <span class="">🇫🇷</span><span class="">Français</span>
+                    </a>
+                    <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'en', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'en'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'en'}) : path('app_home_locale', {'_locale': 'en'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'en' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
+                        <span class="">🇬🇧</span><span class="">English</span>
+                    </a>
+                    <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'it', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'it'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'it'}) : path('app_home_locale', {'_locale': 'it'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'it' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
+                        <span class="">🇮🇹</span><span class="">Italiano</span>
+                    </a>
+                    <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'es', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'es'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'es'}) : path('app_home_locale', {'_locale': 'es'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'es' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
+                        <span class="">🇪🇸</span><span class="">Español</span>
+                    </a>
+                    <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'de', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'de'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'de'}) : path('app_home_locale', {'_locale': 'de'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'de' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-surface' }} transition-colors w-full text-left">
+                        <span class="">🇩🇪</span><span class="">Deutsch</span>
+                    </a>
+                </div>
+            </div>
+            <div class="relative" data-navbar-dropdown>
+                <button aria-expanded="false" aria-haspopup="true" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant" data-navbar-dropdown-toggle type="button">
+                    <span class="font-semibold text-on-surface" data-navbar-currency-label>{{ current_currency().symbol }}</span>
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+                <div class="absolute right-0 mt-2 w-32 py-2 bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(11,78,162,0.12)] opacity-0 pointer-events-none transition-all flex flex-col z-50" data-navbar-dropdown-menu>
+                    {% for currency in currency_options() %}
+                        <button data-currency-code="{{ currency.code }}" data-currency-rate="{{ currency.rate }}" data-currency-symbol="{{ currency.symbol }}" data-currency-position="{{ currency.code in ['EUR', 'USD'] ? 'prefix' : 'suffix' }}" data-currency-url="{{ path('app_currency_set', {code: currency.code}) }}" class="flex items-center justify-between px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors w-full text-left" type="button">
+                            <span>{{ currency.code }}</span><span class="text-outline font-normal">{{ currency.symbol }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if app.user %}
+                <div class="relative" data-user-menu>
+                    <button aria-expanded="false" aria-haspopup="true" aria-label="{{ 'auth.account'|trans }}" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm hover:scale-105 transition-transform" data-user-menu-toggle type="button">
+                        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+                    </button>
+                    <div class="auth-user-menu" data-user-menu-panel hidden>
+                        <a href="{{ path('app_profile') }}">{{ 'auth.profile'|trans }}</a>
+                        <a href="{{ path('admin_transfere_index') }}">Admin</a>
+                        <a href="{{ logout_path() }}">{{ 'auth.logout'|trans }}</a>
+                    </div>
+                </div>
+            {% else %}
+                <button class="auth-connect-button" data-auth-open="login" type="button">{{ 'auth.connect'|trans }}</button>
+            {% endif %}
+        </div>
+    </div>
+</header>

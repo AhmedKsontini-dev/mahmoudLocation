@@ -1,4 +1,10 @@
-import './stimulus_bootstrap.js';
+// assets/app.js
+import './bootstrap.js';
+import './styles/app.css';
+
+import * as bootstrap from 'bootstrap';
+
+
 /*
  * Welcome to your app's main JavaScript file!
  *

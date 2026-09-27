@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin - Location Mahmoud{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ asset('assetsBack/css/admin.css') }}" rel="stylesheet">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="admin-body">
+    <div class="sidebar-overlay"></div>
+    <div class="admin-layout">
+        {% include 'Backend/Components/_sidebar.html.twig' %}
+        
+        <div class="admin-content-wrapper">
+            {% include 'Backend/Components/_header.html.twig' %}
+            
+            <main class="admin-main">
+                {% block breadcrumb %}{% endblock %}
+                {% block body %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    <script src="{{ asset('assetsBack/js/admin.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

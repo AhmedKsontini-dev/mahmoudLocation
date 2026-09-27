@@ -1,0 +1,5 @@
+auth:
+    invalid_email: 'Introduce una dirección de correo válida.'
+    password_required: 'La contraseña es obligatoria.'
+    password_min_length: 'La contraseña debe contener al menos {{ limit }} caracteres.'
+    accept_terms_error: 'Debes aceptar las condiciones de uso.'

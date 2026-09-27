@@ -1,0 +1,131 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Réservation - Admin{% endblock %}
+
+{% block header_title %}Détails de la réservation{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Détails de la réservation</h1>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Numéro de réservation</span>
+                <span class="detail-value">#{{ reservation.id }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date de création</span>
+                <span class="detail-value">{{ reservation.createdAt|date('d/m/Y H:i') }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Nom</span>
+                <span class="detail-value">{{ reservation.nom }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Prénom</span>
+                <span class="detail-value">{{ reservation.prenom }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ reservation.email }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Téléphone</span>
+                <span class="detail-value">{{ reservation.telephone }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Type de transfert</span>
+                <span class="detail-value">{{ reservation.transfereType.value == 'one_way' ? 'Aller simple' : 'Aller-retour' }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Statut</span>
+                <span class="detail-value">
+                    {% if reservation.status.value == 'pending' %}
+                        <span class="badge badge-pending">En attente</span>
+                    {% elseif reservation.status.value == 'confirmed' %}
+                        <span class="badge badge-confirmed">Confirmée</span>
+                    {% elseif reservation.status.value == 'cancelled' %}
+                        <span class="badge badge-cancelled">Annulée</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Lieu de départ</span>
+                <span class="detail-value">{{ reservation.pickupLocation }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Lieu d'arrivée</span>
+                <span class="detail-value">{{ reservation.dropoffLocation }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date de pickup</span>
+                <span class="detail-value">{{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Heure de pickup</span>
+                <span class="detail-value">{{ reservation.pickupTime ? reservation.pickupTime|date('H:i') : 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Nombre de passagers</span>
+                <span class="detail-value">{{ reservation.nombrePassagers }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Nombre de bagages</span>
+                <span class="detail-value">{{ reservation.nombreBagages }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Numéro de vol</span>
+                <span class="detail-value">{{ reservation.numeroVol ?? 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Compagnie aérienne</span>
+                <span class="detail-value">{{ reservation.compagnieVol ?? 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Prix total</span>
+                <span class="detail-value">{{ reservation.prixTotal }} {{ reservation.devise }}</span>
+            </div>
+            {% if reservation.transfereType.value == 'return' %}
+                <div class="detail-item">
+                    <span class="detail-label">Lieu de retour (départ)</span>
+                    <span class="detail-value">{{ reservation.returnPickupLocation ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Lieu de retour (arrivée)</span>
+                    <span class="detail-value">{{ reservation.returnDropoffLocation ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Date de retour</span>
+                    <span class="detail-value">{{ reservation.returnPickupDate ? reservation.returnPickupDate|date('d/m/Y') : 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Heure de retour</span>
+                    <span class="detail-value">{{ reservation.returnPickupTime ? reservation.returnPickupTime|date('H:i') : 'N/A' }}</span>
+                </div>
+            {% endif %}
+            {% if reservation.message %}
+                <div class="detail-item full-width">
+                    <span class="detail-label">Message</span>
+                    <span class="detail-value">{{ reservation.message }}</span>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions" style="margin-top: 2rem;">
+            <a href="{{ path('admin_reservation_edit', {id: reservation.id}) }}" class="btn btn-primary">Modifier le statut</a>
+            <form method="post" action="{{ path('admin_reservation_delete', {id: reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?');" style="display: inline;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

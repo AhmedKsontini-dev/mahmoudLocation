@@ -1,0 +1,70 @@
+<div class="auth-modal" data-auth-login-error="{{ 'auth.login_error'|trans|e('html_attr') }}" data-auth-modal data-auth-generic-error="{{ 'auth.registration_error'|trans|e('html_attr') }}" data-auth-initial="{{ auth_initial|default('') }}" hidden>
+    <div class="auth-modal__overlay" data-auth-close></div>
+    <section aria-labelledby="auth-login-title" aria-modal="true" class="auth-modal__dialog" data-auth-panel="login" role="dialog" tabindex="-1" hidden>
+        <button aria-label="{{ 'auth.close'|trans }}" class="auth-modal__close" data-auth-close type="button">
+            <span aria-hidden="true" class="material-symbols-outlined">close</span>
+        </button>
+        <div class="auth-modal__intro">
+            <span class="auth-modal__eyebrow">{{ 'auth.welcome'|trans }}</span>
+            <h2 id="auth-login-title">{{ 'auth.login_title'|trans }}</h2>
+            <p>{{ 'auth.login_subtitle'|trans }}</p>
+        </div>
+        <div class="auth-form__success" data-auth-success hidden role="status"></div>
+        {% if error|default(null) %}
+            <div class="auth-form__error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+        <form action="{{ path('app_login') }}" class="auth-form" data-auth-login-form method="post" novalidate>
+            <input name="_target_path" type="hidden" value="{{ app.request.uri }}">
+            <input name="_csrf_token" type="hidden" value="{{ csrf_token('authenticate') }}">
+            <div class="auth-form__field">
+                <label for="auth-username">{{ 'auth.email'|trans }}</label>
+                <input aria-describedby="auth-email-error" autocomplete="email" data-invalid-message="{{ 'auth.invalid_email'|trans|e('html_attr') }}" data-required-message="{{ 'auth.email_required'|trans|e('html_attr') }}" id="auth-username" name="_username" required type="email" value="{{ last_username|default('') }}">
+                <p class="auth-form__field-error" data-auth-login-error="email" id="auth-email-error" hidden></p>
+            </div>
+            <div class="auth-form__field">
+                <label for="auth-password">{{ 'auth.password'|trans }}</label>
+                <input aria-describedby="auth-password-error" autocomplete="current-password" data-required-message="{{ 'auth.password_required'|trans|e('html_attr') }}" id="auth-password" name="_password" required type="password">
+                <p class="auth-form__field-error" data-auth-login-error="password" id="auth-password-error" hidden></p>
+            </div>
+            <div class="auth-form__error" data-auth-login-form-error hidden role="alert"></div>
+            <button class="auth-form__submit" type="submit">{{ 'auth.login_submit'|trans }}</button>
+        </form>
+        <p class="auth-modal__switch">{{ 'auth.no_account'|trans }} <button data-auth-switch="register" type="button">{{ 'auth.register_link'|trans }}</button></p>
+    </section>
+
+    <section aria-labelledby="auth-register-title" aria-modal="true" class="auth-modal__dialog" data-auth-panel="register" role="dialog" tabindex="-1" hidden>
+        <button aria-label="{{ 'auth.close'|trans }}" class="auth-modal__close" data-auth-close type="button">
+            <span aria-hidden="true" class="material-symbols-outlined">close</span>
+        </button>
+        <div class="auth-modal__intro">
+            <span class="auth-modal__eyebrow">{{ 'auth.join'|trans }}</span>
+            <h2 id="auth-register-title">{{ 'auth.register_title'|trans }}</h2>
+            <p>{{ 'auth.register_subtitle'|trans }}</p>
+        </div>
+        {% if registrationForm|default(null) %}
+            {{ form_start(registrationForm, { action: path('app_register'), attr: { class: 'auth-form', 'data-auth-registration-form': true, novalidate: true } }) }}
+                <input name="_target_path" type="hidden" value="{{ app.request.uri }}">
+                <div class="auth-form__error" data-auth-registration-error="form"{% if registrationForm.vars.errors|length == 0 %} hidden{% endif %} role="alert">
+                    {{ form_errors(registrationForm) }}
+                </div>
+                <div class="auth-form__field">
+                    {{ form_label(registrationForm.email, 'auth.email'|trans) }}
+                    {{ form_widget(registrationForm.email, { attr: { 'aria-describedby': 'auth-register-email-error' } }) }}
+                    <p class="auth-form__field-error" data-auth-registration-error="email" id="auth-register-email-error" hidden>{{ form_errors(registrationForm.email) }}</p>
+                </div>
+                <div class="auth-form__field">
+                    {{ form_label(registrationForm.plainPassword, 'auth.password'|trans) }}
+                    {{ form_widget(registrationForm.plainPassword, { attr: { 'aria-describedby': 'auth-register-password-error' } }) }}
+                    <p class="auth-form__field-error" data-auth-registration-error="plainPassword" id="auth-register-password-error" hidden>{{ form_errors(registrationForm.plainPassword) }}</p>
+                </div>
+                <div class="auth-form__check auth-form__check--terms">
+                    {{ form_widget(registrationForm.agreeTerms) }}
+                    {{ form_label(registrationForm.agreeTerms, 'auth.accept_terms'|trans) }}
+                    <p class="auth-form__field-error" data-auth-registration-error="agreeTerms" hidden>{{ form_errors(registrationForm.agreeTerms) }}</p>
+                </div>
+                <button class="auth-form__submit" type="submit">{{ 'auth.register_submit'|trans }}</button>
+            {{ form_end(registrationForm) }}
+        {% endif %}
+        <p class="auth-modal__switch">{{ 'auth.has_account'|trans }} <button data-auth-switch="login" type="button">{{ 'auth.login_link'|trans }}</button></p>
+    </section>
+</div>

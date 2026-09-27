@@ -1,0 +1,46 @@
+<nav class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+        <h1 class="sidebar-title">Location Mahmoud</h1>
+        <span class="sidebar-subtitle">Administration</span>
+    </div>
+    
+    <ul class="sidebar-menu">
+        <li class="menu-item">
+            <a href="{{ path('admin_dashboard') }}" class="menu-link {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'active' : '' }}">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ path('admin_transfere_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_transfere' ? 'active' : '' }}">
+                <span class="menu-icon">🚐</span>
+                <span>Transferts</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ path('admin_saison_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_saison' ? 'active' : '' }}">
+                <span class="menu-icon">📆</span>
+                <span>Saisons</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ path('admin_currency_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_currency' ? 'active' : '' }}">
+                <span class="menu-icon">💰</span>
+                <span>Devises</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ path('admin_excursion_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_excursion' ? 'active' : '' }}">
+                <span class="menu-icon">🏝️</span>
+                <span>Excursions</span>
+            </a>
+        </li>
+    </ul>
+    
+    <div class="sidebar-footer">
+        <a href="{{ path('app_home') }}" class="sidebar-back-link">
+            <span class="menu-icon">🏠</span>
+            <span>Voir le site</span>
+        </a>
+    </div>
+</nav>

@@ -1,0 +1,510 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block header_title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/excursion/form.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-header-description">Remplissez les informations de l'excursion</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_excursion_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+    </div>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'class': 'excursion-form'}}) }}
+        
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button type="button" class="tab-btn active" data-tab="general">📋 Informations générales</button>
+                <button type="button" class="tab-btn" data-tab="translations">🌍 Traductions</button>
+                <button type="button" class="tab-btn" data-tab="images">🖼️ Images</button>
+                <button type="button" class="tab-btn" data-tab="itinerary">🗺️ Itinéraire</button>
+                <button type="button" class="tab-btn" data-tab="features">⭐ Caractéristiques</button>
+                <button type="button" class="tab-btn" data-tab="inclusions">✓ Inclusions/Exclusions</button>
+                <button type="button" class="tab-btn" data-tab="faqs">❓ FAQ</button>
+                <button type="button" class="tab-btn" data-tab="badges">🏷️ Badges</button>
+            </div>
+
+            <div class="tabs-content">
+                <!-- Tab 1: Informations générales -->
+                <div class="tab-pane active" id="tab-general">
+                    <div class="form-section">
+                        <h3 class="section-title">Informations de base</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.category) }}
+                                <div class="searchable-select" data-field="category" data-url="{{ path('admin_category_search') }}" data-create-url="{{ path('admin_category_create') }}">
+                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une catégorie..." autocomplete="off" required>
+                                    <div class="searchable-results" style="display: none;"></div>
+                                </div>
+                                {{ form_widget(form.category, {'attr': {'style': 'display: none'}}) }}
+                                {{ form_errors(form.category) }}
+                                <small class="text-muted">Ce champ est requis. Tapez pour rechercher ou créer une nouvelle catégorie.</small>
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.destination) }}
+                                <div class="searchable-select" data-field="destination" data-url="{{ path('admin_destination_search') }}" data-create-url="{{ path('admin_destination_create') }}">
+                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une destination..." autocomplete="off" required>
+                                    <div class="searchable-results" style="display: none;"></div>
+                                </div>
+                                {{ form_widget(form.destination, {'attr': {'style': 'display: none'}}) }}
+                                {{ form_errors(form.destination) }}
+                                <small class="text-muted">Ce champ est requis. Tapez pour rechercher ou créer une nouvelle destination.</small>
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.type) }}
+                                {{ form_widget(form.type) }}
+                                {{ form_errors(form.type) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.status) }}
+                                {{ form_widget(form.status) }}
+                                {{ form_errors(form.status) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Mise en avant</h3>
+                        <div class="form-grid">
+                            <div class="form-field checkbox-field">
+                                {{ form_widget(form.isBestSeller) }}
+                                {{ form_label(form.isBestSeller) }}
+                                {{ form_errors(form.isBestSeller) }}
+                            </div>
+                            <div class="form-field checkbox-field">
+                                {{ form_widget(form.isFeatured) }}
+                                {{ form_label(form.isFeatured) }}
+                                {{ form_errors(form.isFeatured) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Durée et horaires</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.durationHours) }}
+                                {{ form_widget(form.durationHours) }}
+                                {{ form_errors(form.durationHours) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.durationMinutes) }}
+                                {{ form_widget(form.durationMinutes) }}
+                                {{ form_errors(form.durationMinutes) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.startTime) }}
+                                {{ form_widget(form.startTime) }}
+                                {{ form_errors(form.startTime) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.endTime) }}
+                                {{ form_widget(form.endTime) }}
+                                {{ form_errors(form.endTime) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Tarification</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.priceAdult) }}
+                                {{ form_widget(form.priceAdult) }}
+                                {{ form_errors(form.priceAdult) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.priceChild) }}
+                                {{ form_widget(form.priceChild) }}
+                                {{ form_errors(form.priceChild) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Participants</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.minParticipants) }}
+                                {{ form_widget(form.minParticipants) }}
+                                {{ form_errors(form.minParticipants) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.maxParticipants) }}
+                                {{ form_widget(form.maxParticipants) }}
+                                {{ form_errors(form.maxParticipants) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Annulation</h3>
+                        <div class="form-field">
+                            {{ form_label(form.cancellationHours) }}
+                            {{ form_widget(form.cancellationHours) }}
+                            {{ form_errors(form.cancellationHours) }}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">URL</h3>
+                        <div class="form-field">
+                            {{ form_label(form.slug) }}
+                            {{ form_widget(form.slug) }}
+                            {{ form_errors(form.slug) }}
+                            <small class="form-hint">Laissez vide pour générer automatiquement à partir du titre français</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Traductions -->
+                <div class="tab-pane" id="tab-translations">
+                    <div class="form-section">
+                        <h3 class="section-title">Traductions</h3>
+                        <div class="translations-tabs">
+                            <button type="button" class="translation-tab active" data-locale="fr">🇫🇷 Français</button>
+                            <button type="button" class="translation-tab" data-locale="en">🇬🇧 English</button>
+                            <button type="button" class="translation-tab" data-locale="es">🇪🇸 Español</button>
+                            <button type="button" class="translation-tab" data-locale="de">🇩🇪 Deutsch</button>
+                            <button type="button" class="translation-tab" data-locale="it">🇮🇹 Italiano</button>
+                        </div>
+                        
+                        {% for translation in form.translations %}
+                            <div class="translation-pane {{ translation.vars.data.locale == 'fr' ? 'active' : '' }}" data-locale="{{ translation.vars.data.locale }}">
+                                <div class="form-field">
+                                    {{ form_label(translation.title) }}
+                                    {{ form_widget(translation.title) }}
+                                    {{ form_errors(translation.title) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.subtitle) }}
+                                    {{ form_widget(translation.subtitle) }}
+                                    {{ form_errors(translation.subtitle) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.description) }}
+                                    {{ form_widget(translation.description) }}
+                                    {{ form_errors(translation.description) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.location) }}
+                                    {{ form_widget(translation.location) }}
+                                    {{ form_errors(translation.location) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.metaTitle) }}
+                                    {{ form_widget(translation.metaTitle) }}
+                                    {{ form_errors(translation.metaTitle) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.metaDescription) }}
+                                    {{ form_widget(translation.metaDescription) }}
+                                    {{ form_errors(translation.metaDescription) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tab 3: Images -->
+                <div class="tab-pane" id="tab-images">
+                    <div class="form-section">
+                        <h3 class="section-title">Images</h3>
+                        <div class="collection-container" data-collection="images" data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
+                            {% for image in form.images %}
+                                <div class="collection-item">
+                                    <div class="form-field">
+                                        {{ form_label(image.imageFile) }}
+                                        {{ form_widget(image.imageFile) }}
+                                        {{ form_errors(image.imageFile) }}
+                                        {% if excursion and excursion.images[loop.index0].imagePath %}
+                                            <img src="{{ asset(excursion.images[loop.index0].imagePath) }}" alt="" class="preview-image">
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(image.imageAlt) }}
+                                        {{ form_widget(image.imageAlt) }}
+                                        {{ form_errors(image.imageAlt) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(image.position) }}
+                                        {{ form_widget(image.position) }}
+                                        {{ form_errors(image.position) }}
+                                    </div>
+                                    <div class="form-field checkbox-field">
+                                        {{ form_widget(image.isMain) }}
+                                        {{ form_label(image.isMain) }}
+                                        {{ form_errors(image.isMain) }}
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-danger remove-collection">Supprimer</button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary add-collection" data-collection="images">➕ Ajouter une image</button>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Itinéraire -->
+                <div class="tab-pane" id="tab-itinerary">
+                    <div class="form-section">
+                        <h3 class="section-title">Itinéraire</h3>
+                        {% macro itinerary_item(itinerary) %}
+                            <div class="collection-item">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        {{ form_label(itinerary.stepNumber) }}
+                                        {{ form_widget(itinerary.stepNumber) }}
+                                        {{ form_errors(itinerary.stepNumber) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(itinerary.time) }}
+                                        {{ form_widget(itinerary.time) }}
+                                        {{ form_errors(itinerary.time) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(itinerary.duration) }}
+                                        {{ form_widget(itinerary.duration) }}
+                                        {{ form_errors(itinerary.duration) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(itinerary.position) }}
+                                        {{ form_widget(itinerary.position) }}
+                                        {{ form_errors(itinerary.position) }}
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(itinerary.translations) }}
+                                    <div class="sub-collection">
+                                        {% for trans in itinerary.translations %}
+                                            <div class="sub-collection-item">
+                                                <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.title) }}
+                                                {{ form_widget(trans.description) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger remove-collection">Supprimer</button>
+                            </div>
+                        {% endmacro %}
+                        
+                        <div class="collection-container" data-collection="itineraries" data-prototype="{{ _self.itinerary_item(form.itineraries.vars.prototype)|e('html_attr') }}">
+                            {% for itinerary in form.itineraries %}
+                                {{ _self.itinerary_item(itinerary) }}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary add-collection" data-collection="itineraries">➕ Ajouter une étape</button>
+                    </div>
+                </div>
+
+                <!-- Tab 5: Caractéristiques -->
+                <div class="tab-pane" id="tab-features">
+                    <div class="form-section">
+                        <h3 class="section-title">Caractéristiques</h3>
+                        {% macro feature_item(feature) %}
+                            <div class="collection-item">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        {{ form_label(feature.icon) }}
+                                        {{ form_widget(feature.icon) }}
+                                        {{ form_errors(feature.icon) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(feature.position) }}
+                                        {{ form_widget(feature.position) }}
+                                        {{ form_errors(feature.position) }}
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(feature.translations) }}
+                                    <div class="sub-collection">
+                                        {% for trans in feature.translations %}
+                                            <div class="sub-collection-item">
+                                                <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.title) }}
+                                                {{ form_widget(trans.subtitle) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger remove-collection">Supprimer</button>
+                            </div>
+                        {% endmacro %}
+                        
+                        <div class="collection-container" data-collection="features" data-prototype="{{ _self.feature_item(form.features.vars.prototype)|e('html_attr') }}">
+                            {% for feature in form.features %}
+                                {{ _self.feature_item(feature) }}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary add-collection" data-collection="features">➕ Ajouter une caractéristique</button>
+                    </div>
+                </div>
+
+                <!-- Tab 6: Inclusions/Exclusions -->
+                <div class="tab-pane" id="tab-inclusions">
+                    <div class="form-section">
+                        <h3 class="section-title">Inclusions/Exclusions</h3>
+                        {% macro inclusion_item(inclusion) %}
+                            <div class="collection-item">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        {{ form_label(inclusion.type) }}
+                                        {{ form_widget(inclusion.type) }}
+                                        {{ form_errors(inclusion.type) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(inclusion.icon) }}
+                                        {{ form_widget(inclusion.icon) }}
+                                        {{ form_errors(inclusion.icon) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(inclusion.position) }}
+                                        {{ form_widget(inclusion.position) }}
+                                        {{ form_errors(inclusion.position) }}
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(inclusion.translations) }}
+                                    <div class="sub-collection">
+                                        {% for trans in inclusion.translations %}
+                                            <div class="sub-collection-item">
+                                                <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.text) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger remove-collection">Supprimer</button>
+                            </div>
+                        {% endmacro %}
+                        
+                        <div class="collection-container" data-collection="inclusions" data-prototype="{{ _self.inclusion_item(form.inclusions.vars.prototype)|e('html_attr') }}">
+                            {% for inclusion in form.inclusions %}
+                                {{ _self.inclusion_item(inclusion) }}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary add-collection" data-collection="inclusions">➕ Ajouter une inclusion/exclusion</button>
+                    </div>
+                </div>
+
+                <!-- Tab 7: FAQ -->
+                <div class="tab-pane" id="tab-faqs">
+                    <div class="form-section">
+                        <h3 class="section-title">FAQ</h3>
+                        {% macro faq_item(faq) %}
+                            <div class="collection-item">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        {{ form_label(faq.position) }}
+                                        {{ form_widget(faq.position) }}
+                                        {{ form_errors(faq.position) }}
+                                    </div>
+                                    <div class="form-field checkbox-field">
+                                        {{ form_widget(faq.isActive) }}
+                                        {{ form_label(faq.isActive) }}
+                                        {{ form_errors(faq.isActive) }}
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(faq.translations) }}
+                                    <div class="sub-collection">
+                                        {% for trans in faq.translations %}
+                                            <div class="sub-collection-item">
+                                                <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.question) }}
+                                                {{ form_widget(trans.answer) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger remove-collection">Supprimer</button>
+                            </div>
+                        {% endmacro %}
+                        
+                        <div class="collection-container" data-collection="faqs" data-prototype="{{ _self.faq_item(form.faqs.vars.prototype)|e('html_attr') }}">
+                            {% for faq in form.faqs %}
+                                {{ _self.faq_item(faq) }}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary add-collection" data-collection="faqs">➕ Ajouter une FAQ</button>
+                    </div>
+                </div>
+
+                <!-- Tab 8: Badges -->
+                <div class="tab-pane" id="tab-badges">
+                    <div class="form-section">
+                        <h3 class="section-title">Badges</h3>
+                        {% macro badge_item(badge) %}
+                            <div class="collection-item">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        {{ form_label(badge.badgeType) }}
+                                        {{ form_widget(badge.badgeType) }}
+                                        {{ form_errors(badge.badgeType) }}
+                                    </div>
+                                    <div class="form-field checkbox-field">
+                                        {{ form_widget(badge.isActive) }}
+                                        {{ form_label(badge.isActive) }}
+                                        {{ form_errors(badge.isActive) }}
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(badge.translations) }}
+                                    <div class="sub-collection">
+                                        {% for trans in badge.translations %}
+                                            <div class="sub-collection-item">
+                                                <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.text) }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger remove-collection">Supprimer</button>
+                            </div>
+                        {% endmacro %}
+                        
+                        <div class="collection-container" data-collection="badges" data-prototype="{{ _self.badge_item(form.badges.vars.prototype)|e('html_attr') }}">
+                            {% for badge in form.badges %}
+                                {{ _self.badge_item(badge) }}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary add-collection" data-collection="badges">➕ Ajouter un badge</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ path('admin_excursion_index') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assetsBack/js/excursion/form.js') }}"></script>
+{% endblock %}

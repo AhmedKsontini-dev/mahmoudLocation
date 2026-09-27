@@ -1,0 +1,337 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}{{ transfer.getLieuDepartTranslated(locale) }} - {{ transfer.getLieuArriveeTranslated(locale) }}{% endblock %}
+
+{% block stylesheets %}
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    <link href="{{ asset('assetsFront/css/home.css') }}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="{{ asset('assetsFront/js/tailwind.config.js') }}"></script>
+    <style>
+        @layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+{% endblock %}
+
+{% block body_class %}bg-surface text-on-surface font-sans antialiased{% endblock %}
+
+{% block body %}
+{% include 'Frontend/Components/_navbar.html.twig' %}
+
+<main class="w-full pt-20 bg-surface">
+    {% for message in app.flashes('success') %}<div class="max-w-[1240px] mx-auto px-4 md:px-8 xl:px-12 pt-4"><div class="rounded-xl bg-tertiary/10 px-4 py-3 text-sm font-semibold text-tertiary">{{ message }}</div></div>{% endfor %}
+    <section class="w-full bg-surface-container-lowest border-b border-surface-container-high py-4">
+        <div class="max-w-[1240px] mx-auto px-4 md:px-8 xl:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 text-xs text-on-surface-variant mb-1">
+                    <a class="hover:text-primary" href="{{ path('app_home_locale', {'_locale': locale}) }}">{{ 'transfer.form.breadcrumb_home'|trans }}</a>
+                    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+                    <span>{{ 'transfer.form.breadcrumb_transfers'|trans }}</span>
+                    <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+                    <span class="text-primary font-semibold">{{ 'transfer.form.breadcrumb_direct'|trans }}</span>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold text-on-surface tracking-tight">{{ 'transfer.form.page_title'|trans }}</h1>
+            </div>
+            <div class="flex items-center bg-surface-container-low p-1.5 rounded-xl text-xs font-medium self-start sm:self-auto">
+                <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary-container text-on-primary font-semibold shadow-sm"><span class="w-4 h-4 rounded-full bg-white text-primary flex items-center justify-center text-[10px] font-bold">1</span><span>{{ 'transfer.form.step1_title'|trans }}</span></div>
+                <span class="material-symbols-outlined text-outline-variant text-[14px] mx-1">arrow_forward</span>
+                <div class="flex items-center gap-1.5 px-2.5 py-1 text-on-surface-variant"><span class="w-4 h-4 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px]">2</span><span>{{ 'transfer.form.step2_title'|trans }}</span></div>
+                <span class="material-symbols-outlined text-outline-variant text-[14px] mx-1">arrow_forward</span>
+                <div class="flex items-center gap-1.5 px-2.5 py-1 text-on-surface-variant"><span class="w-4 h-4 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px]">3</span><span>{{ 'transfer.form.step3_title'|trans }}</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="bg-primary/5 border-b border-primary/10 py-2">
+        <div class="max-w-[1240px] mx-auto px-4 md:px-8 xl:px-12 flex flex-wrap items-center justify-between gap-3 text-xs text-on-surface-variant font-medium">
+            <div class="flex flex-wrap items-center gap-5">
+                <span class="inline-flex items-center gap-1 text-primary font-semibold"><span class="material-symbols-outlined text-[16px]">credit_card_off</span>{{ 'transfer.form.direct_payment'|trans }}</span>
+                <span class="inline-flex items-center gap-1 text-tertiary font-semibold"><span class="material-symbols-outlined text-[16px]">check_circle</span>{{ 'transfer.form.free_cancellation'|trans }}</span>
+                <span class="hidden md:inline-flex items-center gap-1 text-secondary font-semibold"><span class="material-symbols-outlined text-[16px]">flight</span>{{ 'transfer.form.flight_included'|trans }}</span>
+            </div>
+            <span class="hidden sm:block text-xs text-outline">{{ 'transfer.form.fixed_rates'|trans }}</span>
+        </div>
+    </div>
+
+    <div class="max-w-[1240px] mx-auto px-4 md:px-8 xl:px-12 py-6 md:py-8">
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            <div class="w-full lg:w-2/3">
+                {{ form_start(reservationForm, {attr: {class: 'space-y-6', id: 'fast-booking-form'}}) }}
+                {{ form_errors(reservationForm) }}
+                <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center gap-2.5 pb-4 mb-5 border-b border-surface-container-high">
+                        <span class="w-7 h-7 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">1</span>
+                        <div><h2 class="font-bold text-base md:text-lg leading-tight">{{ 'transfer.form.step1_title'|trans }}</h2><p class="text-xs text-on-surface-variant">{{ 'transfer.form.step1_desc'|trans }}</p></div>
+                    </div>
+                    <div class="mb-5" id="transfer-type-choice">
+                        {{ form_widget(reservationForm.transfereType) }}
+                        <div class="grid grid-cols-2 gap-2.5" role="group" aria-label="{{ 'transfer.form.type'|trans }}">
+                            <button class="transfer-type-button p-3 rounded-xl border border-surface-container-high bg-surface-container-low/40 transition-all text-center flex flex-col items-center gap-1" data-transfer-type="one_way" type="button">
+                                <span class="material-symbols-outlined text-[20px]">flight_land</span><span class="text-xs font-semibold">{{ 'transfer.form.one_way'|trans }}</span>
+                            </button>
+                            <button class="transfer-type-button p-3 rounded-xl border border-surface-container-high bg-surface-container-low/40 transition-all text-center flex flex-col items-center gap-1" data-transfer-type="return" type="button">
+                                <span class="material-symbols-outlined text-[20px]">flight_takeoff</span><span class="text-xs font-semibold">{{ 'transfer.form.return'|trans }}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-4">
+                        <div>{{ form_row(reservationForm.pickupLocation) }}</div>
+                        <div>{{ form_row(reservationForm.dropoffLocation) }}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3.5 mb-6">
+                        <div>{{ form_row(reservationForm.pickupDate) }}</div>
+                        <div>{{ form_row(reservationForm.pickupTime) }}</div>
+                    </div>
+                    <div class="{{ reservationForm.vars.data.transfereType.value == 'return' ? '' : 'hidden' }} grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-6" id="return-fields">
+                        <div>{{ form_row(reservationForm.returnPickupLocation) }}</div>
+                        <div>{{ form_row(reservationForm.returnDropoffLocation) }}</div>
+                        <div>{{ form_row(reservationForm.returnPickupDate) }}</div>
+                        <div>{{ form_row(reservationForm.returnPickupTime) }}</div>
+                    </div>
+                </div>
+
+                <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center gap-2.5 pb-4 mb-5 border-b border-surface-container-high"><span class="w-7 h-7 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">2</span><div><h2 class="font-bold text-base md:text-lg leading-tight">{{ 'transfer.form.step2_title'|trans }}</h2><p class="text-xs text-on-surface-variant">{{ 'transfer.form.step2_desc'|trans }}</p></div></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                        <div class="p-3 rounded-xl bg-surface-container-low/60 border border-surface-container-high flex items-center justify-between"><div><span class="text-xs font-semibold block">{{ 'transfer.form.passengers'|trans }}</span><span class="text-[10px] text-outline">Voyageurs</span></div><div class="flex items-center gap-2"><button class="w-6 h-6 rounded-md bg-white border border-outline-variant text-xs font-bold" onclick="adjustFormCount('passengers', -1)" type="button">-</button><span class="text-xs font-bold w-4 text-center" id="count-passengers">{{ reservationForm.vars.data.nombrePassagers }}</span><button class="w-6 h-6 rounded-md bg-white border border-outline-variant text-xs font-bold" onclick="adjustFormCount('passengers', 1)" type="button">+</button></div>{{ form_widget(reservationForm.nombrePassagers) }}{{ form_errors(reservationForm.nombrePassagers) }}</div>
+                        <div class="p-3 rounded-xl bg-surface-container-low/60 border border-surface-container-high flex items-center justify-between"><div><span class="text-xs font-semibold block">{{ 'transfer.form.luggage'|trans }}</span><span class="text-[10px] text-outline">Bagages</span></div><div class="flex items-center gap-2"><button class="w-6 h-6 rounded-md bg-white border border-outline-variant text-xs font-bold" onclick="adjustFormCount('luggage', -1)" type="button">-</button><span class="text-xs font-bold w-4 text-center" id="count-luggage">{{ reservationForm.vars.data.nombreBagages }}</span><button class="w-6 h-6 rounded-md bg-white border border-outline-variant text-xs font-bold" onclick="adjustFormCount('luggage', 1)" type="button">+</button></div>{{ form_widget(reservationForm.nombreBagages) }}{{ form_errors(reservationForm.nombreBagages) }}</div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                        <div class="p-3 rounded-xl bg-surface-container-low/60 border border-surface-container-high flex items-center justify-between gap-2">
+                            <div class="shrink-0">
+                                <span class="text-xs font-semibold block">{{ 'transfer.form.airline'|trans }}</span>
+                                <span class="text-[10px] text-outline">{{ 'transfer.form.optional'|trans }}</span>
+                            </div>
+                            <div class="w-[140px]">
+                                {{ form_widget(reservationForm.compagnieVol, {'attr': {'class': 'w-full h-8 bg-white border border-outline-variant rounded-md px-2.5 text-xs font-bold text-on-surface placeholder:font-normal focus:border-primary focus:ring-1 focus:ring-primary outline-none', 'placeholder': 'Ex: Tunisair'}}) }}
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-surface-container-low/60 border border-surface-container-high flex items-center justify-between gap-2">
+                            <div class="shrink-0">
+                                <span class="text-xs font-semibold block">{{ 'transfer.form.flight_number'|trans }}</span>
+                                <span class="text-[10px] text-outline">{{ 'transfer.form.optional'|trans }}</span>
+                            </div>
+                            <div class="w-[140px]">
+                                {{ form_widget(reservationForm.numeroVol, {'attr': {'class': 'w-full h-8 bg-white border border-outline-variant rounded-md px-2.5 text-xs font-bold text-on-surface placeholder:font-normal focus:border-primary focus:ring-1 focus:ring-primary outline-none', 'placeholder': 'Ex: TU123'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-surface-container-low/40 border border-surface-container-high flex items-center gap-2.5"><span class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[18px]">flight</span></span><div><span class="text-xs font-bold">{{ 'transfer.form.flight_tracking'|trans }}</span><p class="text-[11px] text-on-surface-variant">{{ 'transfer.form.flight_tracking_desc'|trans }}</p></div></div>
+                </div>
+
+                <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center gap-2.5 pb-4 mb-5 border-b border-surface-container-high"><span class="w-7 h-7 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">3</span><div><h2 class="font-bold text-base md:text-lg leading-tight">{{ 'transfer.form.step3_title'|trans }}</h2><p class="text-xs text-on-surface-variant">{{ 'transfer.form.step3_desc'|trans }}</p></div></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-4"><div>{{ form_row(reservationForm.nom) }}</div><div>{{ form_row(reservationForm.email) }}</div><div>{{ form_row(reservationForm.telephone) }}</div></div>
+                    <div class="flex items-center gap-2.5 mb-5 text-xs font-medium text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span><span>{{ 'transfer.form.contact_notice'|trans }}</span></div>
+                    <div class="pt-4 border-t border-surface-container-high"><span class="block text-xs font-bold mb-2.5">{{ 'transfer.form.additional_info'|trans }}</span><div class="grid grid-cols-1 gap-3"><div>{{ form_row(reservationForm.message) }}</div></div></div>
+                </div>
+            {{ form_end(reservationForm) }}
+            </div>
+
+            <aside class="w-full lg:w-1/3 sticky top-24 self-start space-y-4">
+                <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 md:p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-4 border-b border-surface-container-high">
+                        <h3 class="font-bold text-[17px] text-on-surface">{{ 'transfer.form.summary_title'|trans }}</h3>
+                        <span class="px-2.5 py-1 rounded-md bg-[#e6f4ea] text-[#1e8e3e] text-[11px] font-bold">{{ 'transfer.form.instant_quote'|trans }}</span>
+                    </div>
+                    
+                    <div class="py-4 border-b border-surface-container-high space-y-2">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-outline tracking-wider block">{{ 'transfer.form.summary_transfer'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-[13px]">{{ transfer.getLieuDepartTranslated(locale) }} ➔ {{ transfer.getLieuArriveeTranslated(locale) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-outline tracking-wider block">{{ 'transfer.form.summary_type'|trans }}</span>
+                            <span class="font-semibold text-primary text-[13px]" id="summary-type">One Way</span>
+                        </div>
+                    </div>
+
+                    <div class="py-4 border-b border-surface-container-high space-y-1.5">
+                        <span class="text-[10px] uppercase font-bold text-outline tracking-wider block mb-2">{{ 'transfer.form.summary_passenger'|trans }}</span>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_name'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right" id="summary-client-name">-</span>
+                        </div>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_email'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right truncate max-w-[150px]" id="summary-client-email">-</span>
+                        </div>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_phone'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right" id="summary-client-phone">-</span>
+                        </div>
+                    </div>
+
+                    <div class="py-4 border-b border-surface-container-high space-y-4">
+                        <span class="text-[10px] uppercase font-bold text-outline tracking-wider block">{{ 'transfer.form.summary_outbound'|trans }}</span>
+                        <div class="relative pl-5 space-y-4">
+                            <div class="absolute left-[7px] top-2 bottom-2 w-px bg-surface-container-high"></div>
+                            <div class="relative">
+                                <span class="absolute -left-5 top-1.5 w-2 h-2 rounded-full bg-primary"></span>
+                                <div>
+                                    <span class="text-outline text-[10px] uppercase font-bold block tracking-wider">{{ 'transfer.form.summary_pickup'|trans }}</span>
+                                    <span class="font-semibold text-on-surface text-sm" id="summary-pickup">{{ transfer.getLieuDepartTranslated(locale) }}</span>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute -left-5 top-1.5 w-2 h-2 rounded-full bg-primary"></span>
+                                <div>
+                                    <span class="text-outline text-[10px] uppercase font-bold block tracking-wider">{{ 'transfer.form.summary_destination'|trans }}</span>
+                                    <span class="font-semibold text-on-surface text-sm" id="summary-dropoff">{{ transfer.getLieuArriveeTranslated(locale) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 pt-2">
+                            <div class="flex justify-between text-[13px]">
+                                <span class="text-on-surface-variant">{{ 'transfer.form.summary_date'|trans }}</span>
+                                <span class="font-semibold text-on-surface text-right" id="summary-date">-</span>
+                            </div>
+                            <div class="flex justify-between text-[13px]">
+                                <span class="text-on-surface-variant">{{ 'transfer.form.summary_time'|trans }}</span>
+                                <span class="font-semibold text-on-surface text-right" id="summary-time">-</span>
+                            </div>
+                            <div class="flex justify-between text-[13px]">
+                                <span class="text-on-surface-variant">{{ 'transfer.form.summary_vehicle'|trans }}</span>
+                                <span class="font-semibold text-primary text-right" id="summary-vehicle">Berline Passat / Superb</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hidden py-4 border-b border-surface-container-high space-y-4" id="summary-return-block">
+                        <span class="text-[10px] uppercase font-bold text-outline tracking-wider block text-primary">{{ 'transfer.form.summary_return'|trans }}</span>
+                        <div class="relative pl-5 space-y-4">
+                            <div class="absolute left-[7px] top-2 bottom-2 w-px bg-surface-container-high"></div>
+                            <div class="relative">
+                                <span class="absolute -left-5 top-1.5 w-2 h-2 rounded-full border-2 border-primary bg-surface-container-lowest"></span>
+                                <div>
+                                    <span class="text-outline text-[10px] uppercase font-bold block tracking-wider">{{ 'transfer.form.summary_pickup'|trans }}</span>
+                                    <span class="font-semibold text-on-surface text-sm" id="summary-return-pickup">-</span>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute -left-5 top-1.5 w-2 h-2 rounded-full border-2 border-primary bg-surface-container-lowest"></span>
+                                <div>
+                                    <span class="text-outline text-[10px] uppercase font-bold block tracking-wider">{{ 'transfer.form.summary_destination'|trans }}</span>
+                                    <span class="font-semibold text-on-surface text-sm" id="summary-return-dropoff">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 pt-2">
+                            <div class="flex justify-between text-[13px]">
+                                <span class="text-on-surface-variant">{{ 'transfer.form.summary_date'|trans }}</span>
+                                <span class="font-semibold text-on-surface text-right" id="summary-return-date">-</span>
+                            </div>
+                            <div class="flex justify-between text-[13px]">
+                                <span class="text-on-surface-variant">{{ 'transfer.form.summary_time'|trans }}</span>
+                                <span class="font-semibold text-on-surface text-right" id="summary-return-time">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="py-4 border-b border-surface-container-high space-y-1.5">
+                        <span class="text-[10px] uppercase font-bold text-outline tracking-wider block mb-2">{{ 'transfer.form.summary_passengers'|trans }}</span>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_passengers_label'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right" id="summary-passengers">1</span>
+                        </div>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_luggage'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right" id="summary-luggage">0</span>
+                        </div>
+                    </div>
+
+                    <div class="py-4 border-b border-surface-container-high space-y-1.5">
+                        <span class="text-[10px] uppercase font-bold text-outline tracking-wider block mb-2">{{ 'transfer.form.summary_flight'|trans }}</span>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_airline'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right" id="summary-airline">-</span>
+                        </div>
+                        <div class="flex justify-between text-[13px]">
+                            <span class="text-on-surface-variant">{{ 'transfer.form.summary_flight_number'|trans }}</span>
+                            <span class="font-semibold text-on-surface text-right" id="summary-flight-number">-</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-5 pb-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[12px] uppercase font-bold text-outline tracking-wide block">{{ 'transfer.form.total_due'|trans }}</span>
+                                <span class="text-[12px] text-[#1e8e3e] font-semibold mt-0.5 block">{{ 'transfer.form.pay_driver'|trans }}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-2xl md:text-3xl font-extrabold text-primary price-val" id="side-total-price" data-base="{{ prix }}">{{ prix|price }}</span>
+                                <span class="block text-[11px] text-outline mt-1" id="side-equiv">{{ 'transfer.form.conversion_included'|trans }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="flex items-start gap-2.5 cursor-pointer my-4 text-[12px] text-on-surface-variant leading-snug">
+                        <input checked class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary" id="accept-conditions" type="checkbox">
+                        <span>{{ 'transfer.form.accept_conditions'|trans }}</span>
+                    </label>
+
+                    <button class="w-full h-12 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-[15px] flex items-center justify-center gap-2 shadow-md transition-all" form="fast-booking-form" type="submit">
+                        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                        <span>{{ 'transfer.form.confirm_booking'|trans }}</span>
+                    </button>
+
+                    <div class="mt-3 p-3 rounded-xl bg-surface-container-low text-center text-[12px] text-on-surface-variant flex items-center justify-center gap-1.5 border border-surface-container-high">
+                        <span class="material-symbols-outlined text-[16px] text-[#1e8e3e]">lock</span>
+                        <span>{{ 'transfer.form.no_payment_required'|trans }}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4 rounded-xl border border-surface-container-high bg-surface-container-lowest flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-[24px]">headset_mic</span>
+                        <div>
+                            <span class="font-bold text-on-surface text-[13px] block">{{ 'transfer.form.support_request'|trans }}</span>
+                            <span class="text-[11px] text-on-surface-variant">{{ 'transfer.form.support_available'|trans }}</span>
+                        </div>
+                    </div>
+                    <a class="font-semibold text-primary text-[13px] hover:underline" href="tel:+21671000000">{{ 'transfer.form.call'|trans }}</a>
+                </div>
+            </aside>
+        </div>
+
+        <div class="mt-12 pt-8 border-t border-surface-container-high grid grid-cols-1 sm:grid-cols-3 gap-6"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0"><span class="material-symbols-outlined text-[20px]">flight_takeoff</span></div><div><h4 class="text-xs font-bold">{{ 'transfer.form.flight_tracking_feature'|trans }}</h4><p class="text-[11px] text-on-surface-variant">{{ 'transfer.form.flight_tracking_feature_desc'|trans }}</p></div></div><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary shrink-0"><span class="material-symbols-outlined text-[20px]">shield</span></div><div><h4 class="text-xs font-bold">{{ 'transfer.form.payment_feature'|trans }}</h4><p class="text-[11px] text-on-surface-variant">{{ 'transfer.form.payment_feature_desc'|trans }}</p></div></div><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0"><span class="material-symbols-outlined text-[20px]">timer</span></div><div><h4 class="text-xs font-bold">{{ 'transfer.form.cancellation_feature'|trans }}</h4><p class="text-[11px] text-on-surface-variant">{{ 'transfer.form.cancellation_feature_desc'|trans }}</p></div></div></div>
+    </div>
+</main>
+
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-4" id="success-modal"><div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl"><div class="text-center mb-5"><div class="w-12 h-12 rounded-full bg-tertiary-container/10 mx-auto flex items-center justify-center text-tertiary mb-3"><span class="material-symbols-outlined text-[28px]">done_all</span></div><h3 class="text-lg font-bold">{{ 'transfer.form.modal_title'|trans }}</h3><p class="text-xs text-on-surface-variant mt-1">{{ 'transfer.form.modal_desc'|trans }}</p></div><div class="bg-surface-container-low rounded-xl p-3.5 mb-5 text-xs space-y-2"><div class="flex justify-between"><span class="text-outline">{{ 'transfer.form.modal_trip'|trans }}</span><span class="font-medium">{{ transfer.getLieuDepartTranslated(locale) }} ➔ {{ transfer.getLieuArriveeTranslated(locale) }}</span></div><div class="flex justify-between font-bold pt-1 border-t border-surface-container-high"><span>{{ 'transfer.form.modal_total'|trans }}</span><span class="text-primary">{{ prix|price }}</span></div></div><button class="w-full h-11 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs" onclick="closeModal()" type="button">{{ 'transfer.form.modal_close'|trans }}</button></div></div>
+
+{% include 'Frontend/Components/_footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('assetsFront/js/navbar.js') }}?v=3"></script>
+<script>
+    const translations = {
+        conversion_included: {{ 'transfer.form.conversion_included'|trans|json_encode|raw }},
+        one_way: {{ 'transfer.form.one_way'|trans|json_encode|raw }},
+        return: {{ 'transfer.form.return'|trans|json_encode|raw }}
+    };
+    const bookingState = { basePrice: Number({{ prix|json_encode|raw }}), vehicleName: 'Transfert', counts: { adults: 2, luggage: 2, cabin: 1, kids: 0 } };
+    const transferTypeField = document.getElementById('reservation_transfere_form_transfereType');
+    const field = name => document.querySelector(`[name="reservation_transfere_form[${name}]"]`);
+    function formatBookingPrice(value) { return (value * (window.currentCurrency ? window.currentCurrency.rate : 1)).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + (window.currentCurrency ? window.currentCurrency.code : 'TND'); }
+    function updateVehicle(element) { bookingState.basePrice = Number(element.dataset.price); bookingState.vehicleName = element.dataset.name; document.getElementById('side-base-price').dataset.base = bookingState.basePrice; document.getElementById('summary-vehicle').textContent = bookingState.vehicleName; recalculateBooking(); }
+    function toggleOpt(type, cost, checkbox) { bookingState[type === 'baby' ? 'babySeat' : 'meetGreet'] = checkbox.checked ? cost : 0; document.getElementById(type === 'baby' ? 'side-baby-row' : 'side-greet-row').classList.toggle('hidden', !checkbox.checked); recalculateBooking(); }
+    function adjustFormCount(type, delta) { const input = document.getElementById('reservation_transfere_form_nombre' + (type === 'passengers' ? 'Passagers' : 'Bagages')); const count = document.getElementById('count-' + type); const min = type === 'passengers' ? 1 : 0; const next = Number(input.value || min) + delta; if (next >= min && next <= 9) { input.value = next; count.textContent = next; updateSummary(); } }
+    function recalculateBooking() { const total = bookingState.basePrice * (transferTypeField.value === 'return' ? 2 : 1); document.getElementById('side-total-price').dataset.base = total; document.getElementById('side-total-price').textContent = formatBookingPrice(total); document.getElementById('side-equiv').textContent = translations.conversion_included; updateSummary(); }
+    function updateTypeButtons() { const isReturn = transferTypeField.value === 'return'; document.querySelectorAll('.transfer-type-button').forEach(button => { const active = button.dataset.transferType === transferTypeField.value; button.classList.toggle('border-primary', active); button.classList.toggle('bg-primary/5', active); button.classList.toggle('text-primary', active); button.classList.toggle('border-surface-container-high', !active); }); document.getElementById('return-fields').classList.toggle('hidden', !isReturn); document.getElementById('summary-return-block').classList.toggle('hidden', !isReturn); document.getElementById('summary-type').textContent = isReturn ? translations.return : translations.one_way; }
+    function updateSummary() { const value = name => field(name)?.value || '-'; document.getElementById('summary-client-name').textContent = value('nom'); document.getElementById('summary-client-email').textContent = value('email'); document.getElementById('summary-client-phone').textContent = value('telephone'); document.getElementById('summary-pickup').textContent = value('pickupLocation'); document.getElementById('summary-dropoff').textContent = value('dropoffLocation'); document.getElementById('summary-date').textContent = value('pickupDate'); document.getElementById('summary-time').textContent = value('pickupTime'); document.getElementById('summary-passengers').textContent = value('nombrePassagers'); document.getElementById('summary-luggage').textContent = value('nombreBagages'); document.getElementById('summary-airline').textContent = value('compagnieVol'); document.getElementById('summary-flight-number').textContent = value('numeroVol'); const isReturn = transferTypeField.value === 'return'; if (isReturn) { document.getElementById('summary-return-pickup').textContent = value('returnPickupLocation'); document.getElementById('summary-return-dropoff').textContent = value('returnDropoffLocation'); document.getElementById('summary-return-date').textContent = value('returnPickupDate'); document.getElementById('summary-return-time').textContent = value('returnPickupTime'); } }
+    function submitBooking() { document.getElementById('fast-booking-form').requestSubmit(); }
+    function closeModal() { document.getElementById('success-modal').classList.add('hidden'); document.getElementById('success-modal').classList.remove('flex'); }
+    document.querySelectorAll('.transfer-type-button').forEach(button => button.addEventListener('click', () => { transferTypeField.value = button.dataset.transferType; transferTypeField.dispatchEvent(new Event('change', { bubbles: true })); }));
+    transferTypeField.addEventListener('change', () => { updateTypeButtons(); recalculateBooking(); });
+    document.querySelectorAll('#fast-booking-form input, #fast-booking-form textarea').forEach(input => input.addEventListener('input', updateSummary));
+    window.addEventListener('currency:changed', recalculateBooking);
+    updateTypeButtons();
+    updateSummary();
+</script>
+{% endblock %}

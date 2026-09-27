@@ -1,0 +1,363 @@
+transfer:
+    form:
+        one_way: 'Solo andata'
+        return: 'Andata e ritorno'
+        pickup_location: 'Luogo di partenza'
+        dropoff_location: 'Destinazione finale'
+        pickup_date: 'Data di andata'
+        pickup_time: 'Ora di andata'
+        return_pickup_location: 'Luogo di partenza del ritorno'
+        return_dropoff_location: 'Destinazione del ritorno'
+        return_date: 'Data di ritorno'
+        return_time: 'Ora di ritorno'
+        full_name: 'Nome e cognome'
+        email: 'Indirizzo email'
+        phone: 'Telefono / WhatsApp'
+        passengers: Passeggeri
+        luggage: Bagagli
+        message: Messaggio
+        type: 'Tipo di viaggio'
+        airline: Compagnia
+        flight_number: 'N° volo'
+        optional: Opzionale
+        step1_title: 'Percorso & Veicolo'
+        step1_desc: 'Seleziona la destinazione e il veicolo ideale per il tuo trasferimento.'
+        step2_title: 'Passeggeri & Volo'
+        step2_desc: 'Specifica i viaggiatori e il tuo volo per il tracciamento in tempo reale gratuito.'
+        step3_title: 'Contatti Passeggero'
+        step3_desc: "Per l'invio istantaneo della conferma e contatto autista."
+        flight_tracking: 'Tracciamento volo incluso'
+        flight_tracking_desc: 'Le informazioni del viaggio sono salvate nella tua prenotazione.'
+        contact_notice: 'I tuoi contatti saranno usati per confermare la richiesta.'
+        additional_info: 'Informazioni aggiuntive'
+        summary_title: Riepilogo
+        instant_quote: 'Preventivo istantaneo'
+        summary_transfer: Trasferimento
+        summary_type: Tipo
+        summary_passenger: Passeggero
+        summary_name: 'Nome e cognome:'
+        summary_email: 'Email:'
+        summary_phone: 'Telefono:'
+        summary_outbound: Andata
+        summary_return: Ritorno
+        summary_pickup: Pickup
+        summary_destination: Destinazione
+        summary_date: 'Data:'
+        summary_time: 'Ora:'
+        summary_vehicle: 'Veicolo:'
+        summary_passengers: 'Passeggeri & Bagagli'
+        summary_passengers_label: 'Passeggeri:'
+        summary_luggage: 'Valigie:'
+        summary_flight: Volo
+        summary_airline: 'Compagnia:'
+        summary_flight_number: 'Numero volo:'
+        total_due: 'Totale da pagare'
+        pay_driver: "Pagare all'autista"
+        conversion_included: 'Conversione inclusa'
+        accept_conditions: 'Accetto le condizioni (cancellazione gratuita fino a 12h prima del viaggio).'
+        confirm_booking: 'Conferma la mia prenotazione'
+        no_payment_required: 'Nessun pagamento online richiesto oggi'
+        support_request: 'Una richiesta particolare?'
+        support_available: 'Centrale disponibile 24/7'
+        call: Chiama
+        flight_tracking_feature: 'Tracciamento volo gratuito'
+        flight_tracking_feature_desc: 'Orari aggiornati automaticamente.'
+        payment_feature: 'Pagamento sul posto'
+        payment_feature_desc: "Paga direttamente all'autista."
+        cancellation_feature: 'Cancellazione flessibile'
+        cancellation_feature_desc: 'Gratuita fino a 12h prima.'
+        modal_title: 'Prenotazione Registrata!'
+        modal_desc: 'La tua conferma è stata preparata.'
+        modal_trip: Viaggio
+        modal_total: 'Totale da pagare'
+        modal_close: 'Termina e torna al sito'
+        breadcrumb_home: Home
+        breadcrumb_transfers: Trasferimenti
+        breadcrumb_direct: 'Prenotazione diretta'
+        page_title: 'Prenota la tua navetta privata'
+        direct_payment: "Pagamento diretto all'autista"
+        free_cancellation: 'Cancellazione gratuita fino a 12h'
+        flight_included: 'Tracciamento volo incluso'
+        fixed_rates: 'Tariffe fisse garantite • Nessun costo nascosto'
+        success_message: 'La tua richiesta di prenotazione è stata registrata.'
+    detail:
+        title: 'Dettagli trasferimento'
+        departure: 'Luogo di partenza'
+        arrival: 'Luogo di arrivo'
+        duration: Durata
+        price: Prezzo
+        passengers: Passeggeri
+        luggage: Bagagli
+        book_now: 'Prenota ora'
+        transfer_info: 'Informazioni trasferimento'
+home:
+    guarantee: 'Licenza Turistica Ufficiale • Zero Costi Nascosti • Cancellazione Flessibile'
+    currency_label: 'Valuta:'
+    hero:
+        pill: 'Flotta Executive e Mobilità VIP Tunisia 2026'
+        title: 'Scopri la Tunisia, Semplicemente.'
+        subtitle: 'Noleggio auto, trasferimenti aeroportuali privati ed escursioni su misura in tutta la Tunisia. Affidabilità certificata, prezzi fissi e assistenza 24/7.'
+        btn_reserve_now: 'Prenota Ora'
+        btn_discover_services: 'Scopri i Servizi'
+    booking:
+        tab_transfer: 'Trasferimento Privato'
+        tab_rental: 'Noleggio Auto'
+        tab_excursion: 'Tour & Escursioni'
+        lbl_departure: 'Luogo di Partenza'
+        lbl_destination: Destinazione
+        lbl_date: 'Data & Ora'
+        lbl_passengers: Passeggeri
+        btn_search_transfer: 'Cerca Trasferimento'
+        lbl_pickup: 'Luogo di Ritiro Auto'
+        lbl_pickup_date: 'Data Inizio'
+        lbl_return_date: 'Data Fine'
+        btn_search_cars: 'Trova Veicoli'
+        lbl_excursion_choice: 'Tour / Tema'
+        lbl_excursion_date: 'Data Preferita'
+        lbl_participants: Viaggiatori
+        btn_search_excursions: 'Scopri il Tour'
+    services:
+        pill: 'Mobilità Completa'
+        title: 'I Nostri Servizi'
+        sub: 'Soluzioni di trasporto fluide, sicure e su misura in tutta la Tunisia.'
+        rental_title: Tour
+        rental_desc: 'Noleggia un veicolo moderno per visitare la Tunisia in completa libertà. Flotta recente, chilometraggio illimitato, aria condizionata e assistenza 24/7.'
+        btn_view_cars: 'Vedi Auto'
+        transfer_title: 'Trasferimenti Privati'
+        transfer_desc: 'Goditi corse confortevoli tra aeroporti, resort e città storiche. Autisti professionali puntuali con tracciamento dei voli in tempo reale.'
+        btn_view_transfers: 'Vedi Trasferimenti'
+        excursions_title: 'Escursioni su Misura'
+        excursions_desc: "Vivi le bellezze della Tunisia: le dune del Sahara, l'anfiteatro romano di El Jem, le oasi di montagna e i villaggi costieri."
+        btn_view_excursions: 'Vedi Tour'
+    why:
+        title: 'Perché Sceglierci?'
+        item1_title: 'Veicoli Moderni e Puliti'
+        item1_desc: 'Flotta con meno di 2 anni, ispezionata e igienizzata dopo ogni singola prenotazione.'
+        item2_title: 'Autisti Puntuali e Cortesi'
+        item2_desc: "Incontro personalizzato con cartello nominativo all'uscita doganale. Autisti parlanti inglese e francese."
+        item3_title: 'Tour in Tutta la Tunisia'
+        item3_desc: 'Guide turistiche certificate, spaziosi van climatizzati e itinerari flessibili su misura.'
+        item4_title: 'Prenotazione Facile e Trasparente'
+        item4_desc: "Conferma immediata, nessun costo a sorpresa all'arrivo e opzioni di pagamento sicure."
+        btn_learn_fleet: 'Scopri di più sulla nostra flotta'
+    fleet:
+        pill: 'Flotta 2026'
+        title: 'Auto a Noleggio Popolari'
+        subtitle: 'Dalle utilitarie efficienti ai SUV 4x4 costruiti per viaggi panoramici e percorsi nel deserto.'
+    transfers:
+        pill: 'Prezzi Fissi e Trasparenti'
+        title: 'Trasferimenti Aeroportuali Popolari'
+        sub: 'Tariffe fisse garantite con tutti i pedaggi autostradali inclusi. Nessun costo extra o commissione per ritardi dei voli.'
+    excursions:
+        pill: 'Gite Giornaliere Private'
+        title: 'Esplora la Tunisia'
+        sub: "Circuiti di un'intera giornata e spedizioni nel deserto su misura con partenza direttamente dal tuo hotel."
+    how:
+        pill: 'Facile e Veloce'
+        title: 'Come Funziona'
+        sub: 'La tua prenotazione confermata in 3 semplici passaggi senza scartoffie complicate.'
+        step1_title: '1. Scegli il tuo Servizio'
+        step1_desc: 'Scegli tra noleggio auto affidabile, rapido trasferimento aeroportuale o visite guidate private.'
+        step2_title: '2. Prenota Online'
+        step2_desc: 'Scegli le date, il punto di ritiro e gli extra gratuiti. Ricevi conferma immediata tramite WhatsApp ed e-mail.'
+        step3_title: '3. Goditi il Soggiorno'
+        step3_desc: "Il tuo autista ti accoglie all'arrivo o le chiavi vengono consegnate in meno di 5 minuti. Ci occupiamo noi di tutto."
+    dest:
+        pill: 'Copertura Nazionale'
+        title: 'Destinazioni Principali'
+        sub: "Sedi permanenti e autisti di stanza in tutti i principali centri d'affari e località costiere."
+    reviews:
+        title: 'Cosa Dicono i Nostri Ospiti'
+        sub: 'Recensioni verificate da turisti e viaggiatori internazionali.'
+    cta:
+        title: 'Pronto a Esplorare la Tunisia?'
+        sub: 'Prenota la tua auto a noleggio, la corsa privata o la gita di un giorno in pochi secondi. Cancellazione gratuita fino a 24 ore prima.'
+        btn_cta_book: 'Prenota Ora'
+        btn_cta_whatsapp: 'Chat WhatsApp 24/7'
+navbar:
+    home: Home
+    rental: 'Noleggio Auto'
+    transfers: Trasferimenti
+    excursions: Escursioni
+    about: 'Chi Siamo'
+    contact: Contatti
+footer:
+    brand: 'Tunisia Travel'
+    description: 'Mobilità executive, noleggio auto premium e trasferimenti privati sicuri in Tunisia. Licenza nazionale & trasporto turistico certificato ISO.'
+    license: 'Licenza A n°7482'
+    insurance: 'Assicurazione AXA Pro'
+    services_title: Servizi
+    service_rental: 'Noleggio Auto'
+    service_transfers: 'Trasferimenti Aeroportuali & Città'
+    service_excursions: 'Escursioni Private & Tour'
+    service_vip: 'Servizio Autista VIP'
+    service_corp: 'Mobilità Aziendale & Eventi'
+    dest_title: Destinazioni
+    dest_tunis: 'Tunisi & Cartagine'
+    dest_sousse: 'Sousse & Port El Kantaoui'
+    dest_hammamet: 'Hammamet & Nabeul'
+    dest_monastir: 'Monastir & Enfidha'
+    dest_djerba: 'Isola di Djerba'
+    dest_tozeur: 'Tozeur & Profondo Sud'
+    support_title: 'Supporto 24/7'
+    support_callcenter: 'Call Center'
+    support_whatsapp: 'WhatsApp VIP Diretto'
+    support_client: 'Servizio Clienti'
+    support_hq: 'Sede Centrale'
+    support_address: 'Avenue Habib Bourguiba, Tunisi'
+    copyright: 'Copyright © 2026 Tunisia Travel & Mobility. Tutti i diritti riservati.'
+    legal: 'Note Legali'
+    cgv: 'Condizioni di Vendita'
+    privacy: 'Politica sulla Privacy'
+auth:
+    account: 'Il mio account'
+    connect: Accedi
+    open_login: 'Apri accesso'
+    close: Chiudi
+    welcome: Bentornato
+    login_title: 'Accedi al tuo account'
+    login_subtitle: 'Consulta le tue prenotazioni e prepara il prossimo viaggio.'
+    email: 'Indirizzo e-mail'
+    password: Password
+    remember_me: Ricordami
+    login_submit: Accedi
+    no_account: 'Non hai ancora un account?'
+    register_link: Registrati
+    join: Benvenuto
+    register_title: 'Crea il tuo account'
+    register_subtitle: 'Registrati per gestire facilmente le tue prenotazioni.'
+    accept_terms: 'Accetto i termini di utilizzo.'
+    register_submit: 'Crea account'
+    has_account: 'Hai già un account?'
+    login_link: Accedi
+    profile: 'Il mio profilo'
+    logout: Esci
+    registration_success: 'Il tuo account è stato creato con successo. Accedi ora.'
+    registration_error: 'Impossibile creare l’account. Controlla i dati inseriti.'
+    login_error: 'Accesso non riuscito. Controlla i dati inseriti.'
+    account_not_found: 'Nessun account corrisponde a questo indirizzo e-mail.'
+    invalid_password: 'Password errata.'
+contact:
+    page_title: Contatti
+    breadcrumb_home: Home
+    breadcrumb_contact: 'Contatti & Agenzie'
+    hero:
+        badge: 'Supporto Clienti & Rete Nazionale'
+        title: 'Contatta i Nostri Team & Trova la Tua Agenzia in Tunisia'
+        subtitle: 'Hai una domanda su una prenotazione, un trasferimento aeroportuale urgente o un tour personalizzato? I nostri consulenti basati in Tunisia rispondono 24/7 con ospitalità mediterranea.'
+        response_time: 'Tempo medio di risposta: <strong class="text-primary font-semibold">&lt; 15 min</strong>'
+        feature1_title: 'Risposta garantita &lt; 15 min'
+        feature1_desc: 'Gestione prioritaria della tua richiesta'
+        feature2_title: 'Assistenza 24/7 Telefono & WhatsApp'
+        feature2_desc: 'Personale bilingue francese & inglese'
+        feature3_title: 'Sportelli in tutti gli aeroporti'
+        feature3_desc: 'Tunisi, Enfidha, Djerba & Monastir'
+    form:
+        badge: 'Modulo Express'
+        title: 'Inviaci il tuo messaggio'
+        subtitle: 'Scegli la natura della tua richiesta per il routing al dipartimento dedicato.'
+        tab_general: 'Richiesta di informazioni'
+        tab_reservation: 'Prenotazione in corso'
+        tab_quote: 'Preventivo Gruppo / Personalizzato'
+        tab_partner: Partnership
+        first_name: Nome
+        first_name_placeholder: 'Es: Mohamed'
+        last_name: Cognome
+        last_name_placeholder: 'Es: Trabelsi'
+        email: 'Indirizzo email'
+        email_placeholder: contact@dominio.com
+        phone: 'Telefono / WhatsApp'
+        phone_placeholder: '98 123 456'
+        service_category: 'Servizio interessato'
+        service_location: 'Noleggio veicoli'
+        service_transfer: 'Trasferimento Aeroportuale VIP'
+        service_excursion: 'Escursione Sahariana / Tour Privato'
+        service_group: 'Trasporto & Logistica Eventi'
+        service_other: 'Altra richiesta'
+        reservation_number: 'Numero di prenotazione'
+        reservation_number_placeholder: 'Es: TV-2025-9481'
+        reservation_optional: Opzionale
+        subject: 'Oggetto del messaggio'
+        subject_placeholder: 'Es: Modifica orario volo arrivo o richiesta seggiolino'
+        message: 'Dettagli della richiesta'
+        message_placeholder: 'Specifica la tua richiesta, le date previste, il numero di passeggeri o qualsiasi istruzione particolare...'
+        whatsapp_consent: 'Accetto di essere contattato principalmente via WhatsApp per il tracciamento istantaneo della mia prenotazione.'
+        submit: 'Invia il mio messaggio sicuro'
+        security_note: 'I tuoi dati sono protetti da crittografia SSL. Nessun uso commerciale non richiesto.'
+        first_name_required: 'Il nome è richiesto'
+        last_name_required: 'Il cognome è richiesto'
+        email_required: "L'email è richiesta"
+        email_invalid: "L'email non è valida"
+        phone_required: 'Il telefono è richiesto'
+        service_category_required: 'Il servizio è richiesto'
+        subject_required: "L'oggetto è richiesto"
+        message_required: 'Il messaggio è richiesto'
+        success_message: 'Il tuo messaggio è stato inviato con successo. Risponderemo il prima possibile.'
+        error_message: "Si è verificato un errore durante l'invio del messaggio. Riprova."
+        request_type: 'Tipo di richiesta'
+        request_type_required: 'Seleziona un tipo di richiesta.'
+        type_information: 'Richiesta di informazioni'
+        type_reservation: 'Prenotazione in corso'
+        type_group_quote: 'Preventivo gruppo / su misura'
+        type_partnership: Partnership
+    urgent:
+        badge: 'Canale Prioritario 24/7'
+        title: 'Hai bisogno di assistenza immediata?'
+        subtitle: "Ritardo volo imprevisto, localizzazione autista al terminal o modifica dell'ultimo minuto? I nostri team a terra intervengono senza ritardo."
+        phone_label: "Linea d'emergenza 24/7"
+        whatsapp_label: 'Chat WhatsApp Diretta'
+        whatsapp_status: 'Attualmente online • Risposta ~2 min'
+        support_general: 'Supporto Generale'
+        support_airport: 'Cellula Aeroporti'
+    agent:
+        name: 'Amina Ben Salem'
+        role: 'Responsabile Relazioni Clienti'
+        verified_title: 'Consigliere certificato'
+        quote: '« Coordiniamo i nostri autisti e le nostre agenzie in tempo reale dalla conferma del volo. Non sarai mai solo a destinazione. »'
+    vip:
+        title: 'Accoglienza VIP Personalizzata'
+        desc: "Per qualsiasi trasferimento aeroportuale, il tuo autista ti attende all'uscita della dogana con un cartello nominativo a tuo nome o al nome della tua azienda."
+    agencies:
+        badge: 'Copertura Territoriale'
+        title: 'Le Nostre Agenzie & Sportelli Aeroportuali'
+        subtitle: 'Trova i nostri agenti sui principali hub aeroportuali e nel centro affari di Tunisi per la consegna immediata delle chiavi o la partenza dei tour.'
+        count: '4 Agenzie Chiave in Tunisia'
+        maps: 'Indicazioni Google Maps'
+        tunis_title: 'Aeroporto Tunisi-Cartagine (TUN)'
+        tunis_location: 'Terminale 1 • Sala Arrivi Porta 4'
+        tunis_address: 'Piano terra pubblico, di fronte ai noleggiatori internazionali'
+        tunis_schedule: 'Servizio continuo non-stop'
+        tunis_hours: 'Aperto 24/24 • 7/7'
+        enfidha_title: 'Aeroporto Enfidha-Hammamet (NBE)'
+        enfidha_location: 'Sala Principale • Uscita Bagagli'
+        enfidha_address: 'Sportello ufficiale N° 12 di fronte al nastro bagagli 3'
+        enfidha_schedule: 'Servizio sincronizzato con voli charter'
+        enfidha_hours: 'Aperto 24/24 • 7/7'
+        djerba_title: 'Aeroporto Djerba-Zarzis (DJE)'
+        djerba_location: 'Zona Noleggiatori • Terminale Internazionale'
+        djerba_address: 'Spianata esterna parcheggio noleggiatori professionisti'
+        djerba_schedule: 'Ogni giorno senza interruzione'
+        djerba_hours: '06:00 – 00:00'
+        central_title: 'Agenzia Centrale • Berges du Lac'
+        central_location: 'Boulevard du Lac 2, Tunisi'
+        central_address: 'Carthage Business Center, 1° piano'
+        central_schedule: 'Lun - Sab: 08:00 - 19:00 (Chiuso Domenica)'
+        central_hours: 'Sede • 08:00 – 19:00'
+    email:
+        title: 'Nuovo Messaggio di Contatto'
+        new_message: 'Hai ricevuto un nuovo messaggio di contatto tramite il sito web.'
+        name: Nome
+        email: Email
+        phone: Telefono
+        subject: Oggetto
+        message: Messaggio
+        footer: 'Questa email è stata inviata automaticamente dal modulo di contatto del sito Tunisia Travel.'
+        new_message_title: 'Nuovo messaggio di contatto'
+        visitor_info: 'Informazioni del visitatore'
+        send_date: 'Data di invio'
+        message_details: 'Dettagli del messaggio'
+        footer_auto: 'Questo messaggio è stato inviato automaticamente dal modulo di contatto del sito LocationMahmoud.'
+        rights: 'Tutti i diritti riservati.'
+    invalid_email: 'Inserisci un indirizzo e-mail valido.'
+    email_required: 'L’indirizzo e-mail è obbligatorio.'
+    password_required: 'La password è obbligatoria.'

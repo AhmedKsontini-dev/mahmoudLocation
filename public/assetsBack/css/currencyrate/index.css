@@ -1,0 +1,17 @@
+/* CurrencyRate Index Page Styles */
+
+.page-header-description {
+    color: var(--color-on-surface-variant);
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.info-note {
+    color: var(--color-on-surface-variant);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-surface-container-low);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid var(--color-primary);
+}

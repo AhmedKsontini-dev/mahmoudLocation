@@ -1,0 +1,585 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}{{ 'home.hero.title'|trans }} - Tunisia Travel{% endblock %}
+
+{% block stylesheets %}
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    <link href="{{ asset('assetsFront/css/home.css') }}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('assetsFront/js/tailwind.config.js') }}"></script>
+{% endblock %}
+
+{% block body_class %}bg-surface text-on-surface antialiased{% endblock %}
+
+{% block body %}
+{% include 'Frontend/Components/_navbar.html.twig' %}
+
+<main class="w-full pt-20 bg-surface">
+<div class="flex flex-col w-full" id="home-root">
+
+
+
+{# ── Hero Section ── #}
+<section class="relative w-full overflow-hidden">
+<div class="relative w-full min-h-[580px] lg:min-h-[660px] bg-cover bg-center flex items-center justify-center -mt-20 pt-24" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFwJbIZcXsbU6rKUqIi7Pobj31bR7yxgzRxM_tN5ehD2BjOSc2wSqCuQ1WFYfB8b7oxC5IEyfl0BkQv4AX1wnSR-PaXDMTF1OU0geK4vy2rPgFUzqKMu69OxvmKV6Bc4Glz7VdjX3eQuj9u_QYjiagO5zWl97nC4-pWXc14sVZ1PS80B03Hpyox6sDdMt9CzuzLkxRl3OYuNGuL7cItZoFjYQVxKKomS1uMHe63EBtUZyis5iWypSDKw');">
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container/95 via-primary/85 to-primary/45 mix-blend-multiply"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/95 via-transparent to-transparent"></div>
+<div class="relative z-10 w-full max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-12 lg:py-16 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-10">
+<div class="max-w-2xl text-on-primary">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/20 backdrop-blur-md mb-4 border border-on-primary/15">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-on-tertiary-container animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-primary tracking-wider uppercase font-semibold">{{ 'home.hero.pill'|trans }}</span>
+</div>
+<h1 class="font-display text-display text-on-primary mb-4 leading-tight tracking-tight drop-shadow-sm font-extrabold">{{ 'home.hero.title'|trans }}</h1>
+<p class="font-title-md text-title-md text-on-primary/90 mb-8 max-w-xl leading-relaxed">{{ 'home.hero.subtitle'|trans }}</p>
+<div class="flex flex-wrap items-center gap-4 justify-center md:justify-start">
+<a class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-surface-container-lowest text-primary font-title-md text-title-md shadow-xl hover:bg-surface-container-low hover:translate-y-[-2px] transition-all" href="#booking-console">
+<span>{{ 'home.hero.btn_reserve_now'|trans }}</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-surface-container-lowest/15 backdrop-blur-md text-on-primary font-title-md text-title-md border border-on-primary/30 hover:bg-surface-container-lowest/25 transition-all" href="#services-section">
+<span>{{ 'home.hero.btn_discover_services'|trans }}</span>
+<span class="material-symbols-outlined text-[20px]">explore</span>
+</a>
+</div>
+</div>
+{# KPI Badge #}
+<div class="hidden lg:flex flex-col gap-3 bg-surface-container-lowest/10 backdrop-blur-md p-6 rounded-2xl border border-on-primary/20 text-on-primary max-w-xs shadow-2xl">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container text-on-tertiary flex items-center justify-center font-headline-sm font-bold">4.9</div>
+<div>
+<div class="flex text-amber-300 text-sm">★★★★★</div>
+<p class="font-label-sm text-label-sm text-on-primary/80">Sur 2,400+ avis vérifiés</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-primary/90 mt-1">"Véhicule neuf, ponctualité exemplaire à Tunis-Carthage et service client francophone irréprochable."</p>
+<div class="flex items-center gap-2 mt-2 pt-2 border-t border-on-primary/15 font-label-sm text-label-sm text-on-primary/70">
+<span class="material-symbols-outlined text-[16px]">flight_takeoff</span>
+<span>Prise en charge à tous les aéroports</span>
+</div>
+</div>
+</div>
+</div>
+
+{# ── Booking Engine ── #}
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop -mt-14 relative z-20 pb-8" id="booking-console">
+<div class="bg-surface-container-lowest rounded-2xl shadow-[0_20px_40px_-15px_rgba(7,59,122,0.18)] p-4 md:p-6 transition-all">
+{# Tabs #}
+<div class="flex flex-wrap items-center gap-2 border-b border-surface-container pb-4">
+<button class="booking-tab active flex items-center gap-2.5 px-5 py-3 rounded-xl font-label-lg text-label-lg bg-primary text-on-primary font-bold transition-all shadow-sm" id="tab-btn-transfer" onclick="switchBookingTab('transfer')" type="button">
+<span class="material-symbols-outlined text-[20px]">airport_shuttle</span>
+<span>{{ 'home.booking.tab_transfer'|trans }}</span>
+</button>
+
+<button class="booking-tab flex items-center gap-2.5 px-5 py-3 rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low transition-all" id="tab-btn-excursion" onclick="switchBookingTab('excursion')" type="button">
+<span class="material-symbols-outlined text-[20px]">tour</span>
+<span>{{ 'home.booking.tab_excursion'|trans }}</span>
+</button>
+</div>
+{# Transfer Form #}
+<form class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-5 items-end" id="panel-transfer" onsubmit="handleSearchSubmit(event, 'Transfert')">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">flight_land</span>
+<span>{{ 'home.booking.lbl_departure'|trans }}</span>
+</label>
+<div class="relative">
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
+<option value="TUN">Aéroport Tunis-Carthage (TUN)</option>
+<option value="NBE">Aéroport Enfidha-Hammamet (NBE)</option>
+<option value="DJE">Aéroport Djerba-Zarzis (DJE)</option>
+<option value="MIR">Aéroport Monastir Habib-Bourguiba (MIR)</option>
+<option value="TUNIS_CTR">Tunis Centre-Ville / Berges du Lac</option>
+<option value="SOUSSE">Sousse / Port El Kantaoui</option>
+<option value="HAMMAMET">Hammamet Yasmine</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+<span>{{ 'home.booking.lbl_destination'|trans }}</span>
+</label>
+<div class="relative">
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
+<option value="SOUSSE">Sousse Ville &amp; Médina</option>
+<option value="HAMMAMET">Hammamet Centre &amp; Yasmine</option>
+<option value="SIDI_BOU">Sidi Bou Saïd &amp; La Marsa</option>
+<option value="MONASTIR">Monastir &amp; Skanes</option>
+<option value="MAHDIA">Mahdia &amp; Plages</option>
+<option value="TUNIS_CTR">Tunis Centre / Hôtels</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+<span>{{ 'home.booking.lbl_date'|trans }}</span>
+</label>
+<input class="w-full h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all" id="transfer-date" type="datetime-local" value="2026-06-15T10:30">
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">group</span>
+<span>{{ 'home.booking.lbl_passengers'|trans }}</span>
+</label>
+<div class="relative">
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
+<option>1 à 3 personnes (Berline VIP)</option>
+<option>4 à 7 personnes (Minivan Mercedes)</option>
+<option>8 à 15 personnes (Minibus Exécutif)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
+</div>
+</div>
+<div>
+<button class="w-full h-12 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all font-bold" type="submit">
+<span class="material-symbols-outlined text-[20px]">search</span>
+<span>{{ 'home.booking.btn_search_transfer'|trans }}</span>
+</button>
+</div>
+</form>
+
+{# Excursion Form #}
+<form class="tab-panel hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5 items-end" id="panel-excursion" onsubmit="handleSearchSubmit(event, 'Excursion')">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">map</span>
+<span>{{ 'home.booking.lbl_excursion_choice'|trans }}</span>
+</label>
+<div class="relative">
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
+<option>Sidi Bou Saïd &amp; Carthage Antique (1/2 journée)</option>
+<option>Amphithéâtre Romain d'El Jem &amp; Monastir (1 jour)</option>
+<option>Sahara, Tozeur &amp; Oasis de Douz (2 jours / 1 nuit)</option>
+<option>Djerba la Douce &amp; Tataouine Star Wars (1 jour)</option>
+<option>Kairouan &amp; Grande Mosquée (1 jour)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
+<span>{{ 'home.booking.lbl_excursion_date'|trans }}</span>
+</label>
+<input class="w-full h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all" type="date" value="2026-06-22">
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">people</span>
+<span>{{ 'home.booking.lbl_participants'|trans }}</span>
+</label>
+<div class="relative">
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
+<option>2 Adultes (Couple)</option>
+<option>1 Adulte (Voyageur Solo)</option>
+<option>Famille (2 Adultes + 2 Enfants)</option>
+<option>Groupe Privé (5 à 12 personnes)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
+</div>
+</div>
+<div>
+<button class="w-full h-12 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all font-bold" type="submit">
+<span class="material-symbols-outlined text-[20px]">explore</span>
+<span>{{ 'home.booking.btn_search_excursions'|trans }}</span>
+</button>
+</div>
+</form>
+{# Guarantee Bar #}
+<div class="mt-4 pt-3 flex flex-wrap items-center justify-between gap-4 text-outline font-label-sm text-label-sm">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> Annulation gratuite jusqu'à 24h</span>
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> Suivi de vol en direct</span>
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> Assistance 24/7 par WhatsApp</span>
+</div>
+<div class="text-primary font-semibold flex items-center gap-1">
+<span>Paiement sécurisé ou sur place en Tunisie</span>
+<span class="material-symbols-outlined text-[16px]">lock</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+{# ── Services Section ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface" id="services-section">
+<div class="max-w-7xl mx-auto">
+<div class="text-center max-w-2xl mx-auto mb-12">
+<span class="inline-block px-3 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm tracking-wider uppercase font-bold mb-3">{{ 'home.services.pill'|trans }}</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-3 font-bold">{{ 'home.services.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'home.services.sub'|trans }}</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+{# Service 1: Location #}
+<div class="bg-surface-container-lowest rounded-2xl p-8 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[32px]">directions_car</span>
+</div>
+<span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">Sans guide</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 font-bold">{{ 'home.services.rental_title'|trans }}</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ 'home.services.rental_desc'|trans }}</p>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">À partir de <span class="price-val font-title-md text-title-md text-primary font-bold" data-base="110">{{ 110|price }}</span> / j</span>
+<a class="inline-flex items-center gap-1 font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold group-hover:translate-x-1 transition-all" href="#cars-section">
+<span>{{ 'home.services.btn_view_cars'|trans }}</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+{# Service 2: Transferts #}
+<div class="bg-surface-container-lowest rounded-2xl p-8 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[32px]">flight_takeoff</span>
+</div>
+<span class="px-2.5 py-1 rounded-md bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">Accueil VIP Aéroports</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 font-bold">{{ 'home.services.transfer_title'|trans }}</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ 'home.services.transfer_desc'|trans }}</p>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">À partir de <span class="price-val font-title-md text-title-md text-primary font-bold" data-base="90">{{ 90|price }}</span></span>
+<a class="inline-flex items-center gap-1 font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold group-hover:translate-x-1 transition-all" href="#transfers-section">
+<span>{{ 'home.services.btn_view_transfers'|trans }}</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+{# Service 3: Excursions #}
+<div class="bg-surface-container-lowest rounded-2xl p-8 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[32px]">explore</span>
+</div>
+<span class="px-2.5 py-1 rounded-md bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">Guides Certifiés</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 font-bold">{{ 'home.services.excursions_title'|trans }}</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ 'home.services.excursions_desc'|trans }}</p>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">À partir de <span class="price-val font-title-md text-title-md text-primary font-bold" data-base="85">{{ 85|price }}</span> / p</span>
+<a class="inline-flex items-center gap-1 font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold group-hover:translate-x-1 transition-all" href="#excursions-section">
+<span>{{ 'home.services.btn_view_excursions'|trans }}</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+{# ── Why Choose Us ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface-container-low">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-6 relative">
+<div class="relative rounded-3xl overflow-hidden shadow-2xl h-[480px] w-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFwJbIZcXsbU6rKUqIi7Pobj31bR7yxgzRxM_tN5ehD2BjOSc2wSqCuQ1WFYfB8b7oxC5IEyfl0BkQv4AX1wnSR-PaXDMTF1OU0geK4vy2rPgFUzqKMu69OxvmKV6Bc4Glz7VdjX3eQuj9u_QYjiagO5zWl97nC4-pWXc14sVZ1PS80B03Hpyox6sDdMt9CzuzLkxRl3OYuNGuL7cItZoFjYQVxKKomS1uMHe63EBtUZyis5iWypSDKw');">
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/70 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-md shadow-xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container text-on-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">verified</span>
+</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface font-bold">Note 4.9/5 sur 2,400+ avis voyageurs</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Recommandé par 98.4% de nos clients internationaux en 2025</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-6 flex flex-col justify-center">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase font-bold mb-2">Excellence &amp; Fiabilité</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-6 font-bold">{{ 'home.why.title'|trans }}</h2>
+<div class="space-y-5 mb-8">
+
+{% for item in why_items %}
+<div class="flex items-start gap-4 p-3.5 rounded-xl bg-surface-container-lowest shadow-xs">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">{{ item.icon }}</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-on-surface font-semibold">{{ item.title|trans }}</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">{{ item.desc|trans }}</p>
+</div>
+</div>
+{% endfor %}
+</div>
+<div>
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-bold shadow-md hover:bg-primary-container transition-all" href="#cars-section">
+<span>{{ 'home.why.btn_learn_fleet'|trans }}</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+
+
+
+{# ── Transfers Section ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface-container" id="transfers-section">
+<div class="max-w-7xl mx-auto">
+<div class="text-center max-w-2xl mx-auto mb-12">
+<span class="font-label-sm text-label-sm text-primary tracking-widest uppercase font-bold">{{ 'home.transfers.pill'|trans }}</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.transfers.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'home.transfers.sub'|trans }}</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+{% for transfere in transferts %}
+<a href="{{ path('app_transfer_show_locale', {'_locale': app.request.locale, 'slug': transfere.slug}) }}" class="block bg-surface-container-lowest rounded-2xl p-6 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between" data-transfer-card data-normal-price="{{ transfere.prixNormal }}" data-season-price="{{ transfere.prixSaisonForte }}"{% if activeSeason %} data-season-start="{{ activeSeason.dateDebut|date('m-d') }}" data-season-end="{{ activeSeason.dateFin|date('m-d') }}"{% endif %}>
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">{{ transfere.getDureeTranslated(app.request.locale) }}</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">flight_land</span> Transfert</span>
+</div>
+<div class="flex items-center gap-3 my-4">
+<div class="flex flex-col items-center">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="w-0.5 h-8 bg-outline-variant"></span>
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+</div>
+<div class="flex flex-col justify-between h-14">
+<span class="font-title-md text-title-md text-on-surface font-semibold">{{ transfere.getLieuDepartTranslated(app.request.locale) }}</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold">{{ transfere.getLieuArriveeTranslated(app.request.locale) }}</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Transfert privé confortable et ponctuel.</p>
+</div>
+<div class="pt-4 border-t border-surface-container flex items-center justify-between">
+<div>
+<span class="font-body-sm text-body-sm text-outline">Prix par véhicule</span>
+<div class="price-val font-headline-sm text-headline-sm text-primary font-bold" data-base="{{ transfertPrices[transfere.id] }}">{{ transfertPrices[transfere.id]|price }}</div>
+</div>
+<span class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-all">Réserver</span>
+</div>
+</a>
+{% else %}
+<p class="col-span-full text-center font-body-md text-body-md text-on-surface-variant">Aucun transfert disponible pour le moment.</p>
+{% endfor %}
+</div>
+<div class="mt-10 text-center">
+<a class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-bold shadow-md hover:bg-primary-container transition-all" href="#booking-console">
+<span>Calculer un trajet personnalisé (Toutes villes de Tunisie)</span>
+<span class="material-symbols-outlined text-[20px]">calculate</span>
+</a>
+</div>
+</div>
+</section>
+
+{# ── Excursions Section ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface" id="excursions-section">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+<div>
+<span class="font-label-sm text-label-sm text-primary tracking-widest uppercase font-bold">{{ 'home.excursions.pill'|trans }}</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.excursions.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">{{ 'home.excursions.sub'|trans }}</p>
+</div>
+<a class="inline-flex items-center gap-1.5 font-label-lg text-label-lg text-primary font-bold hover:underline self-start md:self-auto" href="#booking-console">
+<span>Guide des circuits 2026</span>
+<span class="material-symbols-outlined text-[18px]">map</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+{% for ex in excursions %}
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+<div>
+<div class="relative h-52 w-full bg-cover bg-center overflow-hidden" style="background-image: url('{{ ex.image }}');">
+<span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-bold">{{ ex.duration }}</span>
+{% if ex.unesco %}<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white font-label-sm text-label-sm font-bold">UNESCO</span>{% endif %}
+</div>
+<div class="p-5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">{{ ex.name }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-4">{{ ex.desc }}</p>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-4">
+<span class="material-symbols-outlined text-[16px] text-primary">{{ ex.info_icon }}</span> {{ ex.info }}
+<span class="text-outline">•</span>
+<span class="material-symbols-outlined text-[16px] text-primary">{{ ex.info2_icon }}</span> {{ ex.info2 }}
+</div>
+</div>
+</div>
+<div class="p-5 pt-0 border-t border-surface-container flex items-center justify-between">
+<div>
+<span class="font-body-sm text-body-sm text-outline">À partir de</span>
+<div class="price-val font-headline-sm text-headline-sm text-primary font-extrabold" data-base="{{ ex.price }}">{{ ex.price|price }}</div>
+</div>
+<button class="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-all" onclick="quickReserveModal('Excursion {{ ex.name }}', {{ ex.price }})" type="button">Découvrir</button>
+</div>
+</div>
+{% endfor %}
+</div>
+<div class="mt-10 text-center">
+<a class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-surface-container-high text-primary font-title-md text-title-md font-bold hover:bg-surface-container-highest transition-all" href="#booking-console">
+<span>Voir toutes les excursions &amp; circuits thématiques</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+
+{# ── How It Works ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface-container-low">
+<div class="max-w-7xl mx-auto">
+<div class="text-center max-w-2xl mx-auto mb-14">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase font-bold">{{ 'home.how.pill'|trans }}</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.how.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'home.how.sub'|trans }}</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+
+{% for step in steps %}
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-xs relative flex flex-col justify-between">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed text-on-primary-fixed font-headline-md text-headline-md font-extrabold flex items-center justify-center mb-6">{{ step.num }}</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-3">{{ step.title|trans }}</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ step.desc|trans }}</p>
+<div class="flex items-center gap-2 text-primary font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>{{ step.check }}</span>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+
+{# ── Destinations ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+<div>
+<span class="font-label-sm text-label-sm text-primary tracking-widest uppercase font-bold">{{ 'home.dest.pill'|trans }}</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.dest.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">{{ 'home.dest.sub'|trans }}</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+{% for d in destinations %}
+<div class="group relative rounded-2xl overflow-hidden h-72 shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('{{ d.image }}');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/30 to-transparent"></div>
+<div class="absolute bottom-0 inset-x-0 p-6 text-on-primary">
+<span class="px-2 py-0.5 rounded-md bg-secondary text-on-secondary font-label-sm text-label-sm mb-2 inline-block">{{ d.tag }}</span>
+<h3 class="font-headline-sm text-headline-sm font-bold mb-1">{{ d.name }}</h3>
+<p class="font-body-sm text-body-sm text-on-primary/80 mb-3">{{ d.desc }}</p>
+<a class="inline-flex items-center gap-1 font-label-sm text-label-sm font-semibold text-secondary-fixed hover:underline" href="#booking-console">
+<span>Voir les options de transfert</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+
+{# ── Reviews ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface-container-low">
+<div class="max-w-7xl mx-auto">
+<div class="text-center max-w-2xl mx-auto mb-10">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest shadow-xs text-on-surface mb-3">
+<span class="text-amber-500 text-base">★★★★★</span>
+<span class="font-label-md text-label-md font-bold text-primary">4.9 / 5</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">+1,850 avis vérifiés</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">{{ 'home.reviews.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'home.reviews.sub'|trans }}</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+{% for rev in reviews %}
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-xs flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<div class="flex text-amber-500 text-sm">★★★★★</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm">{{ rev.tag }}</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6 italic">{{ rev.text }}</p>
+</div>
+<div class="flex items-center gap-3 pt-4 border-t border-surface-container">
+<div class="w-10 h-10 rounded-full {{ rev.color }} font-bold flex items-center justify-center font-label-lg text-label-lg">{{ rev.initials }}</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface font-bold">{{ rev.name }}</p>
+<p class="font-label-sm text-label-sm text-outline">{{ rev.origin }}</p>
+</div>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+
+{# ── CTA Section ── #}
+<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-primary text-on-primary relative overflow-hidden">
+<div class="absolute inset-0 pointer-events-none opacity-10">
+<svg class="w-full h-full object-cover" preserveAspectRatio="none" viewBox="0 0 1440 320">
+<path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,117.3C672,117,768,171,864,197.3C960,224,1056,224,1152,197.3C1248,171,1344,117,1392,90.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" fill="currentColor" fill-opacity="1"></path>
+</svg>
+</div>
+<div class="relative z-10 max-w-5xl mx-auto text-center">
+<span class="inline-block px-3.5 py-1.5 rounded-full bg-on-primary/10 backdrop-blur-sm text-on-primary font-label-sm text-label-sm tracking-widest uppercase font-bold mb-4 border border-on-primary/20">Réservation Directe Sans Frais Cachés</span>
+<h2 class="font-headline-lg text-headline-lg text-on-primary font-extrabold mb-4">{{ 'home.cta.title'|trans }}</h2>
+<p class="font-body-lg text-body-lg text-on-primary/90 max-w-2xl mx-auto mb-8 leading-relaxed">{{ 'home.cta.sub'|trans }}</p>
+<div class="flex flex-wrap items-center justify-center gap-4">
+<a class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-surface-container-lowest text-primary font-title-md text-title-md font-bold shadow-2xl hover:bg-surface-container-low transition-all" href="#booking-console">
+<span>{{ 'home.cta.btn_cta_book'|trans }}</span>
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</a>
+<a class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-tertiary-container text-on-tertiary font-title-md text-title-md font-bold shadow-xl hover:bg-tertiary transition-all" href="https://wa.me/21698000111" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+<span>{{ 'home.cta.btn_cta_whatsapp'|trans }}</span>
+</a>
+</div>
+<div class="mt-8 flex flex-wrap items-center justify-center gap-6 font-label-sm text-label-sm text-on-primary/75">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px]">verified</span> Agrément Ministère du Transport</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px]">credit_card</span> Paiement à bord accepté</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[18px]">sentiment_very_satisfied</span> 98.4% de clients satisfaits</span>
+</div>
+</div>
+</section>
+
+{# ── Booking Modal ── #}
+<div class="fixed inset-0 z-50 bg-on-background/60 backdrop-blur-xs flex items-center justify-center p-4 hidden" id="booking-modal">
+<div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+<div class="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[28px]">check_circle</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2" id="modal-title">Demande enregistrée</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6" id="modal-desc">Votre recherche a été prise en compte avec succès.</p>
+<div class="bg-surface-container-low p-4 rounded-xl mb-6 text-on-surface font-label-md text-label-md">
+<div class="flex justify-between py-1">
+<span class="text-outline">Prestation :</span>
+<span class="font-semibold text-primary" id="modal-service">Transfert Privé</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-outline">Tarif estimé :</span>
+<span class="font-bold text-on-surface" id="modal-price">{{ 130|price }}</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-outline">Confirmation :</span>
+<span class="text-tertiary-container font-semibold">Instantanée via WhatsApp</span>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-bold hover:bg-primary-container transition-all" onclick="closeModal()" type="button">Valider la sélection</button>
+</div>
+</div>
+
+</div>
+</main>
+
+{% include 'Frontend/Components/_footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('assetsFront/js/navbar.js') }}?v=2"></script>
+<script src="{{ asset('assetsFront/js/home.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Saisons - Admin{% endblock %}
+
+{% block header_title %}Saisons{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/saison/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Saisons</h1>
+        <p class="page-header-description">Gérez les saisons et leurs périodes pour la tarification.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_saison_new') }}" class="btn btn-primary">Ajouter une saison</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Du</th>
+                        <th>Au</th>
+                        <th>Statut</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for saison in saisons %}
+                        <tr>
+                            <td>{{ saison.nom }}</td>
+                            <td>{{ saison.dateDebut ? saison.dateDebut|date('d/m') : '-' }}</td>
+                            <td>{{ saison.dateFin ? saison.dateFin|date('d/m') : '-' }}</td>
+                            <td>
+                                {% if saison.actif %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_saison_edit', {id: saison.id}) }}" class="btn btn-sm btn-outline">Modifier</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <div class="empty-state-text">Aucune saison configurée.</div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
