@@ -75,7 +75,7 @@ class ExcursionType extends AbstractType
                 'label' => 'Best Seller',
                 'required' => false,
             ])
-            ->add('isFeatured', CheckboxType::class, [
+            ->add('featured', CheckboxType::class, [
                 'label' => 'Mis en avant',
                 'required' => false,
             ])
@@ -113,6 +113,12 @@ class ExcursionType extends AbstractType
             ])
             ->add('priceChild', NumberType::class, [
                 'label' => 'Prix enfant',
+                'scale' => 2,
+                'required' => false,
+                'attr' => ['class' => 'form-control', 'step' => '0.01'],
+            ])
+            ->add('priceConverted', NumberType::class, [
+                'label' => 'Prix converti',
                 'scale' => 2,
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'step' => '0.01'],

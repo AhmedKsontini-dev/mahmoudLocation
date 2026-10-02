@@ -28,6 +28,13 @@
     {% endfor %}
 {% endfor %}
 
+{% if form.vars.errors|length > 0 %}
+    <div class="alert alert-error">
+        <strong>{{ form.vars.errors|length }} erreur(s) détectée(s).</strong> Veuillez corriger les champs indiqués ci-dessous.
+        <button type="button" class="btn btn-sm btn-link" onclick="scrollToFirstError()">Aller à la première erreur</button>
+    </div>
+{% endif %}
+
 <div class="card">
     <div class="card-body">
         {{ form_start(form, {'attr': {'class': 'excursion-form'}}) }}
@@ -92,9 +99,9 @@
                                 {{ form_errors(form.isBestSeller) }}
                             </div>
                             <div class="form-field checkbox-field">
-                                {{ form_widget(form.isFeatured) }}
-                                {{ form_label(form.isFeatured) }}
-                                {{ form_errors(form.isFeatured) }}
+                                {{ form_widget(form.featured) }}
+                                {{ form_label(form.featured) }}
+                                {{ form_errors(form.featured) }}
                             </div>
                         </div>
                     </div>
@@ -137,6 +144,12 @@
                                 {{ form_label(form.priceChild) }}
                                 {{ form_widget(form.priceChild) }}
                                 {{ form_errors(form.priceChild) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.priceConverted) }}
+                                {{ form_widget(form.priceConverted) }}
+                                {{ form_errors(form.priceConverted) }}
+                                <small class="form-hint">Prix converti pour les devises étrangères</small>
                             </div>
                         </div>
                     </div>
@@ -294,12 +307,20 @@
                                 </div>
                                 <div class="form-field">
                                     {{ form_label(itinerary.translations) }}
-                                    <div class="sub-collection">
+                                    <div class="sub-collection" data-prototype="{{ form_widget(itinerary.translations.vars.prototype)|e('html_attr') }}">
                                         {% for trans in itinerary.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
-                                                {{ form_widget(trans.title) }}
-                                                {{ form_widget(trans.description) }}
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.title) }}
+                                                    {{ form_widget(trans.title) }}
+                                                    {{ form_errors(trans.title) }}
+                                                </div>
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.description) }}
+                                                    {{ form_widget(trans.description) }}
+                                                    {{ form_errors(trans.description) }}
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -337,12 +358,20 @@
                                 </div>
                                 <div class="form-field">
                                     {{ form_label(feature.translations) }}
-                                    <div class="sub-collection">
+                                    <div class="sub-collection" data-prototype="{{ form_widget(feature.translations.vars.prototype)|e('html_attr') }}">
                                         {% for trans in feature.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
-                                                {{ form_widget(trans.title) }}
-                                                {{ form_widget(trans.subtitle) }}
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.title) }}
+                                                    {{ form_widget(trans.title) }}
+                                                    {{ form_errors(trans.title) }}
+                                                </div>
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.subtitle) }}
+                                                    {{ form_widget(trans.subtitle) }}
+                                                    {{ form_errors(trans.subtitle) }}
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -385,11 +414,15 @@
                                 </div>
                                 <div class="form-field">
                                     {{ form_label(inclusion.translations) }}
-                                    <div class="sub-collection">
+                                    <div class="sub-collection" data-prototype="{{ form_widget(inclusion.translations.vars.prototype)|e('html_attr') }}">
                                         {% for trans in inclusion.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
-                                                {{ form_widget(trans.text) }}
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.text) }}
+                                                    {{ form_widget(trans.text) }}
+                                                    {{ form_errors(trans.text) }}
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -427,12 +460,20 @@
                                 </div>
                                 <div class="form-field">
                                     {{ form_label(faq.translations) }}
-                                    <div class="sub-collection">
+                                    <div class="sub-collection" data-prototype="{{ form_widget(faq.translations.vars.prototype)|e('html_attr') }}">
                                         {% for trans in faq.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
-                                                {{ form_widget(trans.question) }}
-                                                {{ form_widget(trans.answer) }}
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.question) }}
+                                                    {{ form_widget(trans.question) }}
+                                                    {{ form_errors(trans.question) }}
+                                                </div>
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.answer) }}
+                                                    {{ form_widget(trans.answer) }}
+                                                    {{ form_errors(trans.answer) }}
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -470,11 +511,15 @@
                                 </div>
                                 <div class="form-field">
                                     {{ form_label(badge.translations) }}
-                                    <div class="sub-collection">
+                                    <div class="sub-collection" data-prototype="{{ form_widget(badge.translations.vars.prototype)|e('html_attr') }}">
                                         {% for trans in badge.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
-                                                {{ form_widget(trans.text) }}
+                                                <div class="sub-field">
+                                                    {{ form_label(trans.text) }}
+                                                    {{ form_widget(trans.text) }}
+                                                    {{ form_errors(trans.text) }}
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>

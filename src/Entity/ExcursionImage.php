@@ -106,7 +106,7 @@ class ExcursionImage
         return $this->isMain;
     }
 
-    public function setMain(bool $isMain): static
+    public function setIsMain(bool $isMain): static
     {
         $this->isMain = $isMain;
         return $this;

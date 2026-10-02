@@ -1,0 +1,93 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Destinations - Admin{% endblock %}
+
+{% block header_title %}Destinations{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Destinations</h1>
+        <p class="page-header-description">Gérez les destinations géographiques de vos excursions</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_destination_new') }}" class="btn btn-primary">➕ Nouvelle destination</a>
+    </div>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="card">
+    <div class="card-body">
+        <!-- Tableau -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom (FR)</th>
+                        <th>Région</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Statut</th>
+                        <th>Excursions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for destination in destinations %}
+                        <tr>
+                            <td>
+                                <strong>{{ destination.getNameTranslated('fr') ?? '-' }}</strong>
+                                <br><small class="text-muted">{{ destination.slug }}</small>
+                            </td>
+                            <td>{{ destination.region ?? '-' }}</td>
+                            <td>{{ destination.latitude ? destination.latitude|number_format(6) : '-' }}</td>
+                            <td>{{ destination.longitude ? destination.longitude|number_format(6) : '-' }}</td>
+                            <td>
+                                {% if destination.isActive %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ destination.excursions|length }}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ path('admin_destination_edit', {id: destination.id}) }}" class="btn btn-sm btn-outline" title="Modifier">✏️</a>
+                                    <form method="post" action="{{ path('admin_destination_delete', {id: destination.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette destination ?');" class="inline-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ destination.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer" {% if destination.excursions|length > 0 %}disabled{% endif %}>🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🌍</div>
+                                    <div class="empty-state-title">Aucune destination</div>
+                                    <div class="empty-state-text">Commencez par créer votre première destination.</div>
+                                    <a href="{{ path('admin_destination_new') }}" class="btn btn-primary">Créer une destination</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if destinations|length > 0 %}
+            <div class="table-footer">
+                <span class="table-count">{{ destinations|length }} destination(s)</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

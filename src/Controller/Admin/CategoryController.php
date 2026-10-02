@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Config\LocaleConfig;
 use App\Entity\Category;
 use App\Entity\CategoryTranslation;
+use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,105 @@ class CategoryController extends AbstractController
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger
     ) {
+    }
+
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(): Response
+    {
+        $categories = $this->repository->findBy([], ['position' => 'ASC']);
+        
+        return $this->render('Backend/Category/index.html.twig', [
+            'categories' => $categories,
+        ]);
+    }
+
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category);
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Auto-generate slug if not provided
+            if (!$category->getSlug()) {
+                $frenchName = $category->getNameTranslated('fr');
+                if ($frenchName) {
+                    $category->setSlug($this->slugger->slug($frenchName)->lower());
+                }
+            }
+            
+            $this->entityManager->persist($category);
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La catégorie a été créée avec succès.');
+            
+            return $this->redirectToRoute('admin_category_index');
+        }
+        
+        return $this->render('Backend/Category/form.html.twig', [
+            'form' => $form,
+            'title' => 'Nouvelle catégorie',
+            'category' => null,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Category $category): Response
+    {
+        $form = $this->createForm(CategoryType::class, $category);
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Auto-generate slug if not provided
+            if (!$category->getSlug()) {
+                $frenchName = $category->getNameTranslated('fr');
+                if ($frenchName) {
+                    $category->setSlug($this->slugger->slug($frenchName)->lower());
+                }
+            }
+            
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La catégorie a été modifiée avec succès.');
+            
+            return $this->redirectToRoute('admin_category_index');
+        }
+        
+        return $this->render('Backend/Category/form.html.twig', [
+            'form' => $form,
+            'title' => 'Modifier la catégorie',
+            'category' => $category,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Category $category): Response
+    {
+        // Check if category has excursions
+        if ($category->getExcursions()->count() > 0) {
+            $this->addFlash('error', 'Impossible de supprimer cette catégorie car elle est utilisée par des excursions.');
+            return $this->redirectToRoute('admin_category_index');
+        }
+        
+        // Check if category has children
+        if ($category->getChildren()->count() > 0) {
+            $this->addFlash('error', 'Impossible de supprimer cette catégorie car elle contient des sous-catégories.');
+            return $this->redirectToRoute('admin_category_index');
+        }
+        
+        if ($this->isCsrfTokenValid('delete' . $category->getId(), $request->request->get('_token'))) {
+            $this->entityManager->remove($category);
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La catégorie a été supprimée avec succès.');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide.');
+        }
+        
+        return $this->redirectToRoute('admin_category_index');
     }
 
     #[Route('/search', name: 'search', methods: ['GET'])]
@@ -63,7 +163,7 @@ class CategoryController extends AbstractController
             $category = new Category();
             $category->setSlug($this->slugger->slug($data['name'])->lower());
             $category->setPosition(0);
-            $category->setActive(true);
+            $category->setIsActive(true);
             
             // Create French translation
             $translation = new CategoryTranslation();

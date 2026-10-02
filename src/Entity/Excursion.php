@@ -213,7 +213,7 @@ class Excursion
         return $this->isBestSeller;
     }
 
-    public function setBestSeller(bool $isBestSeller): static
+    public function setIsBestSeller(bool $isBestSeller): static
     {
         $this->isBestSeller = $isBestSeller;
         return $this;

@@ -153,8 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!collectionContainer) return;
             
             const prototype = collectionContainer.getAttribute('data-prototype');
-            // Use timestamp to ensure unique indices even when items are deleted
-            const index = Date.now();
+            const index = collectionContainer.children.length;
             const newFormHtml = prototype.replace(/__name__/g, index);
             
             const tempDiv = document.createElement('div');
@@ -163,6 +162,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             newForm.classList.add('collection-item');
             collectionContainer.appendChild(newForm);
+            
+            // Initialize nested translation collections if they exist
+            const subCollections = newForm.querySelectorAll('.sub-collection');
+            subCollections.forEach(subCollection => {
+                const subPrototype = subCollection.getAttribute('data-prototype');
+                if (subPrototype) {
+                    const locales = ['fr', 'en', 'es', 'de', 'it'];
+                    locales.forEach((locale, localeIndex) => {
+                        const subIndex = localeIndex;
+                        const subFormHtml = subPrototype.replace(/__name__/g, subIndex);
+                        const subTempDiv = document.createElement('div');
+                        subTempDiv.innerHTML = subFormHtml;
+                        const subForm = subTempDiv.firstElementChild;
+                        subForm.classList.add('sub-collection-item');
+                        subCollection.appendChild(subForm);
+                    });
+                }
+            });
             
             // Add remove button functionality
             const removeBtn = newForm.querySelector('.remove-collection');
@@ -303,4 +320,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Function to scroll to first error field
+    window.scrollToFirstError = function() {
+        const firstErrorField = document.querySelector('.has-error input, .has-error select, .has-error textarea, .invalid-feedback');
+        if (firstErrorField) {
+            firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (firstErrorField.tagName === 'INPUT' || firstErrorField.tagName === 'SELECT' || firstErrorField.tagName === 'TEXTAREA') {
+                firstErrorField.focus();
+            }
+        }
+    };
+
+    // Mark tabs with errors after page load (for server-side validation errors)
+    document.querySelectorAll('.invalid-feedback').forEach(errorElement => {
+        const tabPane = errorElement.closest('.tab-pane');
+        if (tabPane) {
+            const tabId = tabPane.id.replace('tab-', '');
+            const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (tabBtn) {
+                tabBtn.classList.add('has-error');
+            }
+        }
+    });
 });

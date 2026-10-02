@@ -1,0 +1,93 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Catégories - Admin{% endblock %}
+
+{% block header_title %}Catégories{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Catégories</h1>
+        <p class="page-header-description">Gérez les catégories d'excursions</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_category_new') }}" class="btn btn-primary">➕ Nouvelle catégorie</a>
+    </div>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="card">
+    <div class="card-body">
+        <!-- Tableau -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom (FR)</th>
+                        <th>Parent</th>
+                        <th>Icône</th>
+                        <th>Position</th>
+                        <th>Statut</th>
+                        <th>Excursions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>
+                                <strong>{{ category.getNameTranslated('fr') ?? '-' }}</strong>
+                                <br><small class="text-muted">{{ category.slug }}</small>
+                            </td>
+                            <td>{{ category.parent ? category.parent.getNameTranslated('fr') : '-' }}</td>
+                            <td>{{ category.icon ?? '-' }}</td>
+                            <td>{{ category.position }}</td>
+                            <td>
+                                {% if category.isActive %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ category.excursions|length }}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="btn btn-sm btn-outline" title="Modifier">✏️</a>
+                                    <form method="post" action="{{ path('admin_category_delete', {id: category.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');" class="inline-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer" {% if category.excursions|length > 0 or category.children|length > 0 %}disabled{% endif %}>🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📁</div>
+                                    <div class="empty-state-title">Aucune catégorie</div>
+                                    <div class="empty-state-text">Commencez par créer votre première catégorie.</div>
+                                    <a href="{{ path('admin_category_new') }}" class="btn btn-primary">Créer une catégorie</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if categories|length > 0 %}
+            <div class="table-footer">
+                <span class="table-count">{{ categories|length }} catégorie(s)</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

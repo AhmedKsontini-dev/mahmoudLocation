@@ -1,6 +1,6 @@
 {% extends 'baseFront.html.twig' %}
 
-{% block title %}Sidi Bou Saïd & Carthage Antique - Tunisia Travel{% endblock %}
+{% block title %}{{ excursion.getTranslation(_locale) ? excursion.getTranslation(_locale).metaTitle|default(excursion.getTitleTranslated(_locale)) : excursion.getTitleTranslated(_locale) }} - Tunisia Travel{% endblock %}
 
 {% block stylesheets %}
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -26,19 +26,25 @@
                 Accueil
             </a>
             <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-            <a href="#" class="hover:text-primary transition-colors">Excursions privées</a>
+            <a href="#" class="hover:text-primary transition-colors">{{ excursion.category.getTranslation(_locale) ? excursion.category.getTranslation(_locale).name : (excursion.category.getTranslation('fr') ? excursion.category.getTranslation('fr').name : 'Catégorie') }}</a>
             <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-            <span class="text-on-surface font-semibold">Sidi Bou Saïd & Carthage</span>
+            <span class="text-on-surface font-semibold">{{ excursion.getTitleTranslated(_locale) }}</span>
         </nav>
         <div class="flex items-center gap-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high font-label-md text-label-md text-primary">
-                <span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
-                Disponible immédiatement
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high font-label-md text-label-md text-primary">
-                <span class="material-symbols-outlined text-[16px]">verified_user</span>
-                Circuit Privé & Guidé
-            </span>
+            {% for badge in excursion.badges %}
+                {% if badge.isActive %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high font-label-md text-label-md text-primary">
+                    {% if badge.badgeType == 'available_now' %}
+                        <span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+                    {% elseif badge.badgeType == 'private_guided' %}
+                        <span class="material-symbols-outlined text-[16px]">verified_user</span>
+                    {% elseif badge.badgeType == 'best_seller' %}
+                        <span class="material-symbols-outlined text-[16px]">star</span>
+                    {% endif %}
+                    {{ badge.getTextTranslated(_locale) }}
+                </span>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 
@@ -47,27 +53,38 @@
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-3">
-                    <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider">MEILLEURE VENTE</span>
-                    <span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-md text-label-md">Privé & Guidé</span>
+                    {% if excursion.isBestSeller %}
+                        <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider">MEILLEURE VENTE</span>
+                    {% endif %}
+                    <span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-md text-label-md">
+                        {{ excursion.type|capitalize }}
+                    </span>
                 </div>
-                <h1 class="font-display-mobile md:font-display text-display-mobile md:text-display text-on-surface mb-4">Sidi Bou Saïd & Carthage Antique</h1>
+                <h1 class="font-display-mobile md:font-display text-display-mobile md:text-display text-on-surface mb-4">{{ excursion.getTitleTranslated(_locale) }}</h1>
                 
                 <div class="flex flex-wrap items-center gap-4 font-body-md text-body-md text-on-surface-variant">
                     <div class="flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px]">location_on</span>
-                        <span>Tunis, Carthage & La Marsa</span>
+                        <span>{{ excursion.getLocationTranslated(_locale) }}</span>
                     </div>
+                    {% if excursion.durationHours or excursion.durationMinutes %}
                     <span class="text-surface-container-high hidden md:inline">•</span>
                     <div class="flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px]">schedule</span>
-                        <span>1 journée complète (8h30 – 17h00)</span>
+                        <span>
+                            {% if excursion.durationHours %}{{ excursion.durationHours }}h {% endif %}
+                            {% if excursion.durationMinutes %}{{ excursion.durationMinutes }}min{% endif %}
+                        </span>
                     </div>
+                    {% endif %}
+                    {% if excursion.ratingCount > 0 %}
                     <span class="text-surface-container-high hidden md:inline">•</span>
                     <div class="flex items-center gap-1.5 text-secondary-container font-semibold">
                         <span class="material-symbols-outlined text-[18px] text-amber-400">star</span>
-                        <span class="text-amber-500">4.9 / 5</span>
-                        <span class="text-on-surface-variant font-normal">(124 avis vérifiés)</span>
+                        <span class="text-amber-500">{{ excursion.ratingAverage }} / 5</span>
+                        <span class="text-on-surface-variant font-normal">({{ excursion.ratingCount }} avis vérifiés)</span>
                     </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="flex items-center gap-3 shrink-0">
@@ -84,31 +101,57 @@
     </div>
 
     {# Images Grid #}
+    {% if excursion.images|length > 0 %}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px] md:h-[500px]">
+            {% set main_image = null %}
+            {% for img in excursion.images %}
+                {% if img.isMain and not main_image %}
+                    {% set main_image = img %}
+                {% endif %}
+            {% endfor %}
+            {% if not main_image %}
+                {% set main_image = excursion.images|first %}
+            {% endif %}
+            
             <div class="md:col-span-2 relative h-full rounded-2xl overflow-hidden group">
-                <img src="https://images.unsplash.com/photo-1574360773950-705b637d7a8d?auto=format&fit=crop&q=80&w=1200" alt="Sidi Bou Said" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                <img src="{{ asset(main_image.imagePath) }}" alt="{{ main_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md">Vue panoramique sur le Golfe de Carthage</div>
+                {% if main_image.getCaptionTranslated(_locale) %}
+                <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md">{{ main_image.getCaptionTranslated(_locale) }}</div>
+                {% endif %}
                 <button class="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/50 backdrop-blur-md text-white font-label-md text-label-md hover:bg-black/70 transition-colors">
                     <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-                    <span>4 photos</span>
+                    <span>{{ excursion.images|length }} photos</span>
                 </button>
             </div>
+            
             <div class="hidden md:flex flex-col gap-4 h-full">
-                <div class="relative h-[calc(50%-0.5rem)] rounded-2xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1601662528567-526cd06f3621?auto=format&fit=crop&q=80&w=600" alt="Carthage" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md text-sm">Ruines de Carthage</div>
-                </div>
-                <div class="relative h-[calc(50%-0.5rem)] rounded-2xl overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1598914652251-87ec8fcda336?auto=format&fit=crop&q=80&w=600" alt="Cafe des Delices" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md text-sm">Café des Délices</div>
-                </div>
+                {% set side_count = 0 %}
+                {% for side_image in excursion.images %}
+                    {% if side_image.id != main_image.id and side_count < 2 %}
+                        <div class="relative h-[calc(50%-0.5rem)] rounded-2xl overflow-hidden group">
+                            <img src="{{ asset(side_image.imagePath) }}" alt="{{ side_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            {% if side_image.getCaptionTranslated(_locale) %}
+                            <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md text-sm">{{ side_image.getCaptionTranslated(_locale) }}</div>
+                            {% endif %}
+                        </div>
+                        {% set side_count = side_count + 1 %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px] md:h-[500px]">
+             <div class="md:col-span-3 relative h-full rounded-2xl overflow-hidden group bg-surface-container flex items-center justify-center">
+                 <span class="material-symbols-outlined text-[48px] text-on-surface-variant">image</span>
+             </div>
+        </div>
+    </div>
+    {% endif %}
 
     {# Key Features Bar #}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-12">
@@ -119,17 +162,23 @@
                 </div>
                 <div>
                     <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Durée</div>
-                    <div class="font-title-md text-title-md text-on-surface">1 Journée (8h30-17h)</div>
+                    <div class="font-title-md text-title-md text-on-surface">
+                        {% if excursion.durationHours %}{{ excursion.durationHours }}h {% endif %}
+                        {% if excursion.durationMinutes %}{{ excursion.durationMinutes }}min{% endif %}
+                        {% if excursion.startTime and excursion.endTime %}
+                            ({{ excursion.startTime|date('H:i') }}-{{ excursion.endTime|date('H:i') }})
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="hidden md:block w-px h-12 bg-surface-container"></div>
             <div class="flex items-center gap-4 w-full md:w-auto">
                 <div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
-                    <span class="material-symbols-outlined">directions_car</span>
+                    <span class="material-symbols-outlined">group</span>
                 </div>
                 <div>
-                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Transport</div>
-                    <div class="font-title-md text-title-md text-on-surface">Privé & Climatisé</div>
+                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Participants</div>
+                    <div class="font-title-md text-title-md text-on-surface">Min {{ excursion.minParticipants }} - Max {{ excursion.maxParticipants }}</div>
                 </div>
             </div>
             <div class="hidden md:block w-px h-12 bg-surface-container"></div>
@@ -149,7 +198,7 @@
                 </div>
                 <div>
                     <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Annulation</div>
-                    <div class="font-title-md text-title-md text-on-surface">100% Gratuite à 24h</div>
+                    <div class="font-title-md text-title-md text-on-surface">Gratuite à {{ excursion.cancellationHours }}h</div>
                 </div>
             </div>
         </div>
@@ -162,47 +211,33 @@
             <div class="lg:col-span-2 flex flex-col gap-12">
                 
                 {# Ce que vous allez vivre #}
+                {% if excursion.getDescriptionTranslated(_locale) %}
                 <section>
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-primary text-[28px]">explore</span>
                         <h2 class="font-headline-md text-headline-md text-on-surface">Ce que vous allez vivre</h2>
                     </div>
-                    <p class="font-body-lg text-body-lg text-on-surface-variant mb-8 leading-relaxed">
-                        Partez pour une journée exclusive au cœur des joyaux côtiers de Tunis. Accompagné de votre chauffeur privé dédié, découvrez les vestiges archéologiques grandioses de l'antique Carthage puis laissez-vous charmer par les ruelles pavées, les façades blanches et les volets bleus emblématiques de Sidi Bou Saïd avec un splendide panorama sur la Méditerranée.
-                    </p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-surface-container-low rounded-xl p-4 text-center flex flex-col items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-[24px]">account_balance</span>
-                            <div>
-                                <div class="font-label-md text-label-md text-on-surface">Carthage & Byrsa</div>
-                                <div class="font-body-sm text-body-sm text-on-surface-variant">Histoire millénaire</div>
-                            </div>
-                        </div>
-                        <div class="bg-surface-container-low rounded-xl p-4 text-center flex flex-col items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-[24px]">holiday_village</span>
-                            <div>
-                                <div class="font-label-md text-label-md text-on-surface">Sidi Bou Saïd</div>
-                                <div class="font-body-sm text-body-sm text-on-surface-variant">Village des artistes</div>
-                            </div>
-                        </div>
-                        <div class="bg-surface-container-low rounded-xl p-4 text-center flex flex-col items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-[24px]">landscape</span>
-                            <div>
-                                <div class="font-label-md text-label-md text-on-surface">Panorama Golfe</div>
-                                <div class="font-body-sm text-body-sm text-on-surface-variant">Vue spectaculaire</div>
-                            </div>
-                        </div>
-                        <div class="bg-surface-container-low rounded-xl p-4 text-center flex flex-col items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-[24px]">local_cafe</span>
-                            <div>
-                                <div class="font-label-md text-label-md text-on-surface">Café des Délices</div>
-                                <div class="font-body-sm text-body-sm text-on-surface-variant">Pause détente</div>
-                            </div>
-                        </div>
+                    <div class="font-body-lg text-body-lg text-on-surface-variant mb-8 leading-relaxed raw-html">
+                        {{ excursion.getDescriptionTranslated(_locale)|raw }}
                     </div>
+                    {% if excursion.features|length > 0 %}
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {% for feature in excursion.features %}
+                        <div class="bg-surface-container-low rounded-xl p-4 text-center flex flex-col items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-[24px]">{{ feature.icon }}</span>
+                            <div>
+                                <div class="font-label-md text-label-md text-on-surface">{{ feature.getTitleTranslated(_locale) }}</div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">{{ feature.getSubtitleTranslated(_locale) }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </section>
+                {% endif %}
 
                 {# Programme de la Journée #}
+                {% if excursion.itineraries|length > 0 %}
                 <section>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                         <div class="flex items-center gap-3">
@@ -213,30 +248,21 @@
                     </div>
                     
                     <div class="relative pl-6 md:pl-8 border-l-2 border-surface-container space-y-10 ml-4">
+                        {% for step in excursion.itineraries %}
                         <div class="relative">
-                            <div class="absolute -left-[43px] md:-left-[51px] w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm ring-4 ring-surface">1</div>
-                            <h3 class="font-title-md text-title-md text-on-surface mb-2">08:30 — Prise en charge à votre hébergement</h3>
-                            <p class="font-body-md text-body-md text-on-surface-variant">Départ depuis votre hôtel, villa ou aéroport avec chauffeur privé et véhicule climatisé avec eau fraîche.</p>
+                            <div class="absolute -left-[43px] md:-left-[51px] w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm ring-4 ring-surface">{{ step.stepNumber }}</div>
+                            <h3 class="font-title-md text-title-md text-on-surface mb-2">
+                                {% if step.time %}{{ step.time|date('H:i') }} — {% endif %}{{ step.getTitleTranslated(_locale) }}
+                            </h3>
+                            <p class="font-body-md text-body-md text-on-surface-variant">{{ step.getDescriptionTranslated(_locale) }}</p>
                         </div>
-                        <div class="relative">
-                            <div class="absolute -left-[43px] md:-left-[51px] w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm ring-4 ring-surface">2</div>
-                            <h3 class="font-title-md text-title-md text-on-surface mb-2">09:30 — Visite de Carthage Antique & Thermes d'Antonin</h3>
-                            <p class="font-body-md text-body-md text-on-surface-variant">Exploration des vestiges romains et puniques majeurs, de la colline sacrée de Byrsa et des ports puniques.</p>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute -left-[43px] md:-left-[51px] w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm ring-4 ring-surface">3</div>
-                            <h3 class="font-title-md text-title-md text-on-surface mb-2">12:00 — Découverte de Sidi Bou Saïd & Déjeuner libre</h3>
-                            <p class="font-body-md text-body-md text-on-surface-variant">Promenade dans les allées blanches et bleues, pause thé aux pignons au célèbre Café des Délices et repas selon vos envies.</p>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute -left-[43px] md:-left-[51px] w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm ring-4 ring-surface">4</div>
-                            <h3 class="font-title-md text-title-md text-on-surface mb-2">17:00 — Retour serein à votre adresse de départ</h3>
-                            <p class="font-body-md text-body-md text-on-surface-variant">Votre chauffeur vous raccompagne à votre point de départ en toute sérénité.</p>
-                        </div>
+                        {% endfor %}
                     </div>
                 </section>
+                {% endif %}
 
                 {# Inclus / Non Inclus #}
+                {% if excursion.inclusions|length > 0 %}
                 <section>
                     <h2 class="font-headline-md text-headline-md text-on-surface mb-6">Ce qui est inclus dans le tarif</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -246,22 +272,12 @@
                                 Inclus d'office
                             </div>
                             <ul class="space-y-3">
+                                {% for item in excursion.inclusions|filter(i => i.type == 'included') %}
                                 <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-green-600 text-[20px] shrink-0">check</span>
-                                    Véhicule privé climatisé (berline ou van)
+                                    <span class="material-symbols-outlined text-green-600 text-[20px] shrink-0">{{ item.icon|default('check') }}</span>
+                                    {{ item.getTextTranslated(_locale) }}
                                 </li>
-                                <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-green-600 text-[20px] shrink-0">check</span>
-                                    Chauffeur professionnel bilingue dédié
-                                </li>
-                                <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-green-600 text-[20px] shrink-0">check</span>
-                                    Prise en charge et retour hôtel à Tunis / Côtes
-                                </li>
-                                <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-green-600 text-[20px] shrink-0">check</span>
-                                    Carburant, péages et bouteilles d'eau fraîches
-                                </li>
+                                {% endfor %}
                             </ul>
                         </div>
                         <div class="bg-surface-container-high/50 rounded-2xl p-6 border border-surface-container">
@@ -270,26 +286,17 @@
                                 Non inclus
                             </div>
                             <ul class="space-y-3">
+                                {% for item in excursion.inclusions|filter(i => i.type == 'excluded') %}
                                 <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-outline text-[20px] shrink-0">close</span>
-                                    Billets des sites archéologiques (~20 DT / pers.)
+                                    <span class="material-symbols-outlined text-outline text-[20px] shrink-0">{{ item.icon|default('close') }}</span>
+                                    {{ item.getTextTranslated(_locale) }}
                                 </li>
-                                <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-outline text-[20px] shrink-0">close</span>
-                                    Déjeuner et consommations personnelles
-                                </li>
-                                <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-outline text-[20px] shrink-0">close</span>
-                                    Guide conférencier dédié (disponible en option)
-                                </li>
-                                <li class="flex items-start gap-3 font-body-md text-body-md text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-outline text-[20px] shrink-0">close</span>
-                                    Dépenses individuelles et pourboires
-                                </li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
                 </section>
+                {% endif %}
 
                 {# Booking Form #}
                 <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container p-6 md:p-8">
@@ -299,7 +306,8 @@
                     </div>
                     <p class="font-body-md text-body-md text-on-surface-variant mb-8">Remplissez ces 3 étapes simples. Aucune carte bancaire requise aujourd'hui.</p>
                     
-                    <form class="space-y-8">
+                    <form class="space-y-8" id="booking-form" data-excursion-id="{{ excursion.id }}" data-excursion-slug="{{ excursion.slug }}">
+                        <input type="hidden" name="excursion_id" value="{{ excursion.id }}">
                         {# Step 1 #}
                         <div>
                             <div class="flex items-center gap-3 mb-4">
@@ -388,33 +396,39 @@
                 <div class="sticky top-28 bg-surface-container-lowest rounded-2xl shadow-lg border border-surface-container p-6">
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-label-md text-label-md text-on-surface-variant">Tarif par personne</span>
-                        <span class="px-2.5 py-1 rounded-md bg-secondary-container text-on-secondary-container font-label-md text-label-md">Circuit Privé</span>
+                        <span class="px-2.5 py-1 rounded-md bg-secondary-container text-on-secondary-container font-label-md text-label-md">{{ excursion.type|capitalize }}</span>
                     </div>
                     <div class="flex items-end gap-2 mb-6">
-                        <span class="font-display text-display text-primary leading-none">150 <span class="text-[24px]">DT</span></span>
-                        <span class="font-body-md text-body-md text-on-surface-variant mb-1">≈ 45 €</span>
+                        <span class="font-display text-display text-primary leading-none">{{ excursion.priceAdult|number_format(0, '.', '') }} <span class="text-[24px]">DT</span></span>
+                        {% if excursion.priceConverted %}
+                        <span class="font-body-md text-body-md text-on-surface-variant mb-1">≈ {{ excursion.priceConverted|number_format(0, '.', '') }} €</span>
+                        {% endif %}
                     </div>
                     
                     <div class="space-y-3 mb-6 font-body-md text-body-md text-on-surface-variant pb-6 border-b border-surface-container">
                         <div class="flex justify-between items-center">
-                            <span>Excursion (2 ad.)</span>
-                            <span class="text-on-surface font-medium">300 DT</span>
+                            <span>Excursion (1 ad.)</span>
+                            <span class="text-on-surface font-medium">{{ excursion.priceAdult|number_format(0, '.', '') }} DT</span>
                         </div>
+                        {% if excursion.priceChild %}
                         <div class="flex justify-between items-center">
-                            <span>Prise en charge & retour hôtel</span>
-                            <span class="font-label-md text-label-md text-on-surface">Inclus</span>
+                            <span>Enfant (-12 ans)</span>
+                            <span class="text-on-surface font-medium">{{ excursion.priceChild|number_format(0, '.', '') }} DT</span>
                         </div>
+                        {% endif %}
                         <div class="flex justify-between items-center">
-                            <span>Bouteilles d'eau & péages</span>
+                            <span>Prise en charge & retour</span>
                             <span class="font-label-md text-label-md text-on-surface">Inclus</span>
                         </div>
                     </div>
 
                     <div class="flex justify-between items-end mb-6">
-                        <span class="font-title-md text-title-md text-on-surface">Total TTC</span>
+                        <span class="font-title-md text-title-md text-on-surface">À partir de</span>
                         <div class="text-right">
-                            <div class="font-headline-md text-headline-md text-on-surface leading-none mb-1">300 DT</div>
-                            <div class="font-label-sm text-label-sm text-on-surface-variant">≈ 90 €</div>
+                            <div class="font-headline-md text-headline-md text-on-surface leading-none mb-1">{{ (excursion.priceAdult * excursion.minParticipants)|number_format(0, '.', '') }} DT</div>
+                            {% if excursion.priceConverted %}
+                            <div class="font-label-sm text-label-sm text-on-surface-variant">≈ {{ (excursion.priceConverted * excursion.minParticipants)|number_format(0, '.', '') }} €</div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -435,11 +449,11 @@
                         </li>
                         <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">event_busy</span>
-                            Annulation 100% gratuite jusqu'à 24h
+                            Annulation gratuite jusqu'à {{ excursion.cancellationHours }}h
                         </li>
                         <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">support_agent</span>
-                            Assistance WhatsApp 24/7 (+216 98 000 111)
+                            Assistance WhatsApp 24/7
                         </li>
                     </ul>
                 </div>
@@ -448,58 +462,59 @@
     </div>
 
     {# Reviews Section #}
+    {% set approved_reviews = excursion.reviews|filter(r => r.status == 'approved') %}
+    {% if approved_reviews|length > 0 %}
     <div class="bg-surface-container-lowest py-16 border-t border-surface-container">
         <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
             <div class="flex items-end justify-between mb-8">
                 <div>
                     <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Avis des voyageurs</h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant">Note 4.9/5 par 124 clients vérifiés</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Note {{ excursion.ratingAverage|default('5.0') }}/5 par {{ excursion.ratingCount > 0 ? excursion.ratingCount : approved_reviews|length }} clients vérifiés</p>
                 </div>
                 <div class="font-headline-sm text-headline-sm text-amber-500 flex items-center gap-1 font-bold">
                     <span class="material-symbols-outlined text-[24px]">star</span>
-                    4.9 / 5
+                    {{ excursion.ratingAverage|default('5.0') }} / 5
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for review in approved_reviews|slice(0, 3) %}
                 <div class="bg-surface rounded-2xl p-6 border border-surface-container">
-                    <div class="flex text-amber-400 mb-4 text-sm">★★★★★</div>
-                    <p class="font-body-md text-body-md text-on-surface italic mb-4">« Journée magique et sans stress. Notre chauffeur Karim était discret, courtois et ponctuel. Véhicule impeccable. »</p>
-                    <div class="font-label-md text-label-md text-on-surface-variant"><span class="text-on-surface font-bold">Marc & Laura L.</span> • Paris</div>
+                    <div class="flex text-amber-400 mb-4 text-sm">
+                        {% for i in 1..5 %}
+                            {% if i <= review.rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="font-body-md text-body-md text-on-surface italic mb-4">« {{ review.comment }} »</p>
+                    <div class="font-label-md text-label-md text-on-surface-variant"><span class="text-on-surface font-bold">{{ review.customerName }}</span>{% if review.customerLocation %} • {{ review.customerLocation }}{% endif %}</div>
                 </div>
-                <div class="bg-surface rounded-2xl p-6 border border-surface-container">
-                    <div class="flex text-amber-400 mb-4 text-sm">★★★★★</div>
-                    <p class="font-body-md text-body-md text-on-surface italic mb-4">« Visite inoubliable de Sidi Bou Said et Carthage. Très rassurant de ne rien payer d'avance en ligne. »</p>
-                    <div class="font-label-md text-label-md text-on-surface-variant"><span class="text-on-surface font-bold">Elena D.</span> • Genève</div>
-                </div>
-                <div class="bg-surface rounded-2xl p-6 border border-surface-container">
-                    <div class="flex text-amber-400 mb-4 text-sm">★★★★★</div>
-                    <p class="font-body-md text-body-md text-on-surface italic mb-4">« Organisation irréprochable pour redécouvrir Carthage en couple. Chauffeur à l'heure à 8h30 précises. »</p>
-                    <div class="font-label-md text-label-md text-on-surface-variant"><span class="text-on-surface font-bold">Anis B.</span> • Montréal</div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
+    {% endif %}
 
     {# FAQ Section #}
+    {% set active_faqs = excursion.faqs|filter(f => f.isActive) %}
+    {% if active_faqs|length > 0 %}
     <div class="bg-surface py-16">
         <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop">
             <h2 class="font-headline-md text-headline-md text-on-surface text-center mb-10">Questions fréquentes</h2>
             <div class="space-y-4">
-                <div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 flex justify-between items-center cursor-pointer hover:bg-surface-container-low transition-colors">
-                    <span class="font-title-md text-title-md text-on-surface">L'excursion est-elle totalement privée ?</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
+                {% for faq in active_faqs %}
+                <div class="bg-surface-container-lowest rounded-xl border border-surface-container flex flex-col group transition-all">
+                    <div class="p-5 flex justify-between items-center cursor-pointer hover:bg-surface-container-low transition-colors" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.material-symbols-outlined').classList.toggle('rotate-180')">
+                        <span class="font-title-md text-title-md text-on-surface">{{ faq.getQuestionTranslated(_locale) }}</span>
+                        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+                    </div>
+                    <div class="hidden px-5 pb-5 font-body-md text-body-md text-on-surface-variant">
+                        {{ faq.getAnswerTranslated(_locale)|nl2br }}
+                    </div>
                 </div>
-                <div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 flex justify-between items-center cursor-pointer hover:bg-surface-container-low transition-colors">
-                    <span class="font-title-md text-title-md text-on-surface">Quelles sont les conditions d'annulation ?</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                </div>
-                <div class="bg-surface-container-lowest rounded-xl border border-surface-container p-5 flex justify-between items-center cursor-pointer hover:bg-surface-container-low transition-colors">
-                    <span class="font-title-md text-title-md text-on-surface">Comment s'effectue le paiement ?</span>
-                    <span class="material-symbols-outlined text-outline">expand_more</span>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
+    {% endif %}
 
     {% include 'Frontend/Components/_footer.html.twig' %}
 </main>

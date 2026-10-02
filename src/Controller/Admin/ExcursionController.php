@@ -88,8 +88,9 @@ class ExcursionController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->entityManager->beginTransaction();
                 try {
+                    $this->entityManager->beginTransaction();
+                    
                     $this->handleImageUploads($form, $excursion);
                     $this->generateSlugIfNeeded($excursion);
                     
@@ -97,18 +98,33 @@ class ExcursionController extends AbstractController
                     $this->entityManager->flush();
                     
                     $this->entityManager->commit();
+                    
                     $this->addFlash('success', 'L\'excursion a été créée avec succès.');
                     return $this->redirectToRoute('admin_excursion_index');
                 } catch (\Exception $e) {
                     $this->entityManager->rollback();
-                    $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de l\'excursion : ' . $e->getMessage());
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de l\'excursion: ' . $e->getMessage());
+                    error_log('Excursion creation error: ' . $e->getMessage());
                 }
             } else {
-                $this->addFlash('error', 'Veuillez vérifier les informations saisies. Le formulaire contient des erreurs.');
-                // Log form errors for debugging
+                // Log form errors for debugging with detailed information
+                $errorCount = 0;
                 foreach ($form->getErrors(true) as $error) {
-                    error_log('Form error: ' . $error->getMessage());
+                    $errorCount++;
+                    $origin = $error->getOrigin();
+                    $propertyPath = $origin ? $origin->getPropertyPath() : 'unknown';
+                    $invalidValue = $origin ? $origin->getInvalidValue() : 'N/A';
+                    
+                    error_log(sprintf(
+                        'Form error #%d - Path: %s, Message: %s, InvalidValue: %s',
+                        $errorCount,
+                        $propertyPath,
+                        $error->getMessage(),
+                        is_scalar($invalidValue) ? $invalidValue : gettype($invalidValue)
+                    ));
                 }
+                
+                $this->addFlash('error', sprintf('Veuillez corriger les %d erreur(s) dans le formulaire.', $errorCount));
             }
         }
 
@@ -129,26 +145,42 @@ class ExcursionController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->entityManager->beginTransaction();
                 try {
+                    $this->entityManager->beginTransaction();
+                    
                     $this->handleImageUploads($form, $excursion);
                     $this->generateSlugIfNeeded($excursion);
                     
                     $this->entityManager->flush();
                     
                     $this->entityManager->commit();
+                    
                     $this->addFlash('success', 'L\'excursion a été modifiée avec succès.');
                     return $this->redirectToRoute('admin_excursion_index');
                 } catch (\Exception $e) {
                     $this->entityManager->rollback();
-                    $this->addFlash('error', 'Une erreur est survenue lors de la modification de l\'excursion : ' . $e->getMessage());
+                    $this->addFlash('error', 'Une erreur est survenue lors de la modification de l\'excursion: ' . $e->getMessage());
+                    error_log('Excursion edit error: ' . $e->getMessage());
                 }
             } else {
-                $this->addFlash('error', 'Veuillez vérifier les informations saisies. Le formulaire contient des erreurs.');
-                // Log form errors for debugging
+                // Log form errors for debugging with detailed information
+                $errorCount = 0;
                 foreach ($form->getErrors(true) as $error) {
-                    error_log('Form error: ' . $error->getMessage());
+                    $errorCount++;
+                    $origin = $error->getOrigin();
+                    $propertyPath = $origin ? $origin->getPropertyPath() : 'unknown';
+                    $invalidValue = $origin ? $origin->getInvalidValue() : 'N/A';
+                    
+                    error_log(sprintf(
+                        'Form error #%d - Path: %s, Message: %s, InvalidValue: %s',
+                        $errorCount,
+                        $propertyPath,
+                        $error->getMessage(),
+                        is_scalar($invalidValue) ? $invalidValue : gettype($invalidValue)
+                    ));
                 }
+                
+                $this->addFlash('error', sprintf('Veuillez corriger les %d erreur(s) dans le formulaire.', $errorCount));
             }
         }
 

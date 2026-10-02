@@ -1,0 +1,187 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block header_title %}{{ title }}{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-header-description">Remplissez les informations de la destination</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_destination_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+    </div>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+{% if form.vars.errors|length > 0 %}
+    <div class="alert alert-error">
+        <strong>{{ form.vars.errors|length }} erreur(s) détectée(s).</strong> Veuillez corriger les champs indiqués ci-dessous.
+        {{ form_errors(form) }}
+    </div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'class': 'destination-form'}}) }}
+        
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button type="button" class="tab-btn active" data-tab="general">📋 Informations générales</button>
+                <button type="button" class="tab-btn" data-tab="translations">🌍 Traductions</button>
+            </div>
+
+            <div class="tabs-content">
+                <!-- Tab 1: Informations générales -->
+                <div class="tab-pane active" id="tab-general">
+                    <div class="form-section">
+                        <h3 class="section-title">Informations de base</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.region) }}
+                                {{ form_widget(form.region) }}
+                                {{ form_errors(form.region) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.isActive) }}
+                                {{ form_widget(form.isActive) }}
+                                {{ form_errors(form.isActive) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Coordonnées géographiques</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.latitude) }}
+                                {{ form_widget(form.latitude) }}
+                                {{ form_errors(form.latitude) }}
+                                <small class="form-hint">Latitude entre -90 et 90. Ex: 36.806389 pour Tunis</small>
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.longitude) }}
+                                {{ form_widget(form.longitude) }}
+                                {{ form_errors(form.longitude) }}
+                                <small class="form-hint">Longitude entre -180 et 180. Ex: 10.181667 pour Tunis</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">URL</h3>
+                        <div class="form-field">
+                            {{ form_label(form.slug) }}
+                            {{ form_widget(form.slug) }}
+                            {{ form_errors(form.slug) }}
+                            <small class="form-hint">Laissez vide pour générer automatiquement à partir du nom français</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Traductions -->
+                <div class="tab-pane" id="tab-translations">
+                    <div class="form-section">
+                        <h3 class="section-title">Traductions</h3>
+                        <div class="translations-tabs">
+                            <button type="button" class="translation-tab active" data-locale="fr">🇫🇷 Français</button>
+                            <button type="button" class="translation-tab" data-locale="en">🇬🇧 English</button>
+                            <button type="button" class="translation-tab" data-locale="es">🇪🇸 Español</button>
+                            <button type="button" class="translation-tab" data-locale="de">🇩🇪 Deutsch</button>
+                            <button type="button" class="translation-tab" data-locale="it">🇮🇹 Italiano</button>
+                        </div>
+                        
+                        {% for translation in form.translations %}
+                            <div class="translation-pane {{ translation.vars.data.locale == 'fr' ? 'active' : '' }}" data-locale="{{ translation.vars.data.locale }}">
+                                <div class="form-field">
+                                    {{ form_label(translation.name) }}
+                                    {{ form_widget(translation.name) }}
+                                    {{ form_errors(translation.name) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.description) }}
+                                    {{ form_widget(translation.description) }}
+                                    {{ form_errors(translation.description) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ path('admin_destination_index') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Main tabs functionality
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+
+            // Translation tabs functionality
+            const translationTabs = document.querySelectorAll('.translation-tab');
+            const translationPanes = document.querySelectorAll('.translation-pane');
+
+            translationTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const locale = this.getAttribute('data-locale');
+                    
+                    translationTabs.forEach(t => t.classList.remove('active'));
+                    translationPanes.forEach(p => p.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.querySelector(`.translation-pane[data-locale="${locale}"]`).classList.add('active');
+                });
+            });
+
+            // Auto-generate slug from French name
+            const nameFr = document.querySelector('input[name*="[translations]"][name*="[name]"]');
+            const slugField = document.querySelector('input[name="destination[slug]"]');
+            
+            if (nameFr && slugField) {
+                nameFr.addEventListener('input', function() {
+                    if (!slugField.value) {
+                        const slug = this.value
+                            .toLowerCase()
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/(^-|-$)/g, '');
+                        slugField.value = slug;
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

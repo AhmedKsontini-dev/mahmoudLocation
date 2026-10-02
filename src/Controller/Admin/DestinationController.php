@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Config\LocaleConfig;
 use App\Entity\Destination;
 use App\Entity\DestinationTranslation;
+use App\Form\DestinationType;
 use App\Repository\DestinationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,99 @@ class DestinationController extends AbstractController
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger
     ) {
+    }
+
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(): Response
+    {
+        $destinations = $this->repository->findBy([], ['id' => 'ASC']);
+        
+        return $this->render('Backend/Destination/index.html.twig', [
+            'destinations' => $destinations,
+        ]);
+    }
+
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $destination = new Destination();
+        $form = $this->createForm(DestinationType::class, $destination);
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Auto-generate slug if not provided
+            if (!$destination->getSlug()) {
+                $frenchName = $destination->getNameTranslated('fr');
+                if ($frenchName) {
+                    $destination->setSlug($this->slugger->slug($frenchName)->lower());
+                }
+            }
+            
+            $this->entityManager->persist($destination);
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La destination a été créée avec succès.');
+            
+            return $this->redirectToRoute('admin_destination_index');
+        }
+        
+        return $this->render('Backend/Destination/form.html.twig', [
+            'form' => $form,
+            'title' => 'Nouvelle destination',
+            'destination' => null,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Destination $destination): Response
+    {
+        $form = $this->createForm(DestinationType::class, $destination);
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Auto-generate slug if not provided
+            if (!$destination->getSlug()) {
+                $frenchName = $destination->getNameTranslated('fr');
+                if ($frenchName) {
+                    $destination->setSlug($this->slugger->slug($frenchName)->lower());
+                }
+            }
+            
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La destination a été modifiée avec succès.');
+            
+            return $this->redirectToRoute('admin_destination_index');
+        }
+        
+        return $this->render('Backend/Destination/form.html.twig', [
+            'form' => $form,
+            'title' => 'Modifier la destination',
+            'destination' => $destination,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Destination $destination): Response
+    {
+        // Check if destination has excursions
+        if ($destination->getExcursions()->count() > 0) {
+            $this->addFlash('error', 'Impossible de supprimer cette destination car elle est utilisée par des excursions.');
+            return $this->redirectToRoute('admin_destination_index');
+        }
+        
+        if ($this->isCsrfTokenValid('delete' . $destination->getId(), $request->request->get('_token'))) {
+            $this->entityManager->remove($destination);
+            $this->entityManager->flush();
+            
+            $this->addFlash('success', 'La destination a été supprimée avec succès.');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide.');
+        }
+        
+        return $this->redirectToRoute('admin_destination_index');
     }
 
     #[Route('/search', name: 'search', methods: ['GET'])]
@@ -62,7 +156,7 @@ class DestinationController extends AbstractController
             
             $destination = new Destination();
             $destination->setSlug($this->slugger->slug($data['name'])->lower());
-            $destination->setActive(true);
+            $destination->setIsActive(true);
             
             // Create French translation
             $translation = new DestinationTranslation();

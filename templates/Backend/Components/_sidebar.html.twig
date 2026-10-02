@@ -35,6 +35,18 @@
                 <span>Excursions</span>
             </a>
         </li>
+        <li class="menu-item">
+            <a href="{{ path('admin_destination_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_destination' ? 'active' : '' }}">
+                <span class="menu-icon">🌍</span>
+                <span>Destinations</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ path('admin_category_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_category' ? 'active' : '' }}">
+                <span class="menu-icon">📁</span>
+                <span>Catégories</span>
+            </a>
+        </li>
     </ul>
     
     <div class="sidebar-footer">
