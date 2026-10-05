@@ -168,6 +168,17 @@
     margin-top: 5px;
 }
 
+.image-upload-errors[data-has-errors="true"] {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.image-upload-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
 .checkbox-field {
     display: flex;
     align-items: center;

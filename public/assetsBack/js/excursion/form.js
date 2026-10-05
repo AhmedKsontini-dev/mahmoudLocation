@@ -126,6 +126,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    const imagePane = document.getElementById('tab-images');
+    const imageErrors = imagePane?.querySelectorAll('.image-upload-errors[data-has-errors="true"]');
+    if (imageErrors?.length) {
+        const imageTab = document.querySelector('.tab-btn[data-tab="images"]');
+        imageTab?.classList.add('has-error');
+        imageTab?.click();
+        imageErrors[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     // Translation tabs functionality
     const translationTabs = document.querySelectorAll('.translation-tab');
     const translationPanes = document.querySelectorAll('.translation-pane');
@@ -153,7 +162,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!collectionContainer) return;
             
             const prototype = collectionContainer.getAttribute('data-prototype');
-            const index = collectionContainer.children.length;
+            const indices = Array.from(collectionContainer.children, item => {
+                const fieldName = item.querySelector('[name]')?.name || '';
+                const match = fieldName.match(/\[(\d+)\]/);
+                return match ? Number(match[1]) : -1;
+            });
+            const index = Math.max(-1, ...indices) + 1;
             const newFormHtml = prototype.replace(/__name__/g, index);
             
             const tempDiv = document.createElement('div');
@@ -245,57 +259,88 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             const categorySelect = document.querySelector('select[name="excursion[category]"]');
             const destinationSelect = document.querySelector('select[name="excursion[destination]"]');
+            const titleFr = document.querySelector('input[name="excursion[translations][0][title]"]');
+            const descFr = document.querySelector('textarea[name="excursion[translations][0][description]"]');
             
             let isValid = true;
             let errorMessage = '';
-            
-            // Find if there are native HTML5 validation errors (like required fields)
-            let hasErrors = false;
             let firstInvalidTab = null;
             let firstInvalidInput = null;
+            let firstInvalidLocale = null;
 
             // Clear previous error indicators
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('has-error'));
+            document.querySelectorAll('.translation-tab').forEach(btn => btn.classList.remove('has-error'));
 
-            // Check required select fields specifically
+            // 1. Check French Title (mandatory)
+            if (!titleFr || !titleFr.value.trim()) {
+                isValid = false;
+                errorMessage = 'Le titre en français est obligatoire dans l\'onglet Traductions.';
+                firstInvalidTab = 'translations';
+                firstInvalidLocale = 'fr';
+                firstInvalidInput = titleFr;
+                const transBtn = document.querySelector('.tab-btn[data-tab="translations"]');
+                if (transBtn) transBtn.classList.add('has-error');
+            } 
+            // 2. Check French Description (mandatory)
+            else if (!descFr || !descFr.value.trim()) {
+                isValid = false;
+                errorMessage = 'La description en français est obligatoire dans l\'onglet Traductions.';
+                firstInvalidTab = 'translations';
+                firstInvalidLocale = 'fr';
+                firstInvalidInput = descFr;
+                const transBtn = document.querySelector('.tab-btn[data-tab="translations"]');
+                if (transBtn) transBtn.classList.add('has-error');
+            }
+
+            // 3. Check Category
             if (!categorySelect || !categorySelect.value) {
                 isValid = false;
-                errorMessage = 'Veuillez sélectionner une catégorie.';
-                hasErrors = true;
-                firstInvalidTab = 'general';
+                errorMessage = errorMessage ? errorMessage + '\nVeuillez sélectionner une catégorie.' : 'Veuillez sélectionner une catégorie.';
+                if (!firstInvalidTab) {
+                    firstInvalidTab = 'general';
+                    firstInvalidInput = document.querySelector('.searchable-select[data-field="category"] .searchable-input');
+                }
+                const genBtn = document.querySelector('.tab-btn[data-tab="general"]');
+                if (genBtn) genBtn.classList.add('has-error');
             }
             
+            // 4. Check Destination
             if (!destinationSelect || !destinationSelect.value) {
                 isValid = false;
                 errorMessage = errorMessage ? errorMessage + '\nVeuillez sélectionner une destination.' : 'Veuillez sélectionner une destination.';
-                hasErrors = true;
-                firstInvalidTab = firstInvalidTab || 'general';
+                if (!firstInvalidTab) {
+                    firstInvalidTab = 'general';
+                    firstInvalidInput = document.querySelector('.searchable-select[data-field="destination"] .searchable-input');
+                }
+                const genBtn = document.querySelector('.tab-btn[data-tab="general"]');
+                if (genBtn) genBtn.classList.add('has-error');
             }
 
-            // Check all other form fields for HTML5 validation errors
-            const inputs = form.querySelectorAll('input, select, textarea');
+            // 5. Check any other fields with native validation if visible
+            const inputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
             inputs.forEach(input => {
                 if (!input.checkValidity()) {
-                    hasErrors = true;
-                    // Find the tab containing this input
+                    isValid = false;
                     const tabPane = input.closest('.tab-pane');
                     if (tabPane) {
                         const tabId = tabPane.id.replace('tab-', '');
-                        // Mark the tab button as having an error
                         const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-                        if (tabBtn) {
-                            tabBtn.classList.add('has-error');
-                        }
+                        if (tabBtn) tabBtn.classList.add('has-error');
                         
                         if (!firstInvalidTab) {
                             firstInvalidTab = tabId;
                             firstInvalidInput = input;
+                            const transPane = input.closest('.translation-pane');
+                            if (transPane) {
+                                firstInvalidLocale = transPane.getAttribute('data-locale');
+                            }
                         }
                     }
                 }
             });
 
-            if (hasErrors || !isValid) {
+            if (!isValid) {
                 e.preventDefault();
                 
                 if (errorMessage) {
@@ -309,10 +354,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     const tabBtn = document.querySelector(`.tab-btn[data-tab="${firstInvalidTab}"]`);
                     if (tabBtn) {
                         tabBtn.click();
-                        // Focus the input if possible
-                        if (firstInvalidInput) {
-                            setTimeout(() => firstInvalidInput.focus(), 100);
+                    }
+                    if (firstInvalidLocale) {
+                        const localeBtn = document.querySelector(`.translation-tab[data-locale="${firstInvalidLocale}"]`);
+                        if (localeBtn) {
+                            localeBtn.click();
                         }
+                    }
+                    // Focus the input if possible
+                    if (firstInvalidInput) {
+                        setTimeout(() => {
+                            firstInvalidInput.focus();
+                            firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 150);
                     }
                 }
                 

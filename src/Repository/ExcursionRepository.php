@@ -45,6 +45,20 @@ class ExcursionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Excursion[]
+     */
+    public function findLatestActive(int $limit = 4): array
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.status = :status')
+            ->setParameter('status', Excursion::STATUS_ACTIVE)
+            ->orderBy('e.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findBySlug(string $slug): ?Excursion
     {
         return $this->createQueryBuilder('e')
@@ -173,4 +187,3 @@ class ExcursionRepository extends ServiceEntityRepository
         ];
     }
 }
-

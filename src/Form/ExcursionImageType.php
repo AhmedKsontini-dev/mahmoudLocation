@@ -25,10 +25,9 @@ class ExcursionImageType extends AbstractType
                 'label' => 'Image',
                 'mapped' => false,
                 'required' => false,
-                'attr' => ['class' => 'form-control'],
+                'attr' => ['class' => 'form-control', 'accept' => '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp'],
                 'constraints' => [
                     new Assert\Image([
-                        'maxSize' => '5M',
                         'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
                         'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, WebP).',
                     ]),

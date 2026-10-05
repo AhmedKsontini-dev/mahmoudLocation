@@ -44,6 +44,16 @@ class DestinationController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+            // Clean empty translations
+            foreach ($destination->getTranslations() as $translation) {
+                if ($translation->getLocale() !== 'fr' && empty(trim($translation->getName() ?? ''))) {
+                    $destination->removeTranslation($translation);
+                    if ($this->entityManager->contains($translation)) {
+                        $this->entityManager->remove($translation);
+                    }
+                }
+            }
+
             // Auto-generate slug if not provided
             if (!$destination->getSlug()) {
                 $frenchName = $destination->getNameTranslated('fr');
@@ -75,6 +85,16 @@ class DestinationController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+            // Clean empty translations
+            foreach ($destination->getTranslations() as $translation) {
+                if ($translation->getLocale() !== 'fr' && empty(trim($translation->getName() ?? ''))) {
+                    $destination->removeTranslation($translation);
+                    if ($this->entityManager->contains($translation)) {
+                        $this->entityManager->remove($translation);
+                    }
+                }
+            }
+
             // Auto-generate slug if not provided
             if (!$destination->getSlug()) {
                 $frenchName = $destination->getNameTranslated('fr');

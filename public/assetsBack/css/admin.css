@@ -426,6 +426,14 @@ input, select, textarea {
     color: var(--color-on-surface);
 }
 
+.table-thumbnail {
+    display: block;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
 .table tbody tr:last-child td {
     border-bottom: none;
 }

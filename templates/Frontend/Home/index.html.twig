@@ -218,41 +218,29 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'home.services.sub'|trans }}</p>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-{# Service 1: Location #}
+{# Service 1: Circuits touristiques  #}
 <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
 <div>
 <div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
 <span class="material-symbols-outlined text-[32px]">directions_car</span>
 </div>
-<span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">Sans guide</span>
+<span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">{{ 'home.services.badge_circuits'|trans }}</span>
 <h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 font-bold">{{ 'home.services.rental_title'|trans }}</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ 'home.services.rental_desc'|trans }}</p>
 </div>
-<div class="pt-4 border-t border-surface-container flex items-center justify-between">
-<span class="font-label-sm text-label-sm text-outline">À partir de <span class="price-val font-title-md text-title-md text-primary font-bold" data-base="110">{{ 110|price }}</span> / j</span>
-<a class="inline-flex items-center gap-1 font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold group-hover:translate-x-1 transition-all" href="#cars-section">
-<span>{{ 'home.services.btn_view_cars'|trans }}</span>
-<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</a>
-</div>
+
 </div>
 {# Service 2: Transferts #}
 <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
 <div>
-<div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transitizon-colors">
 <span class="material-symbols-outlined text-[32px]">flight_takeoff</span>
 </div>
-<span class="px-2.5 py-1 rounded-md bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">Accueil VIP Aéroports</span>
+<span class="px-2.5 py-1 rounded-md bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">{{ 'home.services.badge_transfer'|trans }}</span>
 <h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 font-bold">{{ 'home.services.transfer_title'|trans }}</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ 'home.services.transfer_desc'|trans }}</p>
 </div>
-<div class="pt-4 border-t border-surface-container flex items-center justify-between">
-<span class="font-label-sm text-label-sm text-outline">À partir de <span class="price-val font-title-md text-title-md text-primary font-bold" data-base="90">{{ 90|price }}</span></span>
-<a class="inline-flex items-center gap-1 font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold group-hover:translate-x-1 transition-all" href="#transfers-section">
-<span>{{ 'home.services.btn_view_transfers'|trans }}</span>
-<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</a>
-</div>
+
 </div>
 {# Service 3: Excursions #}
 <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
@@ -260,17 +248,11 @@
 <div class="w-14 h-14 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
 <span class="material-symbols-outlined text-[32px]">explore</span>
 </div>
-<span class="px-2.5 py-1 rounded-md bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">Guides Certifiés</span>
+<span class="px-2.5 py-1 rounded-md bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm uppercase font-semibold inline-block mb-3">{{ 'home.services.badge_excursions'|trans }}</span>
 <h3 class="font-headline-sm text-headline-sm text-on-surface mb-3 font-bold">{{ 'home.services.excursions_title'|trans }}</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">{{ 'home.services.excursions_desc'|trans }}</p>
 </div>
-<div class="pt-4 border-t border-surface-container flex items-center justify-between">
-<span class="font-label-sm text-label-sm text-outline">À partir de <span class="price-val font-title-md text-title-md text-primary font-bold" data-base="85">{{ 85|price }}</span> / p</span>
-<a class="inline-flex items-center gap-1 font-label-lg text-label-lg text-primary hover:text-primary-container font-semibold group-hover:translate-x-1 transition-all" href="#excursions-section">
-<span>{{ 'home.services.btn_view_excursions'|trans }}</span>
-<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</a>
-</div>
+
 </div>
 </div>
 </div>
@@ -287,8 +269,8 @@
 <span class="material-symbols-outlined text-[24px]">verified</span>
 </div>
 <div>
-<p class="font-title-md text-title-md text-on-surface font-bold">Note 4.9/5 sur 2,400+ avis voyageurs</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Recommandé par 98.4% de nos clients internationaux en 2025</p>
+<p class="font-title-md text-title-md text-on-surface font-bold">{{ 'home.why.rating'|trans }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ 'home.why.recommended'|trans }}</p>
 </div>
 </div>
 </div>
@@ -298,7 +280,7 @@
 <h2 class="font-headline-lg text-headline-lg text-on-surface mb-6 font-bold">{{ 'home.why.title'|trans }}</h2>
 <div class="space-y-5 mb-8">
 
-{% for item in why_items %}
+{% for item in why_items|slice(1) %}
 <div class="flex items-start gap-4 p-3.5 rounded-xl bg-surface-container-lowest shadow-xs">
 <div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0 mt-0.5">
 <span class="material-symbols-outlined text-[22px]">{{ item.icon }}</span>
@@ -311,10 +293,7 @@
 {% endfor %}
 </div>
 <div>
-<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-bold shadow-md hover:bg-primary-container transition-all" href="#cars-section">
-<span>{{ 'home.why.btn_learn_fleet'|trans }}</span>
-<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-</a>
+
 </div>
 </div>
 </div>
@@ -382,43 +361,51 @@
 <h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.excursions.title'|trans }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">{{ 'home.excursions.sub'|trans }}</p>
 </div>
-<a class="inline-flex items-center gap-1.5 font-label-lg text-label-lg text-primary font-bold hover:underline self-start md:self-auto" href="#booking-console">
-<span>Guide des circuits 2026</span>
-<span class="material-symbols-outlined text-[18px]">map</span>
+<a class="inline-flex items-center gap-1.5 font-label-lg text-label-lg text-primary font-bold hover:underline self-start md:self-auto" href="#booking-console"> 
 </a>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-{% for ex in excursions %}
+{% for excursion in excursions %}
+{% set excursionLocale = app.request.locale %}
+{% set main_image = excursion.images|filter(image => image.isMain)|first %}
+{% if not main_image %}
+{% set main_image = excursion.images|first %}
+{% endif %}
+{% set included_item = excursion.inclusions|filter(item => item.type == 'included')|first %}
+{% set first_feature = excursion.features|first %}
+{% set unesco_badge = excursion.badges|filter(badge => badge.isActive and (badge.getTextTranslated(excursionLocale)|lower) == 'unesco')|first %}
 <div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
 <div>
-<div class="relative h-52 w-full bg-cover bg-center overflow-hidden" style="background-image: url('{{ ex.image }}');">
-<span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-bold">{{ ex.duration }}</span>
-{% if ex.unesco %}<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white font-label-sm text-label-sm font-bold">UNESCO</span>{% endif %}
+<div class="relative h-52 w-full bg-cover bg-center overflow-hidden" style="background-image: url('{{ main_image ? asset(main_image.imagePath) : 'https://placehold.co/600x400/e2e8f0/64748b?text=Image+Indisponible' }}');">
+<span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-bold">{% if excursion.durationHours %}{{ excursion.durationHours }}h{% endif %}{% if excursion.durationMinutes %}{{ excursion.durationHours ? ' ' }}{{ excursion.durationMinutes }}min{% endif %}</span>
+{% if unesco_badge %}<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white font-label-sm text-label-sm font-bold">{{ unesco_badge.getTextTranslated(excursionLocale) }}</span>{% endif %}
 </div>
 <div class="p-5">
-<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">{{ ex.name }}</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-4">{{ ex.desc }}</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">{{ excursion.getTitleTranslated(excursionLocale) }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-4">{{ excursion.getDescriptionTranslated(excursionLocale) }}</p>
 <div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-4">
-<span class="material-symbols-outlined text-[16px] text-primary">{{ ex.info_icon }}</span> {{ ex.info }}
+<span class="material-symbols-outlined text-[16px] text-primary">location_on</span> {{ excursion.destination.getNameTranslated(excursionLocale) }}
+{% if included_item or first_feature %}
 <span class="text-outline">•</span>
-<span class="material-symbols-outlined text-[16px] text-primary">{{ ex.info2_icon }}</span> {{ ex.info2 }}
+<span class="material-symbols-outlined text-[16px] text-primary">{{ included_item ? included_item.icon|default('check') : first_feature.icon }}</span> {{ included_item ? included_item.getTextTranslated(excursionLocale) : first_feature.getTitleTranslated(excursionLocale) }}
+{% endif %}
 </div>
 </div>
 </div>
 <div class="p-5 pt-0 border-t border-surface-container flex items-center justify-between">
 <div>
 <span class="font-body-sm text-body-sm text-outline">À partir de</span>
-<div class="price-val font-headline-sm text-headline-sm text-primary font-extrabold" data-base="{{ ex.price }}">{{ ex.price|price }}</div>
+<div class="price-val font-headline-sm text-headline-sm text-primary font-extrabold" data-base="{{ excursion.priceAdult }}">{{ excursion.priceAdult|price }}</div>
 </div>
-<button class="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-all" onclick="quickReserveModal('Excursion {{ ex.name }}', {{ ex.price }})" type="button">Découvrir</button>
+<a class="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold hover:bg-primary-container transition-all" href="{{ path('app_detail_excursion', {'slug': excursion.slug, '_locale': excursionLocale}) }}">Découvrir</a>
 </div>
 </div>
 {% endfor %}
 </div>
 <div class="mt-10 text-center">
-<a class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-surface-container-high text-primary font-title-md text-title-md font-bold hover:bg-surface-container-highest transition-all" href="#booking-console">
-<span>Voir toutes les excursions &amp; circuits thématiques</span>
+<a class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-surface-container-high text-primary font-title-md text-title-md font-bold hover:bg-surface-container-highest transition-all" href="{{ path('app_liste_excursion', {'_locale': app.request.locale}) }}">
+<span>{{ 'home.excursions.btn_view_all'|trans }}</span>
 <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
 </a>
 </div>
@@ -450,36 +437,7 @@
 </div>
 </section>
 
-{# ── Destinations ── #}
-<section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface">
-<div class="max-w-7xl mx-auto">
-<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-<div>
-<span class="font-label-sm text-label-sm text-primary tracking-widest uppercase font-bold">{{ 'home.dest.pill'|trans }}</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.dest.title'|trans }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">{{ 'home.dest.sub'|trans }}</p>
-</div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-{% for d in destinations %}
-<div class="group relative rounded-2xl overflow-hidden h-72 shadow-sm">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('{{ d.image }}');"></div>
-<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/30 to-transparent"></div>
-<div class="absolute bottom-0 inset-x-0 p-6 text-on-primary">
-<span class="px-2 py-0.5 rounded-md bg-secondary text-on-secondary font-label-sm text-label-sm mb-2 inline-block">{{ d.tag }}</span>
-<h3 class="font-headline-sm text-headline-sm font-bold mb-1">{{ d.name }}</h3>
-<p class="font-body-sm text-body-sm text-on-primary/80 mb-3">{{ d.desc }}</p>
-<a class="inline-flex items-center gap-1 font-label-sm text-label-sm font-semibold text-secondary-fixed hover:underline" href="#booking-console">
-<span>Voir les options de transfert</span>
-<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-</a>
-</div>
-</div>
-{% endfor %}
-</div>
-</div>
-</section>
 
 {# ── Reviews ── #}
 <section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface-container-low">

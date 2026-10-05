@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('assetsFront/js/tailwind.config.js') }}"></script>
+    <link href="{{ asset('assetsFront/css/excursions.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block body_class %}bg-surface text-on-surface antialiased{% endblock %}
@@ -103,7 +104,15 @@
     {# Images Grid #}
     {% if excursion.images|length > 0 %}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px] md:h-[500px]">
+        {% set gallery_images = [] %}
+        {% for gallery_image in excursion.images %}
+            {% set gallery_images = gallery_images|merge([{
+                src: asset(gallery_image.imagePath),
+                alt: gallery_image.getAltTextTranslated(_locale),
+                caption: gallery_image.getCaptionTranslated(_locale)
+            }]) %}
+        {% endfor %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px] md:h-[500px]" data-excursion-gallery data-gallery-images="{{ gallery_images|json_encode|e('html_attr') }}">
             {% set main_image = null %}
             {% for img in excursion.images %}
                 {% if img.isMain and not main_image %}
@@ -115,12 +124,12 @@
             {% endif %}
             
             <div class="md:col-span-2 relative h-full rounded-2xl overflow-hidden group">
-                <img src="{{ asset(main_image.imagePath) }}" alt="{{ main_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                <img src="{{ asset(main_image.imagePath) }}" alt="{{ main_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in" data-gallery-trigger role="button" tabindex="0" aria-label="Agrandir l'image">
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 {% if main_image.getCaptionTranslated(_locale) %}
-                <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md">{{ main_image.getCaptionTranslated(_locale) }}</div>
+                <div class="pointer-events-none absolute bottom-4 left-4 text-white font-title-md text-title-md">{{ main_image.getCaptionTranslated(_locale) }}</div>
                 {% endif %}
-                <button class="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/50 backdrop-blur-md text-white font-label-md text-label-md hover:bg-black/70 transition-colors">
+                <button type="button" data-gallery-trigger data-gallery-src="{{ asset(main_image.imagePath) }}" class="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/50 backdrop-blur-md text-white font-label-md text-label-md hover:bg-black/70 transition-colors">
                     <span class="material-symbols-outlined text-[20px]">photo_camera</span>
                     <span>{{ excursion.images|length }} photos</span>
                 </button>
@@ -131,10 +140,10 @@
                 {% for side_image in excursion.images %}
                     {% if side_image.id != main_image.id and side_count < 2 %}
                         <div class="relative h-[calc(50%-0.5rem)] rounded-2xl overflow-hidden group">
-                            <img src="{{ asset(side_image.imagePath) }}" alt="{{ side_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            <img src="{{ asset(side_image.imagePath) }}" alt="{{ side_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in" data-gallery-trigger role="button" tabindex="0" aria-label="Agrandir l'image">
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                             {% if side_image.getCaptionTranslated(_locale) %}
-                            <div class="absolute bottom-4 left-4 text-white font-title-md text-title-md text-sm">{{ side_image.getCaptionTranslated(_locale) }}</div>
+                            <div class="pointer-events-none absolute bottom-4 left-4 text-white font-title-md text-title-md text-sm">{{ side_image.getCaptionTranslated(_locale) }}</div>
                             {% endif %}
                         </div>
                         {% set side_count = side_count + 1 %}
@@ -142,6 +151,18 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div id="excursion-gallery-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/85 p-3 sm:p-6" data-gallery-modal aria-hidden="true">
+        <section class="relative flex h-full w-full max-w-7xl items-center justify-center" role="dialog" aria-modal="true" aria-label="Galerie photos" tabindex="-1" data-gallery-dialog>
+            <button type="button" class="absolute right-1 top-1 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:right-2 sm:top-2" aria-label="Fermer" data-gallery-close>×</button>
+            <button type="button" class="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:left-2 sm:h-12 sm:w-12" aria-label="Image précédente" data-gallery-previous>←</button>
+            <img class="max-h-[78vh] max-w-[78vw] select-none object-contain sm:max-h-[84vh] sm:max-w-[86vw]" alt="" data-gallery-image>
+            <button type="button" class="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:right-2 sm:h-12 sm:w-12" aria-label="Image suivante" data-gallery-next>→</button>
+            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-center text-sm text-white" aria-live="polite">
+                <p class="mb-1" data-gallery-caption hidden></p>
+                <span data-gallery-count></span>
+            </div>
+        </section>
     </div>
     {% else %}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-8">
@@ -516,10 +537,36 @@
     </div>
     {% endif %}
 
+    <section class="section-destinations">
+        <div class="container">
+            <p class="section-eyebrow">INSPIRATIONS RÉGIONALES</p>
+            <div class="section-heading">
+                <h2 class="section-heading__title">Explorez par destination</h2>
+                <p class="section-heading__desc">
+                    Chaque région tunisienne possède sa propre signature : vestiges
+                    puniques, dunes sahariennes ou villages côtiers.
+                </p>
+            </div>
+            <div class="destinations-grid">
+                {% for destinationData in destinations %}
+                    {% set destination = destinationData.destination %}
+                    <a href="{{ path('app_liste_excursion', {'_locale': _locale, 'destination': destination.id}) }}" class="destination-card">
+                        <img src="{{ asset('assetsFront/images/destination-placeholder.svg') }}" alt="{{ destination.getNameTranslated(_locale) }}">
+                        <div class="destination-card__info">
+                            <h3 class="destination-card__name">{{ destination.getNameTranslated(_locale) }}</h3>
+                            <p class="destination-card__count">{{ ('destination.excursion_count.' ~ (destinationData.excursionCount == 1 ? 'one' : 'other'))|trans({'%count%': destinationData.excursionCount}) }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
     {% include 'Frontend/Components/_footer.html.twig' %}
 </main>
 {% endblock %}
 
 {% block javascripts %}
 <script src="{{ asset('assetsFront/js/navbar.js') }}?v=2"></script>
+<script src="{{ asset('assetsFront/js/excursion-gallery.js') }}"></script>
 {% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\TransfereRepository;
 use App\Repository\SaisonRepository;
+use App\Repository\ExcursionRepository;
 use App\Service\TransferePriceCalculator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home', requirements: ['_locale' => 'fr|en|it|es|de'], defaults: ['_locale' => 'fr'], methods: ['GET'])]
     #[Route('/{_locale}', name: 'app_home_locale', requirements: ['_locale' => 'fr|en|it|es|de'], methods: ['GET'])]
-    public function index(TransfereRepository $transfereRepository, SaisonRepository $saisonRepository, TransferePriceCalculator $priceCalculator): Response
+    public function index(TransfereRepository $transfereRepository, SaisonRepository $saisonRepository, TransferePriceCalculator $priceCalculator, ExcursionRepository $excursionRepository): Response
     {
         $why_items = [
             ['icon' => 'directions_car', 'title' => 'home.why.item1_title', 'desc' => 'home.why.item1_desc'],
@@ -33,12 +34,7 @@ class HomeController extends AbstractController
 
         $transferts = $transfereRepository->findBy(['actif' => true], ['id' => 'DESC'], 6);
 
-        $excursions = [
-            ['name' => 'Sidi Bou Saïd & Carthage', 'duration' => '1/2 Journée ou 1 Jour', 'desc' => 'Visitez les thermes d\'Antonin, les ruines puniques de Carthage et flânez dans les ruelles bleues et blanches de Sidi Bou Saïd.', 'info' => '4h à 7h', 'info_icon' => 'schedule', 'info2' => 'Guide privé inclus', 'info2_icon' => 'person', 'price' => 85, 'unesco' => false, 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCDIFvgbEBp5xHkipa4K5xyE5DyZoDXY3t4aUjtEzazRI_rOMCCLuKN_kIxFA0jKjDPJY64X1Q5Hi-1aTWWzaxRKMQlwcm21b9uSuHx_TRyIGnAeysCMSgIZHauqIjtPH96ZDUnzM4LgoNzNkR9o5tlREJ4VRapxR2NstAx6ZUn_iZkSwzs9-iA0ILldDMxsZvzT1yYL9S3meS1Dy4LfHHyI-WbYw_CU5V2Pcmqe0hvxZzDS9ituASQkw'],
-            ['name' => 'Sahara & Douz (Porte du Désert)', 'duration' => '2 Jours / 1 Nuit', 'desc' => 'Traversée du lac salé Chott el-Jérid, coucher de soleil à dos de dromadaire et nuit magique sous tente berbère au campement.', 'info' => 'Tente + Repas', 'info_icon' => 'bed', 'info2' => '4x4 Inclus', 'info2_icon' => 'terrain', 'price' => 340, 'unesco' => false, 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAa4FwMoPi1c-k3ICU5oktObMAsC-iUFw7q0bhazR8KF9EwDxrL-n67GSr1CxGFrmh5W1GuwlRh7f5NZo-XwABZ_8VBU1sUDoZndV_WOS8rglqKLhkSvFjGQ-8C3jSUkcynOjcl4vmPZfiOofSqXGdzOgNpq7LmZHRZ2FQzf9cuVSu7FQIaax5P_Rl9mslN5XXL-S4EMrDG8cPJHGB9d1DJEaK1_t2m0-SMVlcF2c0lBvoUlAYlPt1IKQ'],
-            ['name' => 'El Jem & Monastir', 'duration' => '1 Journée Complète', 'desc' => 'Explorez le plus grand amphithéâtre romain du monde préservé à El Jem, puis visite du mausolée de Bourguiba et du Ribat de Monastir.', 'info' => '8 heures', 'info_icon' => 'schedule', 'info2' => 'Déjeuner inclus', 'info2_icon' => 'restaurant', 'price' => 145, 'unesco' => true, 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDY9dvJSYYdVjtyEvDpFPUAvdeHOkAr_ZonAmq0Wa5LxStK0fs2-oytt9Ke-h5j5Wpjy-Uc8-2FPSccTWtKey_dcfbxjORPBYFIpHXARzgpfHZ02ZW-Yxws0Iv89oBqbFyYnFHTwhycFkRrdg-QNWPQDjJnjy4BVca9Keoj7K7Dv1aoqTgmfTcWEFAIb0CXTwKlrIfhStkXi-NXPOnc0GsOrXL5C7fsm5Rdo5liN-ntDTZMYbScSNtBBg'],
-            ['name' => 'Djerba & Tataouine (Ksour)', 'duration' => '1 Journée', 'desc' => "Découvrez les habitations troglodytiques de Matmata, les greniers fortifiés (Ksour) de Tataouine et l'île des potiers de Guellala.", 'info' => 'Lieux Star Wars', 'info_icon' => 'movie', 'info2' => '4x4 climatisé', 'info2_icon' => 'local_taxi', 'price' => 165, 'unesco' => false, 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBNe2PNmhhiyjlVz2uZ9ly1DN8HOjfdVCxr7VQddwlYhrPfDW5vOPi7WbQ8Zn0aZ09Sgmy9OF5afgBuXPzhBGFLAP0T_EGD4TQJV54zgmjLdrgytdTGCdAGe-eVBKNqxH1vtOrh5wSF9Ffp47kpkI6uLCsK8US6y2I9w0P0bxFUgnJGxMOTN_fwJf-b9TsoLWwmCOyzt-IDYCZGkx04laM75MYPiGkpDJLCMinCRo2KSdDKlXsVzvnxdw']
-        ];
+        $excursions = $excursionRepository->findLatestActive(4);
 
         $steps = [
             ['num' => 1, 'title' => 'home.how.step1_title', 'desc' => 'home.how.step1_desc', 'check' => 'Comparateur transparent'],

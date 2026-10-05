@@ -25,7 +25,7 @@ class DestinationTranslationType extends AbstractType
                 ->add('name', TextType::class, [
                     'label' => 'Nom',
                     'attr' => ['class' => 'form-control'],
-                    'required' => $isFrench,
+                    'required' => false,
                     'constraints' => $isFrench ? [
                         new Assert\NotBlank(['message' => 'Le nom est obligatoire en français.']),
                         new Assert\Length(['min' => 2, 'max' => 255]),

@@ -26,7 +26,7 @@ class ExcursionTranslationType extends AbstractType
                 ->add('title', TextType::class, [
                     'label' => 'Titre',
                     'attr' => ['class' => 'form-control'],
-                    'required' => $isFrench,
+                    'required' => false,
                     'constraints' => $isFrench ? [
                         new Assert\NotBlank(['message' => 'Le titre est obligatoire en français.']),
                         new Assert\Length(['min' => 2, 'max' => 255]),
@@ -40,7 +40,7 @@ class ExcursionTranslationType extends AbstractType
                 ->add('description', TextareaType::class, [
                     'label' => 'Description',
                     'attr' => ['class' => 'form-control', 'rows' => 6],
-                    'required' => $isFrench,
+                    'required' => false,
                     'constraints' => $isFrench ? [
                         new Assert\NotBlank(['message' => 'La description est obligatoire en français.']),
                     ] : [],

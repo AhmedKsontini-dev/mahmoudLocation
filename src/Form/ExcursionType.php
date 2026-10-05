@@ -108,8 +108,8 @@ class ExcursionType extends AbstractType
             ->add('priceAdult', NumberType::class, [
                 'label' => 'Prix adulte',
                 'scale' => 2,
-                'required' => false,
-                'attr' => ['class' => 'form-control', 'step' => '0.01'],
+                'required' => true,
+                'attr' => ['class' => 'form-control', 'step' => '0.01', 'min' => '0.01'],
             ])
             ->add('priceChild', NumberType::class, [
                 'label' => 'Prix enfant',

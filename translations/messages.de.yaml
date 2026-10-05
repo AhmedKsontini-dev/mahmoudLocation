@@ -1,18 +1,18 @@
 transfer:
     form:
-        one_way: 'Einfache Fahrt'
-        return: 'Hin und zurück'
+        one_way: "Einfache Fahrt"
+        return: "Hin und zurück"
         pickup_location: Abholort
         dropoff_location: Endziel
-        pickup_date: 'Hinfahrt Datum'
-        pickup_time: 'Hinfahrt Uhrzeit'
-        return_pickup_location: 'Rückfahrt Abholort'
-        return_dropoff_location: 'Rückfahrt Ziel'
-        return_date: 'Rückfahrt Datum'
-        return_time: 'Rückfahrt Uhrzeit'
-        full_name: 'Vor- und Nachname'
+        pickup_date: "Hinfahrt Datum"
+        pickup_time: "Hinfahrt Uhrzeit"
+        return_pickup_location: "Rückfahrt Abholort"
+        return_dropoff_location: "Rückfahrt Ziel"
+        return_date: "Rückfahrt Datum"
+        return_time: "Rückfahrt Uhrzeit"
+        full_name: "Vor- und Nachname"
         email: E-Mail-Adresse
-        phone: 'Telefon / WhatsApp'
+        phone: "Telefon / WhatsApp"
         passengers: Passagiere
         luggage: Gepäck
         message: Nachricht
@@ -20,66 +20,66 @@ transfer:
         airline: Fluggesellschaft
         flight_number: Flugnummer
         optional: Optional
-        step1_title: 'Route & Fahrzeug'
-        step1_desc: 'Wählen Sie das Ziel und das ideale Fahrzeug für Ihren Transfer.'
-        step2_title: 'Passagiere & Flug'
-        step2_desc: 'Geben Sie Reisende und Ihren Flug für kostenloses Live-Tracking an.'
+        step1_title: "Route & Fahrzeug"
+        step1_desc: "Wählen Sie das Ziel und das ideale Fahrzeug für Ihren Transfer."
+        step2_title: "Passagiere & Flug"
+        step2_desc: "Geben Sie Reisende und Ihren Flug für kostenloses Live-Tracking an."
         step3_title: Passagierkontakt
-        step3_desc: 'Für sofortige Bestätigung und Fahrerkontakt.'
-        flight_tracking: 'Flugverfolgung enthalten'
-        flight_tracking_desc: 'Reiseinformationen werden in Ihrer Buchung gespeichert.'
-        contact_notice: 'Ihre Kontaktdaten werden zur Bestätigung verwendet.'
-        additional_info: 'Zusätzliche Informationen'
+        step3_desc: "Für sofortige Bestätigung und Fahrerkontakt."
+        flight_tracking: "Flugverfolgung enthalten"
+        flight_tracking_desc: "Reiseinformationen werden in Ihrer Buchung gespeichert."
+        contact_notice: "Ihre Kontaktdaten werden zur Bestätigung verwendet."
+        additional_info: "Zusätzliche Informationen"
         summary_title: Zusammenfassung
         instant_quote: Sofortangebot
         summary_transfer: Transfer
         summary_type: Typ
         summary_passenger: Passagier
-        summary_name: 'Vor- und Nachname:'
-        summary_email: 'E-Mail:'
-        summary_phone: 'Telefon:'
+        summary_name: "Vor- und Nachname:"
+        summary_email: "E-Mail:"
+        summary_phone: "Telefon:"
         summary_outbound: Hin
         summary_return: Zurück
         summary_pickup: Abholung
         summary_destination: Ziel
-        summary_date: 'Datum:'
-        summary_time: 'Uhrzeit:'
-        summary_vehicle: 'Fahrzeug:'
-        summary_passengers: 'Passagiere & Gepäck'
-        summary_passengers_label: 'Passagiere:'
-        summary_luggage: 'Koffer:'
+        summary_date: "Datum:"
+        summary_time: "Uhrzeit:"
+        summary_vehicle: "Fahrzeug:"
+        summary_passengers: "Passagiere & Gepäck"
+        summary_passengers_label: "Passagiere:"
+        summary_luggage: "Koffer:"
         summary_flight: Flug
-        summary_airline: 'Fluggesellschaft:'
-        summary_flight_number: 'Flugnummer:'
+        summary_airline: "Fluggesellschaft:"
+        summary_flight_number: "Flugnummer:"
         total_due: Gesamtbetrag
-        pay_driver: 'Bezahlen beim Fahrer'
-        conversion_included: 'Umrechnung enthalten'
-        accept_conditions: 'Ich akzeptiere die Bedingungen (kostenlose Stornierung bis 12h vor Reise).'
-        confirm_booking: 'Meine Buchung bestätigen'
-        no_payment_required: 'Heute keine Onlinezahlung erforderlich'
-        support_request: 'Besondere Anfrage?'
-        support_available: 'Callcenter rund um die Uhr'
+        pay_driver: "Bezahlen beim Fahrer"
+        conversion_included: "Umrechnung enthalten"
+        accept_conditions: "Ich akzeptiere die Bedingungen (kostenlose Stornierung bis 12h vor Reise)."
+        confirm_booking: "Meine Buchung bestätigen"
+        no_payment_required: "Heute keine Onlinezahlung erforderlich"
+        support_request: "Besondere Anfrage?"
+        support_available: "Callcenter rund um die Uhr"
         call: Anrufen
-        flight_tracking_feature: 'Kostenlose Flugverfolgung'
-        flight_tracking_feature_desc: 'Zeitpläne automatisch aktualisiert.'
-        payment_feature: 'Zahlung vor Ort'
-        payment_feature_desc: 'Direkt beim Fahrer bezahlen.'
-        cancellation_feature: 'Flexible Stornierung'
-        cancellation_feature_desc: 'Kostenlos bis 12h vorher.'
-        modal_title: 'Buchung Aufgezeichnet!'
-        modal_desc: 'Ihre Bestätigung wurde vorbereitet.'
+        flight_tracking_feature: "Kostenlose Flugverfolgung"
+        flight_tracking_feature_desc: "Zeitpläne automatisch aktualisiert."
+        payment_feature: "Zahlung vor Ort"
+        payment_feature_desc: "Direkt beim Fahrer bezahlen."
+        cancellation_feature: "Flexible Stornierung"
+        cancellation_feature_desc: "Kostenlos bis 12h vorher."
+        modal_title: "Buchung Aufgezeichnet!"
+        modal_desc: "Ihre Bestätigung wurde vorbereitet."
         modal_trip: Reise
         modal_total: Gesamtbetrag
-        modal_close: 'Beenden und zur Website zurückkehren'
+        modal_close: "Beenden und zur Website zurückkehren"
         breadcrumb_home: Startseite
         breadcrumb_transfers: Transfers
-        breadcrumb_direct: 'Direkte Buchung'
-        page_title: 'Buchen Sie Ihren privaten Shuttle'
-        direct_payment: 'Direkte Zahlung an Fahrer'
-        free_cancellation: 'Kostenlose Stornierung bis 12h'
-        flight_included: 'Flugverfolgung enthalten'
-        fixed_rates: 'Feste garantierte Preise • Keine versteckten Gebühren'
-        success_message: 'Ihre Buchungsanfrage wurde aufgezeichnet.'
+        breadcrumb_direct: "Direkte Buchung"
+        page_title: "Buchen Sie Ihren privaten Shuttle"
+        direct_payment: "Direkte Zahlung an Fahrer"
+        free_cancellation: "Kostenlose Stornierung bis 12h"
+        flight_included: "Flugverfolgung enthalten"
+        fixed_rates: "Feste garantierte Preise • Keine versteckten Gebühren"
+        success_message: "Ihre Buchungsanfrage wurde aufgezeichnet."
     detail:
         title: Transferdetails
         departure: Abfahrtsort
@@ -88,276 +88,281 @@ transfer:
         price: Preis
         passengers: Passagiere
         luggage: Gepäck
-        book_now: 'Jetzt buchen'
+        book_now: "Jetzt buchen"
         transfer_info: Transferinformationen
+destination:
+    excursion_count:
+        one: "%count% Ausflug"
+        other: "%count% Ausflüge"
+
 home:
-    guarantee: 'Offizielle Tourismuslizenz • Keine Versteckten Kosten • Flexible Stornierung'
-    currency_label: 'Währung:'
+    guarantee: "Offizielle Tourismuslizenz • Keine Versteckten Kosten • Flexible Stornierung"
+    currency_label: "Währung:"
     hero:
-        pill: 'Executive Flotte & VIP-Mobilität Tunesien 2026'
-        title: 'Entdecken Sie Tunesien, mühelos.'
-        subtitle: 'Mietwagen, private Flughafentransfers und maßgeschneiderte Ausflüge in ganz Tunesien. Zertifizierte Zuverlässigkeit, Festpreise und 24/7-Betreuung.'
-        btn_reserve_now: 'Jetzt Buchen'
-        btn_discover_services: 'Dienste Entdecken'
+        pill: "Executive Flotte & VIP-Mobilität Tunesien 2026"
+        title: "Entdecken Sie Tunesien, mühelos."
+        subtitle: "Private Flughafentransfers und maßgeschneiderte Ausflüge in ganz Tunesien. Zertifizierte Zuverlässigkeit, Festpreise und 24/7-Betreuung."
+        btn_reserve_now: "Jetzt Buchen"
+        btn_discover_services: "Dienste Entdecken"
     booking:
-        tab_transfer: 'Privater Transfer'
+        tab_transfer: "Privater Transfer"
         tab_rental: Mietwagen
-        tab_excursion: 'Touren & Ausflüge'
+        tab_excursion: "Touren & Ausflüge"
         lbl_departure: Abholort
         lbl_destination: Zielort
-        lbl_date: 'Datum & Uhrzeit'
+        lbl_date: "Datum & Uhrzeit"
         lbl_passengers: Passagiere
-        btn_search_transfer: 'Transfer Suchen'
-        lbl_pickup: 'Mietwagen Abholort'
+        btn_search_transfer: "Transfer Suchen"
+        lbl_pickup: "Mietwagen Abholort"
         lbl_pickup_date: Startdatum
         lbl_return_date: Rückgabedatum
-        btn_search_cars: 'Fahrzeuge Finden'
-        lbl_excursion_choice: 'Tour / Thema'
+        btn_search_cars: "Fahrzeuge Finden"
+        lbl_excursion_choice: "Tour / Thema"
         lbl_excursion_date: Wunschdatum
         lbl_participants: Reisende
-        btn_search_excursions: 'Tour Entdecken'
+        btn_search_excursions: "Tour Entdecken"
     services:
-        pill: 'Umfassende Mobilität'
-        title: 'Unsere Dienste'
-        sub: 'Nahtlose, sichere und maßgeschneiderte Transportlösungen für ganz Tunesien.'
+        pill: "Umfassende Mobilität"
+        title: "Unsere Dienste"
+        sub: "Nahtlose, sichere und maßgeschneiderte Transportlösungen für ganz Tunesien."
         rental_title: Rundreisen
-        rental_desc: 'Mieten Sie ein sauberes, modernes Fahrzeug, um Tunesien in völliger Freiheit zu bereisen. Neue Flotte, unbegrenzte Kilometer, Klimaanlage und 24/7-Pannenhilfe.'
-        btn_view_cars: 'Autos Ansehen'
-        transfer_title: 'Private Transfers'
-        transfer_desc: 'Genießen Sie komfortable Fahrten von Tür zu Tür zwischen Flughäfen, Resorts und historischen Städten. Pünktliche Chauffeure mit Echtzeit-Flugverfolgung.'
-        btn_view_transfers: 'Transfers Ansehen'
-        excursions_title: 'Maßgeschneiderte Ausflüge'
-        excursions_desc: 'Erleben Sie die atemberaubenden Sehenswürdigkeiten Tunesiens: Saharadünen, das römische Amphitheater von El Jem, Bergoasen und weiße Küstendörfer.'
-        btn_view_excursions: 'Touren Ansehen'
+        rental_desc: "Mieten Sie ein sauberes, modernes Fahrzeug, um Tunesien in völliger Freiheit zu bereisen. Neue Flotte, unbegrenzte Kilometer, Klimaanlage und 24/7-Pannenhilfe."
+        btn_view_cars: "Autos Ansehen"
+        transfer_title: "Private Transfers"
+        transfer_desc: "Genießen Sie komfortable Fahrten von Tür zu Tür zwischen Flughäfen, Resorts und historischen Städten. Pünktliche Chauffeure mit Echtzeit-Flugverfolgung."
+        btn_view_transfers: "Transfers Ansehen"
+        excursions_title: "Ausflüge"
+        excursions_desc: "Erleben Sie die atemberaubenden Sehenswürdigkeiten Tunesiens: Saharadünen, das römische Amphitheater von El Jem, Bergoasen und weiße Küstendörfer."
+        btn_view_excursions: "Touren Ansehen"
     why:
-        title: 'Warum Uns Wählen?'
-        item1_title: 'Moderne & Saubere Fahrzeuge'
-        item1_desc: 'Flotte jünger als 2 Jahre, nach jeder Buchung gründlich inspiziert und desinfiziert.'
-        item2_title: 'Pünktliche & Höfliche Fahrer'
-        item2_desc: 'Persönlicher Empfang mit Namensschild direkt nach der Zollkontrolle. Englisch und französisch sprechende Fahrer.'
-        item3_title: 'Tunesienweite Touren'
-        item3_desc: 'Zertifizierte Reiseleiter, geräumige klimatisierte Vans und flexible Reiserouten.'
-        item4_title: 'Einfache & Transparente Buchung'
-        item4_desc: 'Sofortige Bestätigung, keine versteckten Kosten bei der Ankunft und sichere Zahlungsoptionen.'
-        btn_learn_fleet: 'Erfahren Sie mehr über unsere Flotte'
+        title: "Warum Uns Wählen?"
+        rating: "Bewertung 4.9/5 von über 2.400 Reisenden"
+        recommended: "Empfohlen von 98,4% unserer internationalen Kunden im Jahr 2026"
+        item2_title: "Pünktliche & Höfliche Fahrer"
+        item2_desc: "Ein professioneller Fahrer wird Sie am Flughafen mit einem Schild mit Ihrem Namen erwarten, um Sie direkt bei der Ankunft zu begrüßen."
+        item3_title: "Tunesienweite Touren"
+        item3_desc: "Entdecken Sie Tunesien mit unseren sorgfältig geplanten Touren oder stellen Sie Ihr eigenes Erlebnis mit einem personalisierten Ausflug nach Ihren Wünschen zusammen."
+        item4_title: "Einfache & Transparente Buchung"
+        item4_desc: "Sofortige Bestätigung, keine versteckten Kosten bei der Ankunft und sichere Bargeldzahlung vor Ort."
     fleet:
-        pill: 'Flotte 2026'
-        title: 'Beliebte Mietwagen'
-        subtitle: 'Vom sparsamen Stadtauto bis zum 4x4-SUV für Panoramafahrten und Wüstenpisten.'
+        pill: "Flotte 2026"
+        title: "Beliebte Mietwagen"
+        subtitle: "Vom sparsamen Stadtauto bis zum 4x4-SUV für Panoramafahrten und Wüstenpisten."
     transfers:
-        pill: 'Feste & Transparente Preise'
-        title: 'Beliebte Flughafentransfers'
-        sub: 'Garantierte Festpreise inkl. aller Autobahngebühren. Keine Zusatzkosten für Flugverspätungen.'
+        pill: "Feste & Transparente Preise"
+        title: "Beliebte Flughafentransfers"
+        sub: "Garantierte Festpreise inkl. aller Autobahngebühren. Keine Zusatzkosten für Flugverspätungen."
     excursions:
-        pill: 'Private Tagesausflüge'
-        title: 'Entdecken Sie Tunesien'
-        sub: 'Ganztägige Rundreisen und maßgeschneiderte Wüstenexpeditionen mit Abfahrt direkt von Ihrem Hotel.'
+        pill: "Private Tagesausflüge"
+        title: "Entdecken Sie Tunesien"
+        sub: "Ganztägige Rundreisen und maßgeschneiderte Wüstenexpeditionen mit Abfahrt direkt von Ihrem Hotel."
+        btn_view_all: "Alle Ausflüge und Themenrundreisen ansehen"
     how:
-        pill: 'Einfach & Schnell'
-        title: 'Wie Es Funktioniert'
-        sub: 'Ihre bestätigte Buchung in 3 einfachen Schritten ohne komplizierten Papierkram.'
-        step1_title: '1. Wählen Sie Ihren Service'
-        step1_desc: 'Wählen Sie zwischen zuverlässigem Mietwagen, schnellem Flughafentransfer oder privaten Sightseeing-Touren.'
-        step2_title: '2. Online Buchen'
-        step2_desc: 'Wählen Sie Ihre Daten, den Abholort und kostenlose Extras. Sie erhalten sofortige Bestätigung via WhatsApp und E-Mail.'
-        step3_title: '3. Genießen Sie Ihren Aufenthalt'
-        step3_desc: 'Ihr Chauffeur begrüßt Sie bei der Ankunft oder die Schlüssel werden in unter 5 Minuten übergeben. Wir kümmern uns um alles.'
+        pill: "Einfach & Schnell"
+        title: "Wie Es Funktioniert"
+        sub: "Ihre bestätigte Buchung in 3 einfachen Schritten ohne komplizierten Papierkram."
+        step1_title: "1. Wählen Sie Ihren Service"
+        step1_desc: "Wählen Sie zwischen zuverlässigem Mietwagen, schnellem Flughafentransfer oder privaten Sightseeing-Touren."
+        step2_title: "2. Online Buchen"
+        step2_desc: "Wählen Sie Ihre Daten, den Abholort und kostenlose Extras. Sie erhalten sofortige Bestätigung via WhatsApp und E-Mail."
+        step3_title: "3. Genießen Sie Ihren Aufenthalt"
+        step3_desc: "Ihr Chauffeur begrüßt Sie bei der Ankunft oder die Schlüssel werden in unter 5 Minuten übergeben. Wir kümmern uns um alles."
     dest:
-        pill: 'Landesweite Abdeckung'
+        pill: "Landesweite Abdeckung"
         title: Top-Reiseziele
-        sub: 'Permanente Standorte und Fahrer in allen wichtigen Geschäftszentren und Küstenresorts.'
+        sub: "Permanente Standorte und Fahrer in allen wichtigen Geschäftszentren und Küstenresorts."
     reviews:
-        title: 'Was Unsere Gäste Sagen'
-        sub: 'Verifizierte Bewertungen von internationalen Reisenden und Urlaubern.'
+        title: "Was Unsere Gäste Sagen"
+        sub: "Verifizierte Bewertungen von internationalen Reisenden und Urlaubern."
     cta:
-        title: 'Bereit, Tunesien zu entdecken?'
-        sub: 'Buchen Sie Ihren Mietwagen, privaten Flughafentransfer oder Tagesausflug in Sekundenschnelle. Kostenlose Stornierung bis 24 Stunden vorher.'
-        btn_cta_book: 'Jetzt Buchen'
-        btn_cta_whatsapp: '24/7 WhatsApp Chat'
+        title: "Bereit, Tunesien zu entdecken?"
+        sub: "Buchen Sie Ihren Mietwagen, privaten Flughafentransfer oder Tagesausflug in Sekundenschnelle. Kostenlose Stornierung bis 24 Stunden vorher."
+        btn_cta_book: "Jetzt Buchen"
+        btn_cta_whatsapp: "24/7 WhatsApp Chat"
 navbar:
     home: Startseite
     rental: Mietwagen
     transfers: Transfers
     excursions: Ausflüge
-    about: 'Über Uns'
+    about: "Über Uns"
     contact: Kontakt
 footer:
-    brand: 'Tunisia Travel'
-    description: 'Executive Mobilität, Premium-Mietwagen und sichere private Transfers in Tunesien. Nationale Lizenz & ISO-zertifizierter Transport.'
-    license: 'Lizenz A n°7482'
-    insurance: 'AXA Pro Versicherung'
+    brand: "Tunisia Travel"
+    description: "Executive Mobilität, Premium-Mietwagen und sichere private Transfers in Tunesien. Nationale Lizenz & ISO-zertifizierter Transport."
+    license: "Lizenz A n°7482"
+    insurance: "AXA Pro Versicherung"
     services_title: Dienste
     service_rental: Mietwagen
-    service_transfers: 'Flughafen- & Stadttransfers'
-    service_excursions: 'Private Ausflüge & Touren'
+    service_transfers: "Flughafen- & Stadttransfers"
+    service_excursions: "Private Ausflüge & Touren"
     service_vip: VIP-Chauffeur-Service
-    service_corp: 'Corporate & Event Mobilität'
+    service_corp: "Corporate & Event Mobilität"
     dest_title: Reiseziele
-    dest_tunis: 'Tunis & Karthago'
-    dest_sousse: 'Sousse & Port El Kantaoui'
-    dest_hammamet: 'Hammamet & Nabeul'
-    dest_monastir: 'Monastir & Enfidha'
-    dest_djerba: 'Insel Djerba'
-    dest_tozeur: 'Tozeur & Tiefer Süden'
-    support_title: '24/7 Support'
+    dest_tunis: "Tunis & Karthago"
+    dest_sousse: "Sousse & Port El Kantaoui"
+    dest_hammamet: "Hammamet & Nabeul"
+    dest_monastir: "Monastir & Enfidha"
+    dest_djerba: "Insel Djerba"
+    dest_tozeur: "Tozeur & Tiefer Süden"
+    support_title: "24/7 Support"
     support_callcenter: Callcenter
-    support_whatsapp: 'VIP Direct WhatsApp'
+    support_whatsapp: "VIP Direct WhatsApp"
     support_client: Kundenservice
     support_hq: Hauptsitz
-    support_address: 'Avenue Habib Bourguiba, Tunis'
-    copyright: 'Copyright © 2026 Tunisia Travel & Mobility. Alle Rechte vorbehalten.'
+    support_address: "Avenue Habib Bourguiba, Tunis"
+    copyright: "Copyright © 2026 Tunisia Travel & Mobility. Alle Rechte vorbehalten."
     legal: Impressum
     cgv: AGB
     privacy: Datenschutz
 auth:
-    account: 'Mein Konto'
+    account: "Mein Konto"
     connect: Anmelden
-    open_login: 'Anmeldung öffnen'
+    open_login: "Anmeldung öffnen"
     close: Schließen
-    welcome: 'Willkommen zurück'
-    login_title: 'In Ihrem Konto anmelden'
-    login_subtitle: 'Sehen Sie Ihre Buchungen ein und planen Sie Ihre nächste Reise.'
+    welcome: "Willkommen zurück"
+    login_title: "In Ihrem Konto anmelden"
+    login_subtitle: "Sehen Sie Ihre Buchungen ein und planen Sie Ihre nächste Reise."
     email: E-Mail-Adresse
     password: Passwort
-    remember_me: 'Angemeldet bleiben'
+    remember_me: "Angemeldet bleiben"
     login_submit: Anmelden
-    no_account: 'Noch kein Konto?'
-    register_link: 'Jetzt registrieren'
+    no_account: "Noch kein Konto?"
+    register_link: "Jetzt registrieren"
     join: Willkommen
-    register_title: 'Konto erstellen'
-    register_subtitle: 'Registrieren Sie sich, um Ihre Buchungen einfach zu verwalten.'
-    accept_terms: 'Ich akzeptiere die Nutzungsbedingungen.'
-    register_submit: 'Konto erstellen'
-    has_account: 'Bereits ein Konto?'
+    register_title: "Konto erstellen"
+    register_subtitle: "Registrieren Sie sich, um Ihre Buchungen einfach zu verwalten."
+    accept_terms: "Ich akzeptiere die Nutzungsbedingungen."
+    register_submit: "Konto erstellen"
+    has_account: "Bereits ein Konto?"
     login_link: Anmelden
-    profile: 'Mein Profil'
+    profile: "Mein Profil"
     logout: Abmelden
-    registration_success: 'Ihr Konto wurde erfolgreich erstellt. Melden Sie sich jetzt an.'
-    registration_error: 'Das Konto konnte nicht erstellt werden. Bitte überprüfen Sie Ihre Eingaben.'
-    login_error: 'Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Daten.'
-    account_not_found: 'Kein Konto entspricht dieser E-Mail-Adresse.'
-    invalid_password: 'Falsches Passwort.'
+    registration_success: "Ihr Konto wurde erfolgreich erstellt. Melden Sie sich jetzt an."
+    registration_error: "Das Konto konnte nicht erstellt werden. Bitte überprüfen Sie Ihre Eingaben."
+    login_error: "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Daten."
+    account_not_found: "Kein Konto entspricht dieser E-Mail-Adresse."
+    invalid_password: "Falsches Passwort."
 contact:
     page_title: Kontakt
     breadcrumb_home: Startseite
-    breadcrumb_contact: 'Kontakt & Agenturen'
+    breadcrumb_contact: "Kontakt & Agenturen"
     hero:
-        badge: 'Kundensupport & Nationales Netzwerk'
-        title: 'Kontaktieren Sie Unsere Teams & Finden Sie Ihre Agentur in Tunesien'
-        subtitle: 'Haben Sie eine Frage zu einer Buchung, dringenden Flughafentransfer oder privaten Tour? Unsere Berater in Tunesien sind 24/7 mit mediterraner Gastfreundschaft verfügbar.'
+        badge: "Kundensupport & Nationales Netzwerk"
+        title: "Kontaktieren Sie Unsere Teams & Finden Sie Ihre Agentur in Tunesien"
+        subtitle: "Haben Sie eine Frage zu einer Buchung, dringenden Flughafentransfer oder privaten Tour? Unsere Berater in Tunesien sind 24/7 mit mediterraner Gastfreundschaft verfügbar."
         response_time: 'Durchschnittliche Antwortzeit: <strong class="text-primary font-semibold">&lt; 15 min</strong>'
-        feature1_title: 'Garantierte Antwort &lt; 15 min'
-        feature1_desc: 'Priorisierte Bearbeitung Ihrer Anfrage'
-        feature2_title: '24/7 Telefon & WhatsApp Unterstützung'
-        feature2_desc: 'Zweisprachiges Personal Französisch & Englisch'
-        feature3_title: 'Schalter in allen Flughäfen'
-        feature3_desc: 'Tunis, Enfidha, Djerba & Monastir'
+        feature1_title: "Garantierte Antwort &lt; 15 min"
+        feature1_desc: "Priorisierte Bearbeitung Ihrer Anfrage"
+        feature2_title: "24/7 Telefon & WhatsApp Unterstützung"
+        feature2_desc: "Zweisprachiges Personal Französisch & Englisch"
+        feature3_title: "Schalter in allen Flughäfen"
+        feature3_desc: "Tunis, Enfidha, Djerba & Monastir"
     form:
-        badge: 'Express Formular'
-        title: 'Senden Sie uns Ihre Nachricht'
-        subtitle: 'Wählen Sie die Art Ihrer Anfrage für die Weiterleitung an die zuständige Abteilung.'
-        tab_general: 'Allgemeine Anfrage'
-        tab_reservation: 'Laufende Buchung'
-        tab_quote: 'Gruppenangebot / Maßgeschneidert'
+        badge: "Express Formular"
+        title: "Senden Sie uns Ihre Nachricht"
+        subtitle: "Wählen Sie die Art Ihrer Anfrage für die Weiterleitung an die zuständige Abteilung."
+        tab_general: "Allgemeine Anfrage"
+        tab_reservation: "Laufende Buchung"
+        tab_quote: "Gruppenangebot / Maßgeschneidert"
         tab_partner: Partnerschaft
         first_name: Vorname
-        first_name_placeholder: 'Bsp: Mohamed'
+        first_name_placeholder: "Bsp: Mohamed"
         last_name: Nachname
-        last_name_placeholder: 'Bsp: Trabelsi'
+        last_name_placeholder: "Bsp: Trabelsi"
         email: E-Mail-Adresse
         email_placeholder: kontakt@domain.com
-        phone: 'Telefon / WhatsApp'
-        phone_placeholder: '98 123 456'
-        service_category: 'Betroffener Service'
+        phone: "Telefon / WhatsApp"
+        phone_placeholder: "98 123 456"
+        service_category: "Betroffener Service"
         service_location: Fahrzeugvermietung
-        service_transfer: 'VIP Flughafentransfer'
-        service_excursion: 'Sahara-Exkursion / Privater Tour'
-        service_group: 'Event-Transport & Logistik'
-        service_other: 'Andere Anfrage'
+        service_transfer: "VIP Flughafentransfer"
+        service_excursion: "Sahara-Exkursion / Privater Tour"
+        service_group: "Event-Transport & Logistik"
+        service_other: "Andere Anfrage"
         reservation_number: Buchungsnummer
-        reservation_number_placeholder: 'Bsp: TV-2025-9481'
+        reservation_number_placeholder: "Bsp: TV-2025-9481"
         reservation_optional: Optional
-        subject: 'Betreff der Nachricht'
-        subject_placeholder: 'Bsp: Ankunftszeit-Änderung oder Kindersitz-Anfrage'
+        subject: "Betreff der Nachricht"
+        subject_placeholder: "Bsp: Ankunftszeit-Änderung oder Kindersitz-Anfrage"
         message: Anfragedetails
-        message_placeholder: 'Geben Sie Ihre Anfrage, geplante Termine, Anzahl der Passagiere oder besondere Anweisungen an...'
-        whatsapp_consent: 'Ich stimme zu, primär per WhatsApp für sofortiges Tracking meiner Buchung kontaktiert zu werden.'
-        submit: 'Senden Sie meine sichere Nachricht'
-        security_note: 'Ihre Daten sind durch SSL-Verschlüsselung geschützt. Keine unangeforderte kommerzielle Nutzung.'
-        first_name_required: 'Vorname ist erforderlich'
-        last_name_required: 'Nachname ist erforderlich'
-        email_required: 'E-Mail ist erforderlich'
-        email_invalid: 'E-Mail ist ungültig'
-        phone_required: 'Telefon ist erforderlich'
-        service_category_required: 'Service ist erforderlich'
-        subject_required: 'Betreff ist erforderlich'
-        message_required: 'Nachricht ist erforderlich'
-        success_message: 'Ihre Nachricht wurde erfolgreich gesendet. Wir werden so schnell wie möglich antworten.'
-        error_message: 'Beim Senden der Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.'
-        request_type: 'Art der Anfrage'
-        request_type_required: 'Bitte wählen Sie eine Art der Anfrage aus.'
+        message_placeholder: "Geben Sie Ihre Anfrage, geplante Termine, Anzahl der Passagiere oder besondere Anweisungen an..."
+        whatsapp_consent: "Ich stimme zu, primär per WhatsApp für sofortiges Tracking meiner Buchung kontaktiert zu werden."
+        submit: "Senden Sie meine sichere Nachricht"
+        security_note: "Ihre Daten sind durch SSL-Verschlüsselung geschützt. Keine unangeforderte kommerzielle Nutzung."
+        first_name_required: "Vorname ist erforderlich"
+        last_name_required: "Nachname ist erforderlich"
+        email_required: "E-Mail ist erforderlich"
+        email_invalid: "E-Mail ist ungültig"
+        phone_required: "Telefon ist erforderlich"
+        service_category_required: "Service ist erforderlich"
+        subject_required: "Betreff ist erforderlich"
+        message_required: "Nachricht ist erforderlich"
+        success_message: "Ihre Nachricht wurde erfolgreich gesendet. Wir werden so schnell wie möglich antworten."
+        error_message: "Beim Senden der Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+        request_type: "Art der Anfrage"
+        request_type_required: "Bitte wählen Sie eine Art der Anfrage aus."
         type_information: Informationsanfrage
-        type_reservation: 'Aktuelle Buchung'
-        type_group_quote: 'Gruppenangebot / maßgeschneidert'
+        type_reservation: "Aktuelle Buchung"
+        type_group_quote: "Gruppenangebot / maßgeschneidert"
         type_partnership: Partnerschaft
     urgent:
-        badge: 'Prioritätskanal 24/7'
-        title: 'Benötigen Sie sofortige Hilfe?'
-        subtitle: 'Unerwartete Flugverspätung, Fahrerlokalisierung am Terminal oder letzte Minute Änderung? Unsere Bodenteams reagieren ohne Verzögerung.'
-        phone_label: '24/7 Notfallleitung'
-        whatsapp_label: 'Direkter WhatsApp Chat'
-        whatsapp_status: 'Derzeit online • Antwort ~2 min'
-        support_general: 'Allgemeiner Support'
+        badge: "Prioritätskanal 24/7"
+        title: "Benötigen Sie sofortige Hilfe?"
+        subtitle: "Unerwartete Flugverspätung, Fahrerlokalisierung am Terminal oder letzte Minute Änderung? Unsere Bodenteams reagieren ohne Verzögerung."
+        phone_label: "24/7 Notfallleitung"
+        whatsapp_label: "Direkter WhatsApp Chat"
+        whatsapp_status: "Derzeit online • Antwort ~2 min"
+        support_general: "Allgemeiner Support"
         support_airport: Flughafen-Zelle
     agent:
-        name: 'Amina Ben Salem'
+        name: "Amina Ben Salem"
         role: Kundenbeziehungsmanagerin
-        verified_title: 'Zertifizierte Beraterin'
-        quote: '« Wir koordinieren unsere Fahrer und Agenturen in Echtzeit ab Flugbestätigung. Sie werden nie allein am Ziel sein. »'
+        verified_title: "Zertifizierte Beraterin"
+        quote: "« Wir koordinieren unsere Fahrer und Agenturen in Echtzeit ab Flugbestätigung. Sie werden nie allein am Ziel sein. »"
     vip:
-        title: 'Personalisierter VIP Empfang'
-        desc: 'Für jeden Flughafentransfer wartet Ihr Fahrer am Zollausgang mit einem Schild mit Ihrem Namen oder Ihrem Firmennamen.'
+        title: "Personalisierter VIP Empfang"
+        desc: "Für jeden Flughafentransfer wartet Ihr Fahrer am Zollausgang mit einem Schild mit Ihrem Namen oder Ihrem Firmennamen."
     agencies:
-        badge: 'Territoriale Abdeckung'
-        title: 'Unsere Agenturen & Flughafenschalter'
-        subtitle: 'Finden Sie unsere Agenten an den wichtigsten Flughafen-Hubs und im Geschäftszentrum von Tunis für sofortige Schlüsselübergabe oder Tour-Abfahrt.'
-        count: '4 Schlüssel-Agenturen in Tunesien'
-        maps: 'Google Maps Anweisungen'
-        tunis_title: 'Flughafen Tunis-Karthago (TUN)'
-        tunis_location: 'Terminal 1 • Ankunftshalle Tor 4'
-        tunis_address: 'Erdgeschoss öffentlich, gegenüber internationalen Vermietern'
-        tunis_schedule: 'Kontinueller Non-Stop-Service'
-        tunis_hours: 'Geöffnet 24/24 • 7/7'
-        enfidha_title: 'Flughafen Enfidha-Hammamet (NBE)'
-        enfidha_location: 'Hauptsaal • Gepäckausgang'
-        enfidha_address: 'Offizieller Schalter N° 12 gegenüber Gepäckband 3'
-        enfidha_schedule: 'Service synchronisiert mit Charterflügen'
-        enfidha_hours: 'Geöffnet 24/24 • 7/7'
-        djerba_title: 'Flughafen Djerba-Zarzis (DJE)'
-        djerba_location: 'Vermieter-Zone • Internationaler Terminal'
-        djerba_address: 'Außenfläche Parkplatz professionelle Vermieter'
-        djerba_schedule: 'Jeden Tag ohne Unterbrechung'
-        djerba_hours: '06:00 – 00:00'
-        central_title: 'Zentralagentur • Berges du Lac'
-        central_location: 'Boulevard du Lac 2, Tunis'
-        central_address: 'Carthage Business Center, 1. Stock'
-        central_schedule: 'Mo - Sa: 08:00 - 19:00 (Geschlossen Sonntag)'
-        central_hours: 'Hauptsitz • 08:00 – 19:00'
+        badge: "Territoriale Abdeckung"
+        title: "Unsere Agenturen & Flughafenschalter"
+        subtitle: "Finden Sie unsere Agenten an den wichtigsten Flughafen-Hubs und im Geschäftszentrum von Tunis für sofortige Schlüsselübergabe oder Tour-Abfahrt."
+        count: "4 Schlüssel-Agenturen in Tunesien"
+        maps: "Google Maps Anweisungen"
+        tunis_title: "Flughafen Tunis-Karthago (TUN)"
+        tunis_location: "Terminal 1 • Ankunftshalle Tor 4"
+        tunis_address: "Erdgeschoss öffentlich, gegenüber internationalen Vermietern"
+        tunis_schedule: "Kontinueller Non-Stop-Service"
+        tunis_hours: "Geöffnet 24/24 • 7/7"
+        enfidha_title: "Flughafen Enfidha-Hammamet (NBE)"
+        enfidha_location: "Hauptsaal • Gepäckausgang"
+        enfidha_address: "Offizieller Schalter N° 12 gegenüber Gepäckband 3"
+        enfidha_schedule: "Service synchronisiert mit Charterflügen"
+        enfidha_hours: "Geöffnet 24/24 • 7/7"
+        djerba_title: "Flughafen Djerba-Zarzis (DJE)"
+        djerba_location: "Vermieter-Zone • Internationaler Terminal"
+        djerba_address: "Außenfläche Parkplatz professionelle Vermieter"
+        djerba_schedule: "Jeden Tag ohne Unterbrechung"
+        djerba_hours: "06:00 – 00:00"
+        central_title: "Zentralagentur • Berges du Lac"
+        central_location: "Boulevard du Lac 2, Tunis"
+        central_address: "Carthage Business Center, 1. Stock"
+        central_schedule: "Mo - Sa: 08:00 - 19:00 (Geschlossen Sonntag)"
+        central_hours: "Hauptsitz • 08:00 – 19:00"
     email:
-        title: 'Neue Kontakt Nachricht'
-        new_message: 'Sie haben eine neue Kontakt Nachricht über die Website erhalten.'
+        title: "Neue Kontakt Nachricht"
+        new_message: "Sie haben eine neue Kontakt Nachricht über die Website erhalten."
         name: Name
         email: E-Mail
         phone: Telefon
         subject: Betreff
         message: Nachricht
-        footer: 'Diese E-Mail wurde automatisch vom Kontaktformular der Tunisia Travel Website gesendet.'
-        new_message_title: 'Neue Kontakt-Nachricht'
+        footer: "Diese E-Mail wurde automatisch vom Kontaktformular der Tunisia Travel Website gesendet."
+        new_message_title: "Neue Kontakt-Nachricht"
         visitor_info: Besucherinformationen
         send_date: Sendedatum
         message_details: Nachrichtendetails
-        footer_auto: 'Diese Nachricht wurde automatisch über das Kontaktformular der LocationMahmoud-Website gesendet.'
-        rights: 'Alle Rechte vorbehalten.'
-    invalid_email: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
-    email_required: 'Die E-Mail-Adresse ist erforderlich.'
-    password_required: 'Das Passwort ist erforderlich.'
+        footer_auto: "Diese Nachricht wurde automatisch über das Kontaktformular der LocationMahmoud-Website gesendet."
+        rights: "Alle Rechte vorbehalten."
+    invalid_email: "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+    email_required: "Die E-Mail-Adresse ist erforderlich."
+    password_required: "Das Passwort ist erforderlich."

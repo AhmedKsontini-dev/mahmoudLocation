@@ -26,12 +26,7 @@
                     <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'it', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'it'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'it'}) : path('app_home_locale', {'_locale': 'it'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'it' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
                         <span class="">🇮🇹</span><span class="">Italiano</span>
                     </a>
-                    <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'es', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'es'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'es'}) : path('app_home_locale', {'_locale': 'es'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'es' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
-                        <span class="">🇪🇸</span><span class="">Español</span>
-                    </a>
-                    <a href="{{ app.request.attributes.get('_route') starts with 'app_transfert_show' ? path('app_transfert_show_locale', {'_locale': 'de', 'slug': transfere.slug}) : (app.request.attributes.get('_route') == 'app_liste_excursion' ? path('app_liste_excursion', {'_locale': 'de'}) : (app.request.attributes.get('_route') starts with 'app_contact' ? path('app_contact_locale', {'_locale': 'de'}) : path('app_home_locale', {'_locale': 'de'}))) }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'de' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-surface' }} transition-colors w-full text-left">
-                        <span class="">🇩🇪</span><span class="">Deutsch</span>
-                    </a>
+
                 </div>
             </div>
             <div class="relative" data-navbar-dropdown>

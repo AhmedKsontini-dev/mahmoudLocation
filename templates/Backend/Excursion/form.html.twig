@@ -28,21 +28,21 @@
     {% endfor %}
 {% endfor %}
 
-{% if form.vars.errors|length > 0 %}
+{% if form.vars.submitted and not form.vars.valid %}
     <div class="alert alert-error">
-        <strong>{{ form.vars.errors|length }} erreur(s) détectée(s).</strong> Veuillez corriger les champs indiqués ci-dessous.
+        <strong>Le formulaire contient des erreurs.</strong> Consultez les messages affichés sous les champs concernés, corrigez-les puis réessayez.
         <button type="button" class="btn btn-sm btn-link" onclick="scrollToFirstError()">Aller à la première erreur</button>
     </div>
 {% endif %}
 
 <div class="card">
     <div class="card-body">
-        {{ form_start(form, {'attr': {'class': 'excursion-form'}}) }}
+        {{ form_start(form, {'attr': {'class': 'excursion-form', 'novalidate': 'novalidate'}}) }}
         
         <div class="tabs-container">
             <div class="tabs-nav">
                 <button type="button" class="tab-btn active" data-tab="general">📋 Informations générales</button>
-                <button type="button" class="tab-btn" data-tab="translations">🌍 Traductions</button>
+                <button type="button" class="tab-btn" data-tab="translations">🌍 Traductions <span class="required-indicator" style="color: #ef4444; font-weight: bold;">*</span></button>
                 <button type="button" class="tab-btn" data-tab="images">🖼️ Images</button>
                 <button type="button" class="tab-btn" data-tab="itinerary">🗺️ Itinéraire</button>
                 <button type="button" class="tab-btn" data-tab="features">⭐ Caractéristiques</button>
@@ -54,13 +54,18 @@
             <div class="tabs-content">
                 <!-- Tab 1: Informations générales -->
                 <div class="tab-pane active" id="tab-general">
+                    <div class="alert alert-info" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; background: #e0f2fe; border: 1px solid #7dd3fc; border-radius: 8px; padding: 12px 16px; color: #0369a1;">
+                        <span>ℹ️ <strong>Rappel :</strong> Le <strong>Titre</strong> et la <strong>Description</strong> de l'excursion sont dans l'onglet <strong>🌍 Traductions</strong> (Français obligatoire).</span>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="document.querySelector('.tab-btn[data-tab=\'translations\']').click();">Aller aux Traductions →</button>
+                    </div>
+
                     <div class="form-section">
                         <h3 class="section-title">Informations de base</h3>
                         <div class="form-grid">
                             <div class="form-field">
                                 {{ form_label(form.category) }}
                                 <div class="searchable-select" data-field="category" data-url="{{ path('admin_category_search') }}" data-create-url="{{ path('admin_category_create') }}">
-                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une catégorie..." autocomplete="off" required>
+                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une catégorie..." autocomplete="off">
                                     <div class="searchable-results" style="display: none;"></div>
                                 </div>
                                 {{ form_widget(form.category, {'attr': {'style': 'display: none'}}) }}
@@ -70,7 +75,7 @@
                             <div class="form-field">
                                 {{ form_label(form.destination) }}
                                 <div class="searchable-select" data-field="destination" data-url="{{ path('admin_destination_search') }}" data-create-url="{{ path('admin_destination_create') }}">
-                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une destination..." autocomplete="off" required>
+                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une destination..." autocomplete="off">
                                     <div class="searchable-results" style="display: none;"></div>
                                 </div>
                                 {{ form_widget(form.destination, {'attr': {'style': 'display: none'}}) }}
@@ -249,9 +254,11 @@
                                     <div class="form-field">
                                         {{ form_label(image.imageFile) }}
                                         {{ form_widget(image.imageFile) }}
-                                        {{ form_errors(image.imageFile) }}
-                                        {% if excursion and excursion.images[loop.index0].imagePath %}
-                                            <img src="{{ asset(excursion.images[loop.index0].imagePath) }}" alt="" class="preview-image">
+                                        <div class="image-upload-errors" data-has-errors="{{ image.imageFile.vars.errors|length > 0 ? 'true' : 'false' }}">
+                                            {{ form_errors(image.imageFile) }}
+                                        </div>
+                                        {% if image.vars.data and image.vars.data.imagePath %}
+                                            <img src="{{ asset(image.vars.data.imagePath) }}" alt="" class="preview-image">
                                         {% endif %}
                                     </div>
                                     <div class="form-field">
