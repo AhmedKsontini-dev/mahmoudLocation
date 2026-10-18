@@ -1,0 +1,122 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Détail du transfert - Admin{% endblock %}
+
+{% block header_title %}Détail du transfert{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/transfere/form.css') }}" rel="stylesheet">
+    <style>
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+        .detail-item label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--color-on-surface-variant, #6b7280);
+            margin-bottom: 0.25rem;
+        }
+        .detail-item .value {
+            font-size: 0.95rem;
+            color: var(--color-on-surface, #1f2937);
+        }
+        .detail-image {
+            max-width: 240px;
+            border-radius: 8px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Détail du transfert</h1>
+        <p class="page-header-description">{{ transfere.getLieuDepartTranslated('fr') }} → {{ transfere.getLieuArriveeTranslated('fr') }}</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_transfere_index') }}" class="btn btn-secondary">Retour</a>
+        <a href="{{ path('admin_transfere_edit', {id: transfere.id}) }}" class="btn btn-primary">Modifier</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="form-section">
+            <h2 class="form-section-title">Informations générales</h2>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>Prix normal</label>
+                    <div class="value">{{ transfere.prixNormal }} €</div>
+                </div>
+                <div class="detail-item">
+                    <label>Prix saison forte</label>
+                    <div class="value">{{ transfere.prixSaisonForte }} €</div>
+                </div>
+                <div class="detail-item">
+                    <label>Actif</label>
+                    <div class="value">
+                        {% if transfere.actif %}
+                            <span class="badge badge-success">Oui</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Non</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if transfere.image %}
+                <div class="detail-item" style="margin-top: 1.25rem;">
+                    <label>Image</label>
+                    <img src="{{ asset(transfere.image) }}" class="detail-image" alt="Image du transfert">
+                </div>
+            {% endif %}
+
+            {% if transfere.description %}
+                <div class="detail-item" style="margin-top: 1.25rem;">
+                    <label>Description</label>
+                    <div class="value">{{ transfere.description }}</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Traductions</h2>
+
+            <div class="form-row form-row-3">
+                {% for translation in transfere.translations %}
+                    {% if translation.locale in ['fr', 'en'] %}
+                        <div class="form-group">
+                            <div class="translation-card">
+                                <div class="translation-card-header">
+                                    <h3 class="translation-card-title">{{ localeLabels[translation.locale] }}</h3>
+                                </div>
+                                <div class="translation-card-body">
+                                    <div class="detail-item">
+                                        <label>Lieu de départ</label>
+                                        <div class="value">{{ translation.lieuDepart ?: '—' }}</div>
+                                    </div>
+                                    <div class="detail-item" style="margin-top: 0.75rem;">
+                                        <label>Lieu d'arrivée</label>
+                                        <div class="value">{{ translation.lieuArrivee ?: '—' }}</div>
+                                    </div>
+                                    <div class="detail-item" style="margin-top: 0.75rem;">
+                                        <label>Durée</label>
+                                        <div class="value">{{ translation.duree ?: '—' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

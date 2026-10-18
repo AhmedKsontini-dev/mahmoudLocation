@@ -1,9 +1,16 @@
-<footer class="w-full bg-surface-container-low pt-section-gap-md pb-section-gap-sm">
-    <div class="w-full px-margin-desktop">
+<footer class="site-footer w-full pt-section-gap-md pb-section-gap-sm">
+    <div class="absolute inset-0 pointer-events-none opacity-10" aria-hidden="true">
+        <svg class="w-full h-full object-cover" preserveAspectRatio="none" viewBox="0 0 1440 320">
+            <path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,117.3C672,117,768,171,864,197.3C960,224,1056,224,1152,197.3C1248,171,1344,117,1392,90.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" fill="currentColor" fill-opacity="1"></path>
+        </svg>
+    </div>
+    <div class="relative z-10 w-full px-margin-desktop">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter-desktop mb-section-gap-sm">
             <div>
                 <div class="flex items-center gap-3 mb-4">
-                    <img alt="Tunisia Travel &amp; Mobility Brand Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X65xa4EZzCh388i5NcMK-mBxWcqPPdaxoLH45o46WJh3W3YfH83ZDTlUMEDwvufkp5rE5oViQKZl2jUlcbB8EcK2cljc6egYgIbVERAy1pwdV_YmNLuvufgRTjGYTbWn4Hf-TgbQhdqJmI-CxPWcOeF8Hef5iQxF2dENUEGkhjL7b80efPdxP39SZGCFQ2t07ASTi5a9cbuj3qOkYQ_loo8qCGQmfhder1kiVy0ukNgEh3n2CK75oGU7GA">
+                    <a href="{{ path('app_home_locale', {'_locale': app.request.locale}) }}" aria-label="{{ 'navbar.home'|trans }}" class="flex items-center">
+                        <img alt="Yassmine Guide" class="h-12 sm:h-14 w-auto object-contain" src="{{ asset('assetsFront/images/logo-yassmine-guide.png') }}">
+                    </a>
                     <span class="font-headline-sm text-headline-sm text-primary font-bold">{{ 'footer.brand'|trans }}</span>
                 </div>
                 <p class="font-body-md text-body-md text-on-surface-variant mb-6">{{ 'footer.description'|trans }}</p>

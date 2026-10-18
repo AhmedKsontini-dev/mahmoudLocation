@@ -1,6 +1,6 @@
 {% extends 'baseFront.html.twig' %}
 
-{% block title %}Blog & Actualités - Tunisia Travel{% endblock %}
+{% block title %}Blog & Actualités - Yassmine Guide{% endblock %}
 
 {% block stylesheets %}
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -18,10 +18,9 @@
 {% include 'Frontend/Components/_navbar.html.twig' %}
 
 <main class="w-full pt-20 bg-surface min-h-screen">
-    {# Breadcrumb #}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-4 border-b border-surface-container">
         <nav class="flex flex-wrap items-center gap-2 font-label-md text-label-md text-on-surface-variant">
-            <a href="/" class="hover:text-primary transition-colors flex items-center gap-1">
+            <a href="{{ path('app_home') }}" class="hover:text-primary transition-colors flex items-center gap-1">
                 <span class="material-symbols-outlined text-[16px]">home</span>
                 Accueil
             </a>
@@ -30,195 +29,90 @@
         </nav>
     </div>
 
-    {# Header Section #}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 text-center">
         <h1 class="font-display-mobile md:font-display text-display-mobile md:text-display text-on-surface mb-4">Notre Blog de Voyage</h1>
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Découvrez nos meilleurs conseils, idées de circuits et actualités pour préparer votre prochain séjour en Tunisie dans les meilleures conditions.</p>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Découvrez nos meilleurs conseils, idées de circuits et actualités pour préparer votre prochain séjour en Tunisie.</p>
     </div>
 
-    {# Featured Article #}
-    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-12">
-        <div class="relative rounded-3xl overflow-hidden bg-surface-container-lowest shadow-sm border border-surface-container group flex flex-col md:flex-row h-auto md:h-[450px]">
-            <div class="w-full md:w-1/2 h-[300px] md:h-full overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&q=80&w=1200" alt="Désert Tunisien" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-            </div>
-            <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="px-3 py-1.5 rounded-md bg-tertiary-container text-on-tertiary-container font-label-md text-label-md">À la une</span>
-                    <span class="px-3 py-1.5 rounded-md bg-surface-container-high text-on-surface-variant font-label-md text-label-md">Destinations</span>
+    {% if featuredArticle %}
+        <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-12">
+            <div class="relative rounded-3xl overflow-hidden bg-surface-container-lowest shadow-sm border border-surface-container group flex flex-col md:flex-row h-auto md:h-[450px]">
+                <div class="w-full md:w-1/2 h-[300px] md:h-full overflow-hidden">
+                    <img src="{{ featuredArticle.image ?: 'https://images.unsplash.com/photo-1538332576228-eb5b4c4de6f5?auto=format&fit=crop&q=80&w=1200' }}" alt="{{ featuredArticle.imageAlt ?: featuredArticle.getTitleTranslated(locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 </div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4 hover:text-primary transition-colors cursor-pointer">Le guide ultime pour explorer le Sahara Tunisien</h2>
-                <p class="font-body-lg text-body-lg text-on-surface-variant mb-6 line-clamp-3">
-                    Des dunes dorées de Douz aux oasis verdoyantes de Tozeur, préparez-vous pour une aventure inoubliable au cœur du désert. Voici tout ce que vous devez savoir avant de partir.
-                </p>
-                <div class="flex items-center justify-between mt-auto pt-6 border-t border-surface-container">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">TM</div>
-                        <div>
-                            <div class="font-title-md text-title-md text-on-surface text-sm">Tunisia Mobility</div>
-                            <div class="font-body-sm text-body-sm text-on-surface-variant">12 Novembre 2026 • 5 min de lecture</div>
-                        </div>
+                <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1.5 rounded-md bg-tertiary-container text-on-tertiary-container font-label-md text-label-md">À la une</span>
+                        {% set featuredCategory = featuredArticle.categories|first %}
+                        {% if featuredCategory %}
+                            <span class="px-3 py-1.5 rounded-md bg-surface-container-high text-on-surface-variant font-label-md text-label-md">{{ featuredCategory.getNameTranslated(locale) ?: featuredCategory.getNameTranslated('fr') }}</span>
+                        {% endif %}
                     </div>
-                    <button class="w-12 h-12 rounded-full bg-surface-container-low text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors">
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4 hover:text-primary transition-colors cursor-pointer">
+                        <a href="{{ path('app_blog_show', {'_locale': locale, 'slug': featuredArticle.slug}) }}">{{ featuredArticle.getTitleTranslated(locale) }}</a>
+                    </h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mb-6 line-clamp-3">
+                        {{ featuredArticle.getExcerptTranslated(locale) ?: 'Découvrez notre article pour préparer votre prochain voyage.' }}
+                    </p>
+                    <div class="flex items-center justify-between mt-auto pt-6 border-t border-surface-container">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">TM</div>
+                            <div>
+                                <div class="font-title-md text-title-md text-on-surface text-sm">Tunisia Mobility</div>
+                                <div class="font-body-sm text-body-sm text-on-surface-variant">{{ featuredArticle.publishedAt ? featuredArticle.publishedAt|date('d M Y') : featuredArticle.createdAt|date('d M Y') }} • {{ featuredArticle.readTime }} min de lecture</div>
+                            </div>
+                        </div>
+                        <a href="{{ path('app_blog_show', {'_locale': locale, 'slug': featuredArticle.slug}) }}" class="w-12 h-12 rounded-full bg-surface-container-low text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
-    {# Blog Grid #}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-24">
         <div class="flex items-center justify-between mb-8">
             <h2 class="font-headline-md text-headline-md text-on-surface">Articles Récents</h2>
-            <div class="hidden md:flex gap-2">
-                <button class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md">Tous</button>
-                <button class="px-4 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant border border-surface-container hover:bg-surface-container-low transition-colors font-label-md text-label-md">Conseils</button>
-                <button class="px-4 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant border border-surface-container hover:bg-surface-container-low transition-colors font-label-md text-label-md">Culture</button>
-                <button class="px-4 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant border border-surface-container hover:bg-surface-container-low transition-colors font-label-md text-label-md">Gastronomie</button>
-            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {# Article 1 #}
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
-                <div class="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1598914652251-87ec8fcda336?auto=format&fit=crop&q=80&w=600" alt="Sidi Bou Said" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute top-4 left-4">
-                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">Culture</span>
-                    </div>
-                </div>
-                <div class="p-6 flex flex-col flex-1">
-                    <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">24 Octobre 2026</div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">Sidi Bou Saïd : Les secrets du village bleu et blanc</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">Plongez dans l'histoire fascinante de ce village d'artistes perché sur une colline surplombant la baie de Tunis.</p>
-                    <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
-                        <span class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
-                            Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
+        {% if articles is empty %}
+            <div class="rounded-2xl border border-dashed border-surface-container bg-surface-container-lowest p-8 text-center text-on-surface-variant">
+                Aucun article publié pour le moment.
             </div>
-
-            {# Article 2 #}
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
-                <div class="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1601662528567-526cd06f3621?auto=format&fit=crop&q=80&w=600" alt="Carthage" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute top-4 left-4">
-                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">Histoire</span>
-                    </div>
-                </div>
-                <div class="p-6 flex flex-col flex-1">
-                    <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">15 Octobre 2026</div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">Les ruines de Carthage : Un voyage dans le temps</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">Des thermes d'Antonin à la colline de Byrsa, découvrez comment visiter les vestiges de l'empire punique et romain.</p>
-                    <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
-                        <span class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
-                            Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
+        {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for article in articles %}
+                    {% if article != featuredArticle %}
+                        <article class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
+                            <div class="relative h-60 overflow-hidden">
+                                <img src="{{ article.image ?: 'https://images.unsplash.com/photo-1548684784-8df607fb5bdf?auto=format&fit=crop&q=80&w=600' }}" alt="{{ article.imageAlt ?: article.getTitleTranslated(locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                {% set category = article.categories|first %}
+                                {% if category %}
+                                    <div class="absolute top-4 left-4">
+                                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">{{ category.getNameTranslated(locale) ?: category.getNameTranslated('fr') }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="p-6 flex flex-col flex-1">
+                                <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">{{ article.publishedAt ? article.publishedAt|date('d M Y') : article.createdAt|date('d M Y') }}</div>
+                                <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">
+                                    <a href="{{ path('app_blog_show', {'_locale': locale, 'slug': article.slug}) }}">{{ article.getTitleTranslated(locale) }}</a>
+                                </h3>
+                                <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">{{ article.getExcerptTranslated(locale) ?: 'Découvrez plus de détails dans cet article.' }}</p>
+                                <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
+                                    <a href="{{ path('app_blog_show', {'_locale': locale, 'slug': article.slug}) }}" class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
+                                        Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    {% endif %}
+                {% endfor %}
             </div>
-
-            {# Article 3 #}
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
-                <div class="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1542385151-efd9000785a0?auto=format&fit=crop&q=80&w=600" alt="Gastronomie" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute top-4 left-4">
-                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">Gastronomie</span>
-                    </div>
-                </div>
-                <div class="p-6 flex flex-col flex-1">
-                    <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">02 Octobre 2026</div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">5 plats tunisiens à goûter absolument lors de votre séjour</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">De l'emblématique Brik au couscous au poisson, préparez vos papilles à une explosion de saveurs méditerranéennes.</p>
-                    <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
-                        <span class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
-                            Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-             {# Article 4 #}
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
-                <div class="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1558281050-0c460ecfb31e?auto=format&fit=crop&q=80&w=600" alt="Aeroport" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute top-4 left-4">
-                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">Conseils</span>
-                    </div>
-                </div>
-                <div class="p-6 flex flex-col flex-1">
-                    <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">28 Septembre 2026</div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">Arriver à l'aéroport de Tunis-Carthage : Guide Pratique</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">Où trouver votre chauffeur ? Comment échanger votre monnaie ? Nos conseils pour un transfert sans stress dès votre atterrissage.</p>
-                    <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
-                        <span class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
-                            Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-             {# Article 5 #}
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
-                <div class="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1610012830380-0a255018619f?auto=format&fit=crop&q=80&w=600" alt="Medina" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute top-4 left-4">
-                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">Culture</span>
-                    </div>
-                </div>
-                <div class="p-6 flex flex-col flex-1">
-                    <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">12 Septembre 2026</div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">Se perdre dans les souks de la Médina de Tunis</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">Classée au patrimoine mondial de l'UNESCO, la Médina vous réserve des trésors architecturaux et artisanaux uniques.</p>
-                    <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
-                        <span class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
-                            Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-             {# Article 6 #}
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container overflow-hidden group flex flex-col hover:shadow-md transition-shadow">
-                <div class="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1548684784-8df607fb5bdf?auto=format&fit=crop&q=80&w=600" alt="Colisee El Jem" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute top-4 left-4">
-                        <span class="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur text-primary font-label-sm text-label-sm uppercase tracking-wider">Destinations</span>
-                    </div>
-                </div>
-                <div class="p-6 flex flex-col flex-1">
-                    <div class="font-body-sm text-body-sm text-on-surface-variant mb-2">05 Septembre 2026</div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-3 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">El Jem : Au cœur du plus grand amphithéâtre romain d'Afrique</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3">L'un des vestiges romains les mieux conservés au monde. Découvrez pourquoi ce joyau vaut le détour.</p>
-                    <div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
-                        <span class="font-label-md text-label-md text-primary flex items-center gap-1 cursor-pointer">
-                            Lire l'article <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {# Pagination #}
-        <div class="mt-12 flex justify-center">
-            <div class="inline-flex items-center gap-2 bg-surface-container-lowest rounded-xl border border-surface-container p-2">
-                <button class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors disabled:opacity-50" disabled>
-                    <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-                </button>
-                <button class="w-10 h-10 rounded-lg flex items-center justify-center bg-primary text-on-primary font-label-lg text-label-lg">1</button>
-                <button class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors font-label-lg text-label-lg">2</button>
-                <button class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container-low transition-colors font-label-lg text-label-lg">3</button>
-                <span class="px-2 text-outline">...</span>
-                <button class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-                </button>
-            </div>
-        </div>
+        {% endif %}
     </div>
 
-    {# Newsletter Section #}
     <div class="bg-primary text-on-primary py-16 relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none opacity-10">
             <svg class="w-full h-full object-cover" preserveAspectRatio="none" viewBox="0 0 1440 320">

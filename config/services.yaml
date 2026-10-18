@@ -7,6 +7,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.mailer.from_email: '%env(MAILER_FROM_EMAIL)%'
+    app.mailer.from_name:  '%env(MAILER_FROM_NAME)%'
+    app.mailer.notification_email: '%env(default::CONTACT_NOTIFICATION_EMAIL)%'
 
 services:
     # default configuration for services in *this* file
@@ -19,5 +22,8 @@ services:
     App\:
         resource: '../src/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Configuration explicite du service d'envoi d'e-mails de réservation
+    App\Service\ReservationMailerService:
+        arguments:
+            $fromEmail: '%app.mailer.from_email%'
+            $fromName:  '%app.mailer.from_name%'

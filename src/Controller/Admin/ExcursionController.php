@@ -19,6 +19,7 @@ use App\Entity\ExcursionBadge;
 use App\Entity\ExcursionBadgeTranslation;
 use App\Form\ExcursionType;
 use App\Repository\ExcursionRepository;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -174,20 +175,54 @@ class ExcursionController extends AbstractController
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Excursion $excursion): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $excursion->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete' . $excursion->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+
+            return $this->redirectToRoute('admin_excursion_index');
+        }
+
+        $reservationCount = $this->countAssociatedReservations($excursion);
+
+        if ($reservationCount > 0) {
+            $this->addFlash('warning', sprintf(
+                'Suppression impossible — Cette excursion ne peut pas être supprimée, car elle possède déjà %d réservation(s) associée(s). Pour préserver les données des clients et l\'historique des réservations, veuillez désactiver cette excursion si vous ne souhaitez plus la proposer.',
+                $reservationCount
+            ));
+
+            return $this->redirectToRoute('admin_excursion_index');
+        }
+
+        try {
             $this->entityManager->remove($excursion);
             $this->entityManager->flush();
             $this->addFlash('success', 'L\'excursion a été supprimée avec succès.');
-        } else {
-            $this->addFlash('error', 'Token CSRF invalide.');
+        } catch (ForeignKeyConstraintViolationException $e) {
+            $this->entityManager->rollback();
+            $this->entityManager->clear();
+            $this->addFlash('warning', 'Suppression impossible — Cette excursion ne peut pas être supprimée, car elle possède déjà des réservations associées. Pour préserver les données des clients et l\'historique des réservations, veuillez désactiver cette excursion si vous ne souhaitez plus la proposer.');
+        } catch (\Throwable $e) {
+            $this->entityManager->rollback();
+            $this->entityManager->clear();
+            $this->addFlash('error', 'Une erreur est survenue lors de la suppression de l\'excursion. L\'opération a été annulée et aucune donnée n\'a été perdue.');
+            error_log('Excursion delete error: ' . $e->getMessage());
         }
 
         return $this->redirectToRoute('admin_excursion_index');
     }
 
+    /**
+     * Compte les réservations liées à une excursion (excursions réservées via le module
+     * ReservationExcursion et anciennes réservations Reservation).
+     */
+    private function countAssociatedReservations(Excursion $excursion): int
+    {
+        return $excursion->getReservationExcursions()->count()
+            + $excursion->getReservations()->count();
+    }
+
     private function initializeTranslations(Excursion $excursion): void
     {
-        $locales = LocaleConfig::getSupportedLocales();
+        $locales = LocaleConfig::getExcursionFormLocales();
         foreach ($locales as $locale) {
             $translation = new ExcursionTranslation();
             $translation->setLocale($locale);
@@ -195,37 +230,16 @@ class ExcursionController extends AbstractController
         }
     }
 
-    private function initializeSubEntityTranslations($entity, $translationClass, $localeMethod): void
-    {
-        $locales = LocaleConfig::getSupportedLocales();
-        foreach ($locales as $locale) {
-            $translation = new $translationClass();
-            $translation->setLocale($locale);
-            $entity->$localeMethod($translation);
-        }
-    }
-
-    private function ensureSubEntityTranslations($entity, $translations, $translationClass, $localeMethod): void
-    {
-        $locales = LocaleConfig::getSupportedLocales();
-        $existingLocales = $translations->map(fn($t) => $t->getLocale())->toArray();
-
-        foreach ($locales as $locale) {
-            if (!in_array($locale, $existingLocales)) {
-                $translation = new $translationClass();
-                $translation->setLocale($locale);
-                $entity->$localeMethod($translation);
-            }
-        }
-    }
-
     private function ensureTranslationsExist(Excursion $excursion): void
     {
-        $locales = LocaleConfig::getSupportedLocales();
+        // Le formulaire n'édite que les locales d'une excursion ; les autres
+        // traductions présentes en base restent affichées mais ne sont pas
+        // recréées ici (addTranslation garantit l'unicité par locale).
+        $locales = LocaleConfig::getExcursionFormLocales();
         $existingLocales = $excursion->getTranslations()->map(fn($t) => $t->getLocale())->toArray();
 
         foreach ($locales as $locale) {
-            if (!in_array($locale, $existingLocales)) {
+            if (!in_array($locale, $existingLocales, true)) {
                 $translation = new ExcursionTranslation();
                 $translation->setLocale($locale);
                 $excursion->addTranslation($translation);
@@ -235,6 +249,9 @@ class ExcursionController extends AbstractController
 
     private function handleImageUploads(FormInterface $form, Excursion $excursion): void
     {
+        // On itère les entrées du formulaire plutôt que les indices de la collection
+        // Doctrine : chaque entrée porte déjà l'Entité ExcursionImage correspondante,
+        // ce qui évite toute désynchronisation quand la collection change de clés.
         foreach ($form->get('images') as $imageForm) {
             $image = $imageForm->getData();
             if (!$image instanceof ExcursionImage) {
@@ -305,6 +322,28 @@ class ExcursionController extends AbstractController
 
         // 2. Remove empty itinerary translations
         foreach ($excursion->getItineraries() as $itinerary) {
+            $translationsByLocale = [];
+            foreach ($itinerary->getTranslations() as $translation) {
+                $locale = $translation->getLocale();
+                if (isset($translationsByLocale[$locale])) {
+                    $existingTranslation = $translationsByLocale[$locale];
+                    if (trim((string) $existingTranslation->getTitle()) === '') {
+                        $existingTranslation->setTitle($translation->getTitle());
+                    }
+                    if (trim((string) $existingTranslation->getDescription()) === '') {
+                        $existingTranslation->setDescription($translation->getDescription());
+                    }
+
+                    $itinerary->removeTranslation($translation);
+                    if ($this->entityManager->contains($translation)) {
+                        $this->entityManager->remove($translation);
+                    }
+                    continue;
+                }
+
+                $translationsByLocale[$locale] = $translation;
+            }
+
             foreach ($itinerary->getTranslations() as $translation) {
                 if (empty(trim($translation->getTitle() ?? ''))) {
                     $itinerary->removeTranslation($translation);

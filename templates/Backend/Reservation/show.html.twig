@@ -5,127 +5,192 @@
 {% block header_title %}Détails de la réservation{% endblock %}
 
 {% block body %}
+{% set statutLabels = {'pending': 'En attente', 'confirmed': 'Confirmée', 'cancelled': 'Annulée'} %}
+{% set statutBadges = {'pending': 'badge-pending', 'confirmed': 'badge-confirmed', 'cancelled': 'badge-cancelled'} %}
+{% set statut = reservation.status.value %}
+{% set telephoneBrut = reservation.telephone|replace({' ': '', '-': '', '.': '', '(': '', ')': ''}) %}
+
 <div class="page-header">
     <div>
-        <h1 class="page-title">Détails de la réservation</h1>
+        <h1 class="page-title">Détails de la réservation #{{ reservation.id }}</h1>
+        <p class="page-header-description">
+            Client : <strong>{{ reservation.nom }} {{ reservation.prenom }}</strong> — Enregistrée le {{ reservation.createdAt|date('d/m/Y') }} à {{ reservation.createdAt|date('H:i') }}
+        </p>
     </div>
     <div class="page-actions">
-        <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">Retour</a>
+        <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">← Retour à la liste</a>
     </div>
 </div>
 
-<div class="card">
+{# Messages Flash de notification #}
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert">
+            <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+            <span>{{ flashMessage }}</span>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+{# Carte : Informations du client #}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 class="card-title">👤 Informations du client</h2>
+    </div>
     <div class="card-body">
         <div class="detail-grid">
             <div class="detail-item">
-                <span class="detail-label">Numéro de réservation</span>
+                <span class="detail-label">Nom complet</span>
+                <span class="detail-value">{{ reservation.nom }} {{ reservation.prenom }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Adresse e-mail</span>
+                <span class="detail-value">
+                    <a href="mailto:{{ reservation.email }}" style="color: inherit; text-decoration: underline; text-underline-offset: 2px;">✉️ {{ reservation.email }}</a>
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Téléphone / WhatsApp</span>
+                <span class="detail-value">
+                    📞
+                    <a href="tel:{{ telephoneBrut }}" style="color: inherit; text-decoration: underline; text-underline-offset: 2px;">{{ reservation.telephone }}</a>
+                    {% if telephoneBrut is not empty %}
+                        <a href="https://wa.me/{{ telephoneBrut|replace({'+': ''}) }}" target="_blank" rel="noopener noreferrer" style="color: inherit; margin-left: .6rem;">💬 WhatsApp</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Carte : Informations de la réservation #}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 class="card-title">📋 Informations de la réservation</h2>
+        <span class="badge {{ statutBadges[statut]|default('badge-pending') }}">{{ statutLabels[statut]|default(statut) }}</span>
+    </div>
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Référence</span>
                 <span class="detail-value">#{{ reservation.id }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Date de création</span>
-                <span class="detail-value">{{ reservation.createdAt|date('d/m/Y H:i') }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Nom</span>
-                <span class="detail-value">{{ reservation.nom }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Prénom</span>
-                <span class="detail-value">{{ reservation.prenom }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Email</span>
-                <span class="detail-value">{{ reservation.email }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Téléphone</span>
-                <span class="detail-value">{{ reservation.telephone }}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Type de transfert</span>
                 <span class="detail-value">{{ reservation.transfereType.value == 'one_way' ? 'Aller simple' : 'Aller-retour' }}</span>
             </div>
+            {% if reservation.transfere %}
+                <div class="detail-item">
+                    <span class="detail-label">Service réservé</span>
+                    <span class="detail-value">🚐 {{ reservation.transfere.lieuDepart }} → {{ reservation.transfere.lieuArrivee }}</span>
+                </div>
+            {% endif %}
             <div class="detail-item">
-                <span class="detail-label">Statut</span>
-                <span class="detail-value">
-                    {% if reservation.status.value == 'pending' %}
-                        <span class="badge badge-pending">En attente</span>
-                    {% elseif reservation.status.value == 'confirmed' %}
-                        <span class="badge badge-confirmed">Confirmée</span>
-                    {% elseif reservation.status.value == 'cancelled' %}
-                        <span class="badge badge-cancelled">Annulée</span>
-                    {% endif %}
-                </span>
+                <span class="detail-label">Date de création</span>
+                <span class="detail-value">🗓️ {{ reservation.createdAt|date('d/m/Y') }} à {{ reservation.createdAt|date('H:i') }}</span>
             </div>
+        </div>
+
+        <h3 class="section-title" style="margin: 1.35rem 0 .75rem;">Trajet aller</h3>
+        <div class="detail-grid">
             <div class="detail-item">
                 <span class="detail-label">Lieu de départ</span>
-                <span class="detail-value">{{ reservation.pickupLocation }}</span>
+                <span class="detail-value">📍 {{ reservation.pickupLocation }}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Lieu d'arrivée</span>
-                <span class="detail-value">{{ reservation.dropoffLocation }}</span>
+                <span class="detail-value">🏁 {{ reservation.dropoffLocation }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">Date de pickup</span>
-                <span class="detail-value">{{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : 'N/A' }}</span>
+                <span class="detail-label">Date de départ</span>
+                <span class="detail-value">{{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : 'Non définie' }}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">Heure de pickup</span>
-                <span class="detail-value">{{ reservation.pickupTime ? reservation.pickupTime|date('H:i') : 'N/A' }}</span>
+                <span class="detail-label">Heure de départ</span>
+                <span class="detail-value">{{ reservation.pickupTime ? reservation.pickupTime|date('H:i') : 'Non définie' }}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Nombre de passagers</span>
-                <span class="detail-value">{{ reservation.nombrePassagers }}</span>
+                <span class="detail-value">👥 {{ reservation.nombrePassagers }}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Nombre de bagages</span>
-                <span class="detail-value">{{ reservation.nombreBagages }}</span>
+                <span class="detail-value">🧳 {{ reservation.nombreBagages }}</span>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Numéro de vol</span>
-                <span class="detail-value">{{ reservation.numeroVol ?? 'N/A' }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Compagnie aérienne</span>
-                <span class="detail-value">{{ reservation.compagnieVol ?? 'N/A' }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Prix total</span>
-                <span class="detail-value">{{ reservation.prixTotal }} {{ reservation.devise }}</span>
-            </div>
-            {% if reservation.transfereType.value == 'return' %}
+            {% if reservation.numeroVol %}
                 <div class="detail-item">
-                    <span class="detail-label">Lieu de retour (départ)</span>
-                    <span class="detail-value">{{ reservation.returnPickupLocation ?? 'N/A' }}</span>
+                    <span class="detail-label">Numéro de vol</span>
+                    <span class="detail-value">✈️ {{ reservation.numeroVol }}</span>
                 </div>
+            {% endif %}
+            {% if reservation.compagnieVol %}
                 <div class="detail-item">
-                    <span class="detail-label">Lieu de retour (arrivée)</span>
-                    <span class="detail-value">{{ reservation.returnDropoffLocation ?? 'N/A' }}</span>
+                    <span class="detail-label">Compagnie aérienne</span>
+                    <span class="detail-value">{{ reservation.compagnieVol }}</span>
                 </div>
+            {% endif %}
+        </div>
+
+        {% if reservation.transfereType.value == 'return' %}
+            <h3 class="section-title" style="margin: 1.35rem 0 .75rem;">Trajet retour</h3>
+            <div class="detail-grid">
+                {% if reservation.returnPickupLocation %}
+                    <div class="detail-item">
+                        <span class="detail-label">Lieu de départ (retour)</span>
+                        <span class="detail-value">📍 {{ reservation.returnPickupLocation }}</span>
+                    </div>
+                {% endif %}
+                {% if reservation.returnDropoffLocation %}
+                    <div class="detail-item">
+                        <span class="detail-label">Lieu d'arrivée (retour)</span>
+                        <span class="detail-value">🏁 {{ reservation.returnDropoffLocation }}</span>
+                    </div>
+                {% endif %}
                 <div class="detail-item">
                     <span class="detail-label">Date de retour</span>
-                    <span class="detail-value">{{ reservation.returnPickupDate ? reservation.returnPickupDate|date('d/m/Y') : 'N/A' }}</span>
+                    <span class="detail-value">{{ reservation.returnPickupDate ? reservation.returnPickupDate|date('d/m/Y') : 'Non définie' }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Heure de retour</span>
-                    <span class="detail-value">{{ reservation.returnPickupTime ? reservation.returnPickupTime|date('H:i') : 'N/A' }}</span>
+                    <span class="detail-value">{{ reservation.returnPickupTime ? reservation.returnPickupTime|date('H:i') : 'Non définie' }}</span>
                 </div>
-            {% endif %}
-            {% if reservation.message %}
-                <div class="detail-item full-width">
-                    <span class="detail-label">Message</span>
-                    <span class="detail-value">{{ reservation.message }}</span>
-                </div>
-            {% endif %}
+            </div>
+        {% endif %}
+
+        <h3 class="section-title" style="margin: 1.35rem 0 .75rem;">Tarification</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Prix total</span>
+                <span class="detail-value" style="font-weight: 750;">💰 {{ reservation.prixTotal }} {{ reservation.devise }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Devise</span>
+                <span class="detail-value">{{ reservation.devise }}</span>
+            </div>
         </div>
-        
-        <div class="form-actions" style="margin-top: 2rem;">
-            <a href="{{ path('admin_reservation_edit', {id: reservation.id}) }}" class="btn btn-primary">Modifier le statut</a>
-            <form method="post" action="{{ path('admin_reservation_delete', {id: reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?');" style="display: inline;">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
-                <button type="submit" class="btn btn-danger">Supprimer</button>
-            </form>
-        </div>
+
+        {% if reservation.message %}
+            <h3 class="section-title" style="margin: 1.35rem 0 .75rem;">Commentaires du client</h3>
+            <div class="detail-item full-width" style="background: #f9fbfe;">
+                <span class="detail-value" style="white-space: pre-line;">💬 {{ reservation.message }}</span>
+            </div>
+        {% endif %}
     </div>
+</div>
+
+{# Actions disponibles #}
+<div class="form-actions" style="margin-bottom: 2rem;">
+    <a href="{{ path('admin_reservation_voucher', {id: reservation.id}) }}" class="btn btn-secondary">
+        📄 Imprimer le voucher
+    </a>
+    <a href="{{ path('admin_reservation_edit', {id: reservation.id}) }}" class="btn btn-primary">
+        ✏️ Modifier le statut
+    </a>
+    <form method="post" action="{{ path('admin_reservation_delete', {id: reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?');" style="display: inline;">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
 </div>
 {% endblock %}

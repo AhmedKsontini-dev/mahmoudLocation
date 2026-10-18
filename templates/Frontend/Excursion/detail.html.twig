@@ -1,6 +1,21 @@
 {% extends 'baseFront.html.twig' %}
 
-{% block title %}{{ excursion.getTranslation(_locale) ? excursion.getTranslation(_locale).metaTitle|default(excursion.getTitleTranslated(_locale)) : excursion.getTitleTranslated(_locale) }} - Tunisia Travel{% endblock %}
+{% form_theme bookingForm _self %}
+
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        <div class="mt-1 text-xs text-red-600 font-medium space-y-0.5">
+            {% for error in errors %}
+                <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">error</span>
+                    <span>{{ error.message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block title %}{{ excursion.getTranslation(_locale) ? excursion.getTranslation(_locale).metaTitle|default(excursion.getTitleTranslated(_locale)) : excursion.getTitleTranslated(_locale) }} - Yassmine Guide{% endblock %}
 
 {% block stylesheets %}
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -22,12 +37,12 @@
     {# Breadcrumb and Badges #}
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-container">
         <nav class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant">
-            <a href="/" class="hover:text-primary transition-colors flex items-center gap-1">
+            <a href="{{ path('app_home_locale', {'_locale': _locale}) }}" class="hover:text-primary transition-colors flex items-center gap-1">
                 <span class="material-symbols-outlined text-[16px]">home</span>
-                Accueil
+                {{ 'excursion.detail.home'|trans }}
             </a>
             <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-            <a href="#" class="hover:text-primary transition-colors">{{ excursion.category.getTranslation(_locale) ? excursion.category.getTranslation(_locale).name : (excursion.category.getTranslation('fr') ? excursion.category.getTranslation('fr').name : 'Catégorie') }}</a>
+            <a href="#" class="hover:text-primary transition-colors">{{ excursion.category.getTranslation(_locale) ? excursion.category.getTranslation(_locale).name : (excursion.category.getTranslation('fr') ? excursion.category.getTranslation('fr').name : 'excursion.detail.category'|trans) }}</a>
             <span class="material-symbols-outlined text-[16px]">chevron_right</span>
             <span class="text-on-surface font-semibold">{{ excursion.getTitleTranslated(_locale) }}</span>
         </nav>
@@ -55,10 +70,10 @@
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-3">
                     {% if excursion.isBestSeller %}
-                        <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider">MEILLEURE VENTE</span>
+                        <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider">{{ 'excursion.detail.best_seller'|trans }}</span>
                     {% endif %}
                     <span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-md text-label-md">
-                        {{ excursion.type|capitalize }}
+                        {{ ('excursion.detail.type.' ~ excursion.type)|trans }}
                     </span>
                 </div>
                 <h1 class="font-display-mobile md:font-display text-display-mobile md:text-display text-on-surface mb-4">{{ excursion.getTitleTranslated(_locale) }}</h1>
@@ -83,7 +98,7 @@
                     <div class="flex items-center gap-1.5 text-secondary-container font-semibold">
                         <span class="material-symbols-outlined text-[18px] text-amber-400">star</span>
                         <span class="text-amber-500">{{ excursion.ratingAverage }} / 5</span>
-                        <span class="text-on-surface-variant font-normal">({{ excursion.ratingCount }} avis vérifiés)</span>
+                        <span class="text-on-surface-variant font-normal">({{ 'excursion.detail.verified_reviews'|trans({'%count%': excursion.ratingCount}) }})</span>
                     </div>
                     {% endif %}
                 </div>
@@ -91,11 +106,11 @@
             <div class="flex items-center gap-3 shrink-0">
                 <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface font-label-lg text-label-lg border border-surface-container hover:bg-surface-container-low transition-all">
                     <span class="material-symbols-outlined text-[20px]">share</span>
-                    <span>Partager</span>
+                    <span>{{ 'excursion.detail.share'|trans }}</span>
                 </button>
                 <button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface font-label-lg text-label-lg border border-surface-container hover:bg-surface-container-low transition-all">
                     <span class="material-symbols-outlined text-[20px]">favorite_border</span>
-                    <span>Sauvegarder</span>
+                    <span>{{ 'excursion.detail.save'|trans }}</span>
                 </button>
             </div>
         </div>
@@ -124,14 +139,14 @@
             {% endif %}
             
             <div class="md:col-span-2 relative h-full rounded-2xl overflow-hidden group">
-                <img src="{{ asset(main_image.imagePath) }}" alt="{{ main_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in" data-gallery-trigger role="button" tabindex="0" aria-label="Agrandir l'image">
+                <img src="{{ asset(main_image.imagePath) }}" alt="{{ main_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in" data-gallery-trigger role="button" tabindex="0" aria-label="{{ 'excursion.detail.gallery.enlarge'|trans }}">
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 {% if main_image.getCaptionTranslated(_locale) %}
                 <div class="pointer-events-none absolute bottom-4 left-4 text-white font-title-md text-title-md">{{ main_image.getCaptionTranslated(_locale) }}</div>
                 {% endif %}
                 <button type="button" data-gallery-trigger data-gallery-src="{{ asset(main_image.imagePath) }}" class="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/50 backdrop-blur-md text-white font-label-md text-label-md hover:bg-black/70 transition-colors">
                     <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-                    <span>{{ excursion.images|length }} photos</span>
+                    <span>{{ 'excursion.detail.gallery.photos'|trans({'%count%': excursion.images|length}) }}</span>
                 </button>
             </div>
             
@@ -140,7 +155,7 @@
                 {% for side_image in excursion.images %}
                     {% if side_image.id != main_image.id and side_count < 2 %}
                         <div class="relative h-[calc(50%-0.5rem)] rounded-2xl overflow-hidden group">
-                            <img src="{{ asset(side_image.imagePath) }}" alt="{{ side_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in" data-gallery-trigger role="button" tabindex="0" aria-label="Agrandir l'image">
+                            <img src="{{ asset(side_image.imagePath) }}" alt="{{ side_image.getAltTextTranslated(_locale) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 cursor-zoom-in" data-gallery-trigger role="button" tabindex="0" aria-label="{{ 'excursion.detail.gallery.enlarge'|trans }}">
                             <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                             {% if side_image.getCaptionTranslated(_locale) %}
                             <div class="pointer-events-none absolute bottom-4 left-4 text-white font-title-md text-title-md text-sm">{{ side_image.getCaptionTranslated(_locale) }}</div>
@@ -153,11 +168,11 @@
         </div>
     </div>
     <div id="excursion-gallery-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/85 p-3 sm:p-6" data-gallery-modal aria-hidden="true">
-        <section class="relative flex h-full w-full max-w-7xl items-center justify-center" role="dialog" aria-modal="true" aria-label="Galerie photos" tabindex="-1" data-gallery-dialog>
-            <button type="button" class="absolute right-1 top-1 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:right-2 sm:top-2" aria-label="Fermer" data-gallery-close>×</button>
-            <button type="button" class="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:left-2 sm:h-12 sm:w-12" aria-label="Image précédente" data-gallery-previous>←</button>
+        <section class="relative flex h-full w-full max-w-7xl items-center justify-center" role="dialog" aria-modal="true" aria-label="{{ 'excursion.detail.gallery.title'|trans }}" tabindex="-1" data-gallery-dialog>
+            <button type="button" class="absolute right-1 top-1 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:right-2 sm:top-2" aria-label="{{ 'excursion.detail.gallery.close'|trans }}" data-gallery-close>×</button>
+            <button type="button" class="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:left-2 sm:h-12 sm:w-12" aria-label="{{ 'excursion.detail.gallery.previous'|trans }}" data-gallery-previous>←</button>
             <img class="max-h-[78vh] max-w-[78vw] select-none object-contain sm:max-h-[84vh] sm:max-w-[86vw]" alt="" data-gallery-image>
-            <button type="button" class="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:right-2 sm:h-12 sm:w-12" aria-label="Image suivante" data-gallery-next>→</button>
+            <button type="button" class="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-3xl leading-none text-white transition hover:bg-black/80 sm:right-2 sm:h-12 sm:w-12" aria-label="{{ 'excursion.detail.gallery.next'|trans }}" data-gallery-next>→</button>
             <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-center text-sm text-white" aria-live="polite">
                 <p class="mb-1" data-gallery-caption hidden></p>
                 <span data-gallery-count></span>
@@ -182,10 +197,10 @@
                     <span class="material-symbols-outlined">schedule</span>
                 </div>
                 <div>
-                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Durée</div>
+                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">{{ 'excursion.detail.duration'|trans }}</div>
                     <div class="font-title-md text-title-md text-on-surface">
-                        {% if excursion.durationHours %}{{ excursion.durationHours }}h {% endif %}
-                        {% if excursion.durationMinutes %}{{ excursion.durationMinutes }}min{% endif %}
+                        {% if excursion.durationHours %}{{ excursion.durationHours }}{{ 'excursion.detail.hours_short'|trans }} {% endif %}
+                        {% if excursion.durationMinutes %}{{ excursion.durationMinutes }}{{ 'excursion.detail.minutes_short'|trans }}{% endif %}
                         {% if excursion.startTime and excursion.endTime %}
                             ({{ excursion.startTime|date('H:i') }}-{{ excursion.endTime|date('H:i') }})
                         {% endif %}
@@ -198,8 +213,8 @@
                     <span class="material-symbols-outlined">group</span>
                 </div>
                 <div>
-                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Participants</div>
-                    <div class="font-title-md text-title-md text-on-surface">Min {{ excursion.minParticipants }} - Max {{ excursion.maxParticipants }}</div>
+                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">{{ 'excursion.detail.participants'|trans }}</div>
+                    <div class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.participant_range'|trans({'%min%': excursion.minParticipants, '%max%': excursion.maxParticipants}) }}</div>
                 </div>
             </div>
             <div class="hidden md:block w-px h-12 bg-surface-container"></div>
@@ -208,8 +223,8 @@
                     <span class="material-symbols-outlined">hotel</span>
                 </div>
                 <div>
-                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Prise en charge</div>
-                    <div class="font-title-md text-title-md text-on-surface">Directe à votre hôtel</div>
+                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">{{ 'excursion.detail.pickup'|trans }}</div>
+                    <div class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.hotel_pickup'|trans }}</div>
                 </div>
             </div>
             <div class="hidden md:block w-px h-12 bg-surface-container"></div>
@@ -218,8 +233,8 @@
                     <span class="material-symbols-outlined">verified_user</span>
                 </div>
                 <div>
-                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">Annulation</div>
-                    <div class="font-title-md text-title-md text-on-surface">Gratuite à {{ excursion.cancellationHours }}h</div>
+                    <div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-0.5">{{ 'excursion.detail.cancellation'|trans }}</div>
+                    <div class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.free_cancellation_hours'|trans({'%hours%': excursion.cancellationHours}) }}</div>
                 </div>
             </div>
         </div>
@@ -236,7 +251,7 @@
                 <section>
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-primary text-[28px]">explore</span>
-                        <h2 class="font-headline-md text-headline-md text-on-surface">Ce que vous allez vivre</h2>
+                        <h2 class="font-headline-md text-headline-md text-on-surface">{{ 'excursion.detail.experience_title'|trans }}</h2>
                     </div>
                     <div class="font-body-lg text-body-lg text-on-surface-variant mb-8 leading-relaxed raw-html">
                         {{ excursion.getDescriptionTranslated(_locale)|raw }}
@@ -263,9 +278,9 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-primary text-[28px]">map</span>
-                            <h2 class="font-headline-md text-headline-md text-on-surface">Programme de la Journée</h2>
+                            <h2 class="font-headline-md text-headline-md text-on-surface">{{ 'excursion.detail.itinerary_title'|trans }}</h2>
                         </div>
-                        <span class="px-3 py-1.5 rounded-md bg-surface-container-high text-primary font-label-md text-label-md self-start md:self-auto">Rythme libre & sans stress</span>
+                        <span class="px-3 py-1.5 rounded-md bg-surface-container-high text-primary font-label-md text-label-md self-start md:self-auto">{{ 'excursion.detail.relaxed_pace'|trans }}</span>
                     </div>
                     
                     <div class="relative pl-6 md:pl-8 border-l-2 border-surface-container space-y-10 ml-4">
@@ -285,12 +300,12 @@
                 {# Inclus / Non Inclus #}
                 {% if excursion.inclusions|length > 0 %}
                 <section>
-                    <h2 class="font-headline-md text-headline-md text-on-surface mb-6">Ce qui est inclus dans le tarif</h2>
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-6">{{ 'excursion.detail.inclusions_title'|trans }}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-surface-container-low rounded-2xl p-6">
                             <div class="flex items-center gap-2 mb-4 text-green-700 font-title-md text-title-md">
                                 <span class="material-symbols-outlined">check_circle</span>
-                                Inclus d'office
+                                {{ 'excursion.detail.included'|trans }}
                             </div>
                             <ul class="space-y-3">
                                 {% for item in excursion.inclusions|filter(i => i.type == 'included') %}
@@ -304,7 +319,7 @@
                         <div class="bg-surface-container-high/50 rounded-2xl p-6 border border-surface-container">
                             <div class="flex items-center gap-2 mb-4 text-error font-title-md text-title-md">
                                 <span class="material-symbols-outlined">cancel</span>
-                                Non inclus
+                                {{ 'excursion.detail.excluded'|trans }}
                             </div>
                             <ul class="space-y-3">
                                 {% for item in excursion.inclusions|filter(i => i.type == 'excluded') %}
@@ -319,95 +334,108 @@
                 </section>
                 {% endif %}
 
-                {# Booking Form #}
+                {% for reservation in app.flashes('reservation_success') %}
+                    <div id="reservation-status" role="status" class="mb-6 rounded-2xl border border-green-200 bg-green-50 p-6 text-green-950">
+                        <h2 class="font-headline-md text-headline-md mb-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-green-600 text-[28px]">check_circle</span>
+                            {{ 'excursion_reservation.success.title'|trans }}
+                        </h2>
+                        <p class="font-body-md mb-5">{{ 'excursion_reservation.success.message'|trans }}</p>
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 font-body-sm">
+                            <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.excursion'|trans }}</dt><dd class="text-green-800">{{ reservation.excursion }}</dd></div>
+                            <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.customer'|trans }}</dt><dd class="text-green-800">{{ reservation.prenom }} {{ reservation.nom }}</dd></div>
+                            <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.date_time'|trans }}</dt><dd class="text-green-800">{{ 'excursion_reservation.summary.date_time_value'|trans({'%date%': reservation.date, '%time%': reservation.heure}) }}</dd></div>
+                            <div>
+                                <dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.participants'|trans }}</dt>
+                                <dd class="text-green-800">
+                                    {{ reservation.adultes }} {{ (reservation.adultes == 1 ? 'excursion_reservation.summary.adult_one' : 'excursion_reservation.summary.adult_other')|trans }},
+                                    {{ reservation.enfants }} {{ (reservation.enfants == 1 ? 'excursion_reservation.summary.child_one' : 'excursion_reservation.summary.child_other')|trans }}
+                                </dd>
+                            </div>
+                            <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.pickup_location'|trans }}</dt><dd class="text-green-800">{{ reservation.lieu }}</dd></div>
+                            <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.status'|trans }}</dt><dd class="text-green-800"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">{{ 'excursion_reservation.status.pending'|trans }}</span></dd></div>
+                        </dl>
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('reservation_error') %}
+                    <div role="alert" class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-950 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-red-600 text-[24px] shrink-0 mt-0.5">error</span>
+                        <div>
+                            <h2 class="font-title-md text-title-md font-semibold mb-1 text-red-900">{{ 'excursion.detail.booking_failure'|trans }}</h2>
+                            <p class="font-body-md text-red-800">{{ message|trans }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if bookingForm.vars.submitted and not bookingForm.vars.valid %}
+                    <div role="alert" class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-950 flex items-start gap-3">
+                        <span class="material-symbols-outlined text-red-600 text-[24px] shrink-0 mt-0.5">warning</span>
+                        <div>
+                            <h2 class="font-title-md text-title-md font-semibold mb-1 text-red-900">{{ 'excursion.detail.invalid_form_title'|trans }}</h2>
+                            <p class="font-body-md text-red-800">{{ 'excursion.detail.invalid_form_message'|trans }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <section class="bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container p-6 md:p-8">
                     <div class="flex items-center gap-3 mb-2">
                         <span class="material-symbols-outlined text-primary text-[28px]">event_available</span>
-                        <h2 class="font-headline-md text-headline-md text-on-surface">Formulaire de Réservation Direct</h2>
+                        <h2 class="font-headline-md text-headline-md text-on-surface">{{ 'excursion.detail.booking_form_title'|trans }}</h2>
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-8">Remplissez ces 3 étapes simples. Aucune carte bancaire requise aujourd'hui.</p>
-                    
-                    <form class="space-y-8" id="booking-form" data-excursion-id="{{ excursion.id }}" data-excursion-slug="{{ excursion.slug }}">
-                        <input type="hidden" name="excursion_id" value="{{ excursion.id }}">
-                        {# Step 1 #}
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-8">{{ 'excursion.detail.booking_form_intro'|trans }}</p>
+
+                    {{ form_start(bookingForm, {'attr': {'class': 'space-y-8', 'id': 'booking-form'}}) }}
+                        {{ form_errors(bookingForm) }}
                         <div>
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">1</div>
-                                <h3 class="font-title-md text-title-md text-on-surface">Date et Participants</h3>
+                                <h3 class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.date_participants'|trans }}</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-surface-container-low p-4 rounded-xl">
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Date souhaitée</label>
-                                    <div class="relative">
-                                        <input type="date" value="2026-11-09" class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 bg-surface-container-low p-4 rounded-xl">
+                                {% for field in [bookingForm.dateExcursion, bookingForm.heureDepart, bookingForm.nombreAdultes, bookingForm.nombreEnfants] %}
+                                    <div>
+                                        {{ form_label(field) }}
+                                        {{ form_widget(field) }}
+                                        {{ form_errors(field) }}
                                     </div>
-                                </div>
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Adultes (+12 ans)</label>
-                                    <div class="flex items-center justify-between h-11 px-2 rounded-lg bg-surface-container-lowest border border-surface-container">
-                                        <button type="button" class="w-8 h-8 rounded bg-surface-container-low text-primary flex items-center justify-center hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[18px]">remove</span></button>
-                                        <span class="font-title-md text-on-surface">2</span>
-                                        <button type="button" class="w-8 h-8 rounded bg-surface-container-low text-primary flex items-center justify-center hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[18px]">add</span></button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Enfants (-12 ans)</label>
-                                    <div class="flex items-center justify-between h-11 px-2 rounded-lg bg-surface-container-lowest border border-surface-container">
-                                        <button type="button" class="w-8 h-8 rounded bg-surface-container-low text-primary flex items-center justify-center hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[18px]">remove</span></button>
-                                        <span class="font-title-md text-on-surface">0</span>
-                                        <button type="button" class="w-8 h-8 rounded bg-surface-container-low text-primary flex items-center justify-center hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[18px]">add</span></button>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
 
-                        {# Step 2 #}
                         <div>
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">2</div>
-                                <h3 class="font-title-md text-title-md text-on-surface">Lieu de Prise en Charge</h3>
+                                <h3 class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.pickup'|trans }}</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface-container-low p-4 rounded-xl">
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Région de départ</label>
-                                    <select class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none">
-                                        <option>Tunis Centre, Médina, Berges du Lac (Inclus)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Hôtel ou Adresse précise</label>
-                                    <input type="text" placeholder="Ex: Hôtel Africa Tunis ou Résidence Gammarth" class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none">
-                                </div>
+                            <div class="bg-surface-container-low p-4 rounded-xl">
+                                {{ form_label(bookingForm.lieuPriseEnCharge) }}
+                                {{ form_widget(bookingForm.lieuPriseEnCharge) }}
+                                {{ form_errors(bookingForm.lieuPriseEnCharge) }}
                             </div>
                         </div>
 
-                        {# Step 3 #}
                         <div>
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">3</div>
-                                <h3 class="font-title-md text-title-md text-on-surface">Coordonnées du Contact</h3>
+                                <h3 class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.contact_details'|trans }}</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-surface-container-low p-4 rounded-xl">
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Nom & Prénom</label>
-                                    <input type="text" placeholder="Sophie Martin" class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none">
-                                </div>
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Téléphone (WhatsApp)</label>
-                                    <input type="text" placeholder="+33 6 12 34 56 78" class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none">
-                                </div>
-                                <div>
-                                    <label class="block font-label-md text-label-md text-on-surface-variant mb-2">Adresse Email</label>
-                                    <input type="email" placeholder="sophie@example.com" class="w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none">
-                                </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 bg-surface-container-low p-4 rounded-xl">
+                                {% for field in [bookingForm.nom, bookingForm.prenom, bookingForm.email, bookingForm.whatsapp] %}
+                                    <div>
+                                        {{ form_label(field) }}
+                                        {{ form_widget(field) }}
+                                        {{ form_errors(field) }}
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
 
-                        <button type="button" class="w-full h-14 rounded-xl bg-primary text-on-primary font-title-md text-title-md shadow-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 mt-4">
-                            <span class="material-symbols-outlined">check_circle</span>
-                            Valider et bloquer mon excursion
+                        <button type="submit" class="w-full h-14 rounded-xl bg-primary text-on-primary font-title-md text-title-md shadow-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">event_available</span>
+                            {{ 'excursion.detail.book_button'|trans }}
                         </button>
-                    </form>
+                    {{ form_end(bookingForm) }}
                 </section>
 
             </div>
@@ -416,65 +444,54 @@
             <div class="lg:col-span-1">
                 <div class="sticky top-28 bg-surface-container-lowest rounded-2xl shadow-lg border border-surface-container p-6">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="font-label-md text-label-md text-on-surface-variant">Tarif par personne</span>
-                        <span class="px-2.5 py-1 rounded-md bg-secondary-container text-on-secondary-container font-label-md text-label-md">{{ excursion.type|capitalize }}</span>
+                        <span class="font-label-md text-label-md text-on-surface-variant">{{ 'excursion.detail.price_per_person'|trans }}</span>
+                        <span class="px-2.5 py-1 rounded-md bg-secondary-container text-on-secondary-container font-label-md text-label-md">{{ ('excursion.detail.type.' ~ excursion.type)|trans }}</span>
                     </div>
                     <div class="flex items-end gap-2 mb-6">
-                        <span class="font-display text-display text-primary leading-none">{{ excursion.priceAdult|number_format(0, '.', '') }} <span class="text-[24px]">DT</span></span>
-                        {% if excursion.priceConverted %}
-                        <span class="font-body-md text-body-md text-on-surface-variant mb-1">≈ {{ excursion.priceConverted|number_format(0, '.', '') }} €</span>
-                        {% endif %}
+                        <span class="font-display text-display text-primary leading-none" data-price-base="{{ excursion.priceAdult }}">{{ excursion.priceAdult|price }}</span>
                     </div>
                     
                     <div class="space-y-3 mb-6 font-body-md text-body-md text-on-surface-variant pb-6 border-b border-surface-container">
                         <div class="flex justify-between items-center">
-                            <span>Excursion (1 ad.)</span>
-                            <span class="text-on-surface font-medium">{{ excursion.priceAdult|number_format(0, '.', '') }} DT</span>
+                            <span>{{ 'excursion.detail.adult_price'|trans }}</span>
+                            <span class="text-on-surface font-medium" data-price-base="{{ excursion.priceAdult }}">{{ excursion.priceAdult|price }}</span>
                         </div>
                         {% if excursion.priceChild %}
                         <div class="flex justify-between items-center">
-                            <span>Enfant (-12 ans)</span>
-                            <span class="text-on-surface font-medium">{{ excursion.priceChild|number_format(0, '.', '') }} DT</span>
+                            <span>{{ 'excursion.detail.child_price'|trans }}</span>
+                            <span class="text-on-surface font-medium" data-price-base="{{ excursion.priceChild }}">{{ excursion.priceChild|price }}</span>
                         </div>
                         {% endif %}
                         <div class="flex justify-between items-center">
-                            <span>Prise en charge & retour</span>
-                            <span class="font-label-md text-label-md text-on-surface">Inclus</span>
+                            <span>{{ 'excursion.detail.pickup_return'|trans }}</span>
+                            <span class="font-label-md text-label-md text-on-surface">{{ 'excursion.detail.included'|trans }}</span>
                         </div>
                     </div>
 
                     <div class="flex justify-between items-end mb-6">
-                        <span class="font-title-md text-title-md text-on-surface">À partir de</span>
+                        <span class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.from_price'|trans }}</span>
                         <div class="text-right">
-                            <div class="font-headline-md text-headline-md text-on-surface leading-none mb-1">{{ (excursion.priceAdult * excursion.minParticipants)|number_format(0, '.', '') }} DT</div>
-                            {% if excursion.priceConverted %}
-                            <div class="font-label-sm text-label-sm text-on-surface-variant">≈ {{ (excursion.priceConverted * excursion.minParticipants)|number_format(0, '.', '') }} €</div>
-                            {% endif %}
+                            <div class="font-headline-md text-headline-md text-on-surface leading-none mb-1" data-price-base="{{ excursion.priceAdult * excursion.minParticipants }}">{{ (excursion.priceAdult * excursion.minParticipants)|price }}</div>
                         </div>
                     </div>
 
                     <div class="bg-surface-container-low rounded-xl p-4 flex gap-3 mb-6">
                         <span class="material-symbols-outlined text-green-600 shrink-0">task_alt</span>
-                        <p class="font-label-sm text-label-sm text-on-surface">Zéro avance requise en ligne : règlement sur place le jour même en espèces ou CB.</p>
+                        <p class="font-label-sm text-label-sm text-on-surface">{{ 'excursion.detail.payment_notice'|trans }}</p>
                     </div>
-
-                    <button class="w-full h-14 rounded-xl bg-primary text-on-primary font-title-md text-title-md shadow-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 mb-6">
-                        <span class="material-symbols-outlined">check_circle</span>
-                        Confirmer ma réservation
-                    </button>
 
                     <ul class="space-y-3 font-body-sm text-body-sm text-on-surface-variant">
                         <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">verified</span>
-                            Chauffeurs agréés ONTT & certifiés
+                            {{ 'excursion.detail.certified_drivers'|trans }}
                         </li>
                         <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">event_busy</span>
-                            Annulation gratuite jusqu'à {{ excursion.cancellationHours }}h
+                            {{ 'excursion.detail.free_cancellation_hours'|trans({'%hours%': excursion.cancellationHours}) }}
                         </li>
                         <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">support_agent</span>
-                            Assistance WhatsApp 24/7
+                            {{ 'excursion.detail.whatsapp_support'|trans }}
                         </li>
                     </ul>
                 </div>
@@ -489,8 +506,8 @@
         <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
             <div class="flex items-end justify-between mb-8">
                 <div>
-                    <h2 class="font-headline-md text-headline-md text-on-surface mb-2">Avis des voyageurs</h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant">Note {{ excursion.ratingAverage|default('5.0') }}/5 par {{ excursion.ratingCount > 0 ? excursion.ratingCount : approved_reviews|length }} clients vérifiés</p>
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-2">{{ 'excursion.detail.reviews_title'|trans }}</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">{{ 'excursion.detail.reviews_summary'|trans({'%rating%': excursion.ratingAverage|default('5.0'), '%count%': excursion.ratingCount > 0 ? excursion.ratingCount : approved_reviews|length}) }}</p>
                 </div>
                 <div class="font-headline-sm text-headline-sm text-amber-500 flex items-center gap-1 font-bold">
                     <span class="material-symbols-outlined text-[24px]">star</span>
@@ -519,7 +536,7 @@
     {% if active_faqs|length > 0 %}
     <div class="bg-surface py-16">
         <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop">
-            <h2 class="font-headline-md text-headline-md text-on-surface text-center mb-10">Questions fréquentes</h2>
+            <h2 class="font-headline-md text-headline-md text-on-surface text-center mb-10">{{ 'excursion.detail.faq_title'|trans }}</h2>
             <div class="space-y-4">
                 {% for faq in active_faqs %}
                 <div class="bg-surface-container-lowest rounded-xl border border-surface-container flex flex-col group transition-all">
@@ -539,12 +556,11 @@
 
     <section class="section-destinations">
         <div class="container">
-            <p class="section-eyebrow">INSPIRATIONS RÉGIONALES</p>
+            <p class="section-eyebrow">{{ 'excursion.detail.destinations.eyebrow'|trans }}</p>
             <div class="section-heading">
-                <h2 class="section-heading__title">Explorez par destination</h2>
+                <h2 class="section-heading__title">{{ 'excursion.detail.destinations.title'|trans }}</h2>
                 <p class="section-heading__desc">
-                    Chaque région tunisienne possède sa propre signature : vestiges
-                    puniques, dunes sahariennes ou villages côtiers.
+                    {{ 'excursion.detail.destinations.description'|trans }}
                 </p>
             </div>
             <div class="destinations-grid">
@@ -569,4 +585,26 @@
 {% block javascripts %}
 <script src="{{ asset('assetsFront/js/navbar.js') }}?v=2"></script>
 <script src="{{ asset('assetsFront/js/excursion-gallery.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bookingForm = document.getElementById('booking-form');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function (e) {
+                if (bookingForm.dataset.submitting === 'true') {
+                    e.preventDefault();
+                    return false;
+                }
+                if (bookingForm.checkValidity && !bookingForm.checkValidity()) {
+                    return;
+                }
+                bookingForm.dataset.submitting = 'true';
+                const submitBtn = bookingForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

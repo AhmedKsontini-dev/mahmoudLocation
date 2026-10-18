@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mise à jour de votre réservation</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#26344d;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f6fb;padding:28px 12px;">
+    <tr><td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e4e9f1;border-radius:14px;overflow:hidden;">
+            <tr><td style="padding:24px 28px;background:#1748b5;color:#ffffff;font-size:20px;font-weight:bold;">{{ siteName }}</td></tr>
+            <tr><td style="padding:28px;">
+                <h1 style="margin:0 0 18px;font-size:22px;color:#18243a;">Mise à jour de votre réservation</h1>
+                <p style="margin:0 0 16px;line-height:1.65;">Bonjour{% if clientName %} {{ clientName }}{% endif %},</p>
+                <p style="margin:0 0 22px;line-height:1.65;">Nous vous informons que votre réservation est actuellement annulée et ne pourra donc pas être considérée comme confirmée.</p>
+
+                <h2 style="margin:0 0 12px;font-size:16px;color:#26344d;">Récapitulatif de votre réservation</h2>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border:1px solid #e4e9f1;">
+                    {% if reservation.id %}
+                        <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Référence</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;font-weight:bold;">#{{ reservation.id }}</td></tr>
+                    {% endif %}
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Départ</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;">{{ reservation.pickupLocation }}</td></tr>
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Arrivée</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;">{{ reservation.dropoffLocation }}</td></tr>
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Date prévue</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;">{{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : '' }}{% if reservation.pickupTime %} à {{ reservation.pickupTime|date('H:i') }}{% endif %}</td></tr>
+                    {% if reservation.transfereType.value == 'return' and reservation.returnPickupDate %}
+                        <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Retour prévu</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;">{{ reservation.returnPickupDate|date('d/m/Y') }}{% if reservation.returnPickupTime %} à {{ reservation.returnPickupTime|date('H:i') }}{% endif %}</td></tr>
+                    {% endif %}
+                    {% if reservation.transfere %}
+                        <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Transfert</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;">{{ reservation.transfere.getLieuDepartTranslated('fr') ?? reservation.transfere.lieuDepart }} → {{ reservation.transfere.getLieuArriveeTranslated('fr') ?? reservation.transfere.lieuArrivee }}</td></tr>
+                    {% endif %}
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Statut</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#b42318;font-weight:bold;">Annulée</td></tr>
+                    <tr><td style="padding:10px;color:#68758b;">Montant indiqué</td><td style="padding:10px;">{{ reservation.prixTotal }} {{ reservation.devise }}</td></tr>
+                </table>
+
+                <p style="margin:22px 0 0;line-height:1.65;">Nous sommes désolés pour ce désagrément. Pour toute question ou pour organiser un autre transfert, n’hésitez pas à contacter notre équipe.</p>
+                <p style="margin:20px 0 0;line-height:1.65;">Cordialement,<br><strong>L’équipe {{ siteName }}</strong></p>
+            </td></tr>
+        </table>
+    </td></tr>
+</table>
+</body>
+</html>

@@ -14,7 +14,7 @@ class ExcursionImageTranslationType extends AbstractType
     {
         $builder
             ->add('caption', TextType::class, [
-                'label' => 'Légende',
+                'label' => 'LÃ©gende',
                 'required' => false,
                 'attr' => ['class' => 'form-control'],
             ])

@@ -10,7 +10,7 @@
     
     <div class="header-right">
         <div class="header-user">
-            <span class="user-name">{{ app.user ? app.user.email|split('@')[0]|capitalize : 'Admin' }}</span>
+            <a href="{{ path('admin_dashboard') }}" class="user-name" aria-label="Retour au tableau de bord">{{ app.user ? app.user.email|split('@')[0]|capitalize : 'Admin' }}</a>
             <a href="{{ path('app_logout') }}" class="btn btn-outline btn-sm">Déconnexion</a>
         </div>
     </div>

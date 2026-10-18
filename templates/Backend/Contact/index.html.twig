@@ -9,7 +9,7 @@
 {% set currentType = app.request.query.get('type') %}
 {% set currentTab = app.request.query.get('tab', 'all') %}
 {% set folderParam = app.request.query.get('folder', 'inbox') %}
-{% set currentFolder = folderParam in ['inbox', 'pinned', 'sent', 'drafts', 'archived'] ? folderParam : 'inbox' %}
+{% set currentFolder = folderParam in ['inbox', 'pinned', 'sent', 'failed', 'drafts', 'archived'] ? folderParam : 'inbox' %}
 
 {% set typeBadges = {
     'information': 'Demande de renseignement',
@@ -30,6 +30,7 @@
 {% set countInbox = inboxContacts|length %}
 {% set countPinned = pinnedContacts|length %}
 {% set countSent = sentMessages|length %}
+{% set countFailed = failedMessages|length %}
 {% set countDrafts = draftMessages|length %}
 {% set countArchived = archivedContacts|length %}
 
@@ -49,6 +50,9 @@
 {% elseif currentFolder == 'sent' %}
     {% set baseList = sentMessages %}
     {% set tabField = 'sentAt' %}
+{% elseif currentFolder == 'failed' %}
+    {% set baseList = failedMessages %}
+    {% set tabField = 'updatedAt' %}
 {% elseif currentFolder == 'drafts' %}
     {% set baseList = draftMessages %}
     {% set tabField = 'updatedAt' %}
@@ -97,6 +101,7 @@
             </div>
         </div>
         <div class="page-actions">
+            <a href="{{ path('admin_contact_new_message') }}" class="btn btn-primary" aria-label="Nouveau message">✉️ + Nouveau message</a>
             <a href="{{ path('admin_contact_index', {folder: folderUrlParam}) }}" class="btn btn-secondary btn-sm">🔄 Actualiser</a>
         </div>
     </div>
@@ -121,7 +126,7 @@
                         <span class="mailbox-folder-icon">📥</span>
                         <span>Réception</span>
                     </span>
-                    <span class="mailbox-folder-count">{{ countInbox }}</span>
+                    <span class="mailbox-folder-count" title="{{ unreadCount }} message(s) non lu(s)">{{ countInbox }}</span>
                 </a>
                 <a href="{{ path('admin_contact_index', {folder: 'pinned'}) }}" class="mailbox-folder {{ currentFolder == 'pinned' ? 'active' }}">
                     <span class="mailbox-folder-left">
@@ -136,6 +141,13 @@
                         <span>Envoyés</span>
                     </span>
                     <span class="mailbox-folder-count plain">{{ countSent }}</span>
+                </a>
+                <a href="{{ path('admin_contact_index', {folder: 'failed'}) }}" class="mailbox-folder {{ currentFolder == 'failed' ? 'active' }}">
+                    <span class="mailbox-folder-left">
+                        <span class="mailbox-folder-icon">⚠️</span>
+                        <span>Échecs d’envoi</span>
+                    </span>
+                    <span class="mailbox-folder-count plain">{{ countFailed }}</span>
                 </a>
                 <a href="{{ path('admin_contact_index', {folder: 'drafts'}) }}" class="mailbox-folder {{ currentFolder == 'drafts' ? 'active' }}">
                     <span class="mailbox-folder-left">
@@ -153,7 +165,7 @@
                 </a>
             </nav>
 
-            {% if currentFolder != 'sent' and currentFolder != 'drafts' %}
+            {% if currentFolder not in ['sent', 'failed', 'drafts'] %}
                 <nav class="mailbox-folder-list">
                     <span class="mailbox-folder-section">Types de demande</span>
                     <a href="{{ path('admin_contact_index', {type: 'information', tab: tabUrlParam}) }}" class="mailbox-folder {{ currentFolder == 'inbox' and currentType == 'information' ? 'active' }}">
@@ -206,13 +218,14 @@
                 {% if isReceivedFolder %}
                     {% for contact in tabItems %}
                         <a href="{{ path('admin_contact_index', {folder: folderUrlParam, selected: contact.id, type: typeUrlParam, tab: tabUrlParam}) }}"
-                           class="mailbox-item{{ selected and selected.id == contact.id ? ' active' }}{{ contact.createdAt|date('Y-m-d') == 'now'|date('Y-m-d') ? ' is-new' }}"
+                           class="mailbox-item{{ selected and selected.id == contact.id ? ' active' }}{{ not contact.isRead ? ' is-new is-unread' }}"
                            data-search="{{ (contact.firstName ~ ' ' ~ contact.lastName ~ ' ' ~ contact.email ~ ' ' ~ contact.subject ~ ' ' ~ contact.message ~ ' ' ~ (typeBadges[contact.requestType] ?? '') ~ ' ' ~ (serviceLabels[contact.serviceCategory] ?? ''))|lower }}">
                             <div class="mailbox-item-top">
                                 <span class="mailbox-item-sender">
-                                    <span class="mailbox-dot"></span>
+                                    <span class="mailbox-dot" aria-hidden="true"></span>
                                     {% if contact.isPinned %}<span class="mailbox-pin-flag" title="Épinglé">⭐</span>{% endif %}
                                     <span class="mailbox-item-name">{{ contact.firstName }} {{ contact.lastName }}</span>
+                                    {% if not contact.isRead %}<span class="mailbox-status-unread">Non lu</span>{% elseif contact.id in repliedContactIds %}<span class="mailbox-status-replied">Répondu</span>{% endif %}
                                 </span>
                                 <span class="mailbox-item-time">
                                     {% if contact.createdAt|date('Y-m-d') == 'now'|date('Y-m-d') %}
@@ -228,15 +241,16 @@
                             <div class="mailbox-item-preview">{{ contact.message }}</div>
                         </a>
                     {% endfor %}
-                {% elseif currentFolder == 'sent' %}
+                {% elseif currentFolder in ['sent', 'failed'] %}
                     {% for message in tabItems %}
-                        <a href="{{ path('admin_contact_index', {folder: 'sent', selected: message.id, tab: tabUrlParam}) }}"
+                        <a href="{{ path('admin_contact_index', {folder: currentFolder, selected: message.id, tab: tabUrlParam}) }}"
                            class="mailbox-item{{ selected and selected.id == message.id ? ' active' }}"
                            data-search="{{ (message.recipient ~ ' ' ~ message.subject ~ ' ' ~ message.body)|lower }}">
                             <div class="mailbox-item-top">
                                 <span class="mailbox-item-sender">
-                                    <span class="mailbox-item-tag">📤</span>
-                                    <span class="mailbox-item-name">À : {{ message.recipient }}</span>
+                                    <span class="mailbox-item-tag">{{ message.status.value == 'failed' ? '⚠️' : '📤' }}</span>
+                                    <span class="mailbox-item-name">À : {{ message.recipientName ? message.recipientName ~ ' · ' : '' }}{{ message.recipient }}</span>
+                                    <span class="{{ message.status.value == 'failed' ? 'mailbox-status-failed' : 'mailbox-status-replied' }}">{{ message.status.value == 'failed' ? 'Échec' : 'Envoyé' }}</span>
                                 </span>
                                 <span class="mailbox-item-time">
                                     {% if message.sentAt and message.sentAt|date('Y-m-d') == 'now'|date('Y-m-d') %}
@@ -244,7 +258,7 @@
                                     {% elseif message.sentAt and message.sentAt|date('Y-m-d') == 'yesterday'|date('Y-m-d') %}
                                         Hier
                                     {% else %}
-                                        {{ message.sentAt ? message.sentAt|date('d/m/Y') : '' }}
+                                        {{ message.sentAt ? message.sentAt|date('d/m/Y') : message.updatedAt|date('d/m/Y') }}
                                     {% endif %}
                                 </span>
                             </div>
@@ -280,9 +294,10 @@
 
                 {% if tabItems|length == 0 %}
                     <div class="empty-state">
-                        <div class="empty-state-icon">{{ currentFolder == 'sent' ? '📤' : (currentFolder == 'drafts' ? '📝' : (currentFolder == 'archived' ? '🗄️' : (currentFolder == 'pinned' ? '⭐' : '📭'))) }}</div>
+                        <div class="empty-state-icon">{{ currentFolder == 'sent' ? '📤' : (currentFolder == 'failed' ? '⚠️' : (currentFolder == 'drafts' ? '📝' : (currentFolder == 'archived' ? '🗄️' : (currentFolder == 'pinned' ? '⭐' : '📭')))) }}</div>
                         <div class="empty-state-title">
                             {% if currentFolder == 'sent' %}Aucun message envoyé
+                            {% elseif currentFolder == 'failed' %}Aucun échec d’envoi
                             {% elseif currentFolder == 'drafts' %}Aucun brouillon
                             {% elseif currentFolder == 'archived' %}Aucun message archivé
                             {% elseif currentFolder == 'pinned' %}Aucun message épinglé
@@ -290,6 +305,7 @@
                         </div>
                         <div class="empty-state-text">
                             {% if currentFolder == 'sent' %}Les réponses envoyées aux clients apparaîtront ici.
+                            {% elseif currentFolder == 'failed' %}Les messages qui n’ont pas pu être remis au transport apparaîtront ici.
                             {% elseif currentFolder == 'drafts' %}Les réponses commencées mais non envoyées apparaîtront ici.
                             {% elseif currentFolder == 'archived' %}Les messages archivés depuis la réception apparaîtront ici.
                             {% elseif currentFolder == 'pinned' %}Épinglez un message avec l'étoile pour le retrouver ici.
@@ -323,6 +339,14 @@
                             <input type="hidden" name="_return_type" value="{{ currentFolder == 'inbox' and currentType ? currentType : '' }}">
                             <input type="hidden" name="_return_tab" value="{{ currentTab }}">
                             <button type="submit" class="mailbox-icon-btn" title="{{ selected.isArchived ? 'Désarchiver (remettre en réception)' : 'Archiver' }}">{{ selected.isArchived ? '📥' : '🗄️' }}</button>
+                        </form>
+
+                        <form method="post" action="{{ path('admin_contact_' ~ (selected.isRead ? 'unread' : 'read'), {id: selected.id}) }}" class="mailbox-inline-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token((selected.isRead ? 'unread' : 'read') ~ selected.id) }}">
+                            <input type="hidden" name="_return_folder" value="{{ currentFolder }}">
+                            <input type="hidden" name="_return_type" value="{{ currentFolder == 'inbox' and currentType ? currentType : '' }}">
+                            <input type="hidden" name="_return_tab" value="{{ currentTab }}">
+                            <button type="submit" class="mailbox-icon-btn" title="{{ selected.isRead ? 'Marquer comme non lu' : 'Marquer comme lu' }}">{{ selected.isRead ? '✉️' : '📨' }}</button>
                         </form>
 
                         <form method="post" action="{{ path('admin_contact_delete', {id: selected.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce contact ? Cette action est définitive.');" class="mailbox-inline-form">
@@ -369,12 +393,37 @@
                         {% if selected.isPinned %}
                             <span class="badge badge-pending">⭐ Épinglé</span>
                         {% endif %}
+                        {% if not selected.isRead %}
+                            <span class="mailbox-status-unread">Non lu</span>
+                        {% elseif selected.id in repliedContactIds %}
+                            <span class="mailbox-status-replied">Répondu</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Lu</span>
+                        {% endif %}
                         {% if selected.isArchived %}
                             <span class="badge badge-secondary">🗄️ Archivé</span>
                         {% endif %}
                     </div>
 
                     <div class="mailbox-message">{{ selected.message|nl2br }}</div>
+
+                    {% set conversation = sentMessages|merge(failedMessages)|filter(message => message.contact and message.contact.id == selected.id)|reverse %}
+                    {% if conversation|length > 0 %}
+                        <section class="mailbox-conversation" aria-label="Historique de la conversation">
+                            <h3 class="mailbox-conversation-title">Historique des échanges</h3>
+                            {% for message in conversation %}
+                                <article class="mailbox-conversation-message {{ message.status.value == 'failed' ? 'is-failed' : '' }}">
+                                    <div class="mailbox-conversation-meta">
+                                        <strong>Réponse envoyée</strong>
+                                        <span>{{ message.sentAt ? message.sentAt|date('d/m/Y à H:i') : message.updatedAt|date('d/m/Y à H:i') }}</span>
+                                        <span class="{{ message.status.value == 'failed' ? 'mailbox-status-failed' : 'mailbox-status-replied' }}">{{ message.status.value == 'failed' ? 'Échec d’envoi' : 'Envoyé' }}</span>
+                                    </div>
+                                    <h4>{{ message.subject }}</h4>
+                                    <div class="mailbox-message">{{ message.body|nl2br }}</div>
+                                </article>
+                            {% endfor %}
+                        </section>
+                    {% endif %}
 
                     <div class="mailbox-reply" id="quickReply">
                         <span class="mailbox-reply-title">Réponse rapide</span>
@@ -400,19 +449,27 @@
                         </form>
                     </div>
                 </div>
-            {% elseif selected and currentFolder == 'sent' %}
+            {% elseif selected and currentFolder in ['sent', 'failed'] %}
                 <div class="mailbox-reader-toolbar">
                     <div class="mailbox-reader-actions">
                         {% if selected.contact %}
                             <a href="{{ path('admin_contact_show', {id: selected.contact.id}) }}" class="btn btn-secondary btn-sm">📄 Fiche du contact</a>
                             <a href="{{ path('admin_contact_index', {selected: selected.contact.id}) }}" class="btn btn-secondary btn-sm">↩️ Voir la demande</a>
                         {% endif %}
+                        <form method="post" action="{{ path('admin_contact_message_delete', {id: selected.id}) }}" onsubmit="return confirm('Supprimer ce message ? Cette action est définitive.');" class="mailbox-inline-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token('message_delete' ~ selected.id) }}">
+                            <input type="hidden" name="_return_folder" value="{{ currentFolder }}">
+                            <input type="hidden" name="_return_tab" value="{{ currentTab }}">
+                            <button type="submit" class="mailbox-icon-btn danger" title="Supprimer le message">🗑️</button>
+                        </form>
                     </div>
                     <button type="button" class="mailbox-icon-btn" id="mailboxPrintBtn" title="Imprimer">🖨️</button>
                 </div>
 
                 <div class="mailbox-reader-body">
-                    <div class="mailbox-sent-notice">📤 Message envoyé par l'administrateur</div>
+                    <div class="{{ selected.status.value == 'failed' ? 'mailbox-failed-notice' : 'mailbox-sent-notice' }}">
+                        {{ selected.status.value == 'failed' ? '⚠️ Échec de l’envoi — le contenu est conservé.' : '📤 Message envoyé par l’administrateur — accepté par le service de messagerie' }}
+                    </div>
 
                     <div class="mailbox-reader-head">
                         <h2 class="mailbox-reader-subject">{{ selected.subject }}</h2>
@@ -428,11 +485,11 @@
                     <div class="mailbox-sender-row">
                         <span class="mailbox-avatar">{% if selected.contact %}{{ selected.contact.firstName|slice(0, 1)|upper }}{{ selected.contact.lastName|slice(0, 1)|upper }}{% else %}✉️{% endif %}</span>
                         <div class="mailbox-sender-info">
-                            <span class="mailbox-sender-name">À : {% if selected.contact %}{{ selected.contact.firstName }} {{ selected.contact.lastName }}{% else %}{{ selected.recipient }}{% endif %}</span>
+                            <span class="mailbox-sender-name">À : {% if selected.recipientName %}{{ selected.recipientName }}{% elseif selected.contact %}{{ selected.contact.firstName }} {{ selected.contact.lastName }}{% else %}{{ selected.recipient }}{% endif %}</span>
                             <span class="mailbox-sender-meta">
                                 <a href="mailto:{{ selected.recipient }}">{{ selected.recipient }}</a>
                                 <span class="mailbox-sep">•</span>
-                                <span>{% if selected.contact %}En réponse à : {{ selected.contact.subject }}{% else %}Contact supprimé — message conservé dans les envoyés{% endif %}</span>
+                                <span>{% if selected.contact %}En réponse à : {{ selected.contact.subject }}{% else %}Message indépendant{% endif %}</span>
                             </span>
                         </div>
                     </div>

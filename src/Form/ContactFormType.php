@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class ContactFormType extends AbstractType
 {
@@ -25,8 +26,8 @@ class ContactFormType extends AbstractType
                     'placeholder' => 'contact.form.first_name_placeholder'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.first_name_required']),
-                    new Length(['min' => 2, 'max' => 100])
+                    new NotBlank(message: 'contact.form.first_name_required'),
+                    new Length(min: 2, max: 100)
                 ]
             ])
             ->add('lastName', TextType::class, [
@@ -36,8 +37,8 @@ class ContactFormType extends AbstractType
                     'placeholder' => 'contact.form.last_name_placeholder'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.last_name_required']),
-                    new Length(['min' => 2, 'max' => 100])
+                    new NotBlank(message: 'contact.form.last_name_required'),
+                    new Length(min: 2, max: 100)
                 ]
             ])
             ->add('email', EmailType::class, [
@@ -47,8 +48,8 @@ class ContactFormType extends AbstractType
                     'placeholder' => 'contact.form.email_placeholder'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.email_required']),
-                    new Email(['message' => 'contact.form.email_invalid'])
+                    new NotBlank(message: 'contact.form.email_required'),
+                    new Email(message: 'contact.form.email_invalid')
                 ]
             ])
             ->add('phone', TextType::class, [
@@ -58,8 +59,8 @@ class ContactFormType extends AbstractType
                     'placeholder' => 'contact.form.phone_placeholder'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.phone_required']),
-                    new Length(['min' => 8, 'max' => 20])
+                    new NotBlank(message: 'contact.form.phone_required'),
+                    new Length(min: 8, max: 20)
                 ]
             ])
             ->add('requestType', ChoiceType::class, [
@@ -74,7 +75,7 @@ class ContactFormType extends AbstractType
                     'class' => 'w-full h-12 px-4 pr-10 rounded-xl bg-surface-container-low text-on-surface focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary font-body-md text-body-md appearance-none transition-all cursor-pointer'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.request_type_required'])
+                    new NotBlank(message: 'contact.form.request_type_required')
                 ]
             ])
             ->add('serviceCategory', ChoiceType::class, [
@@ -90,7 +91,7 @@ class ContactFormType extends AbstractType
                     'class' => 'w-full h-12 px-4 pr-10 rounded-xl bg-surface-container-low text-on-surface focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary font-body-md text-body-md appearance-none transition-all cursor-pointer'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.service_category_required'])
+                    new NotBlank(message: 'contact.form.service_category_required')
                 ]
             ])
             ->add('reservationNumber', TextType::class, [
@@ -108,8 +109,13 @@ class ContactFormType extends AbstractType
                     'placeholder' => 'contact.form.subject_placeholder'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.subject_required']),
-                    new Length(['min' => 3, 'max' => 200])
+                    new NotBlank(message: 'contact.form.subject_required'),
+                    new Length(min: 3, max: 200),
+                    new Regex(
+                        pattern: '/[\r\n\x00-\x1F\x7F]/',
+                        match: false,
+                        message: 'contact.form.subject_invalid',
+                    ),
                 ]
             ])
             ->add('message', TextareaType::class, [
@@ -120,8 +126,8 @@ class ContactFormType extends AbstractType
                     'rows' => 4
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'contact.form.message_required']),
-                    new Length(['min' => 10, 'max' => 2000])
+                    new NotBlank(message: 'contact.form.message_required'),
+                    new Length(min: 10, max: 2000)
                 ]
             ])
         ;

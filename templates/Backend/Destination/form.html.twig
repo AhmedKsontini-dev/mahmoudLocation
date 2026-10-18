@@ -58,34 +58,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Coordonnées géographiques</h3>
-                        <div class="form-grid">
-                            <div class="form-field">
-                                {{ form_label(form.latitude) }}
-                                {{ form_widget(form.latitude) }}
-                                {{ form_errors(form.latitude) }}
-                                <small class="form-hint">Latitude entre -90 et 90. Ex: 36.806389 pour Tunis</small>
-                            </div>
-                            <div class="form-field">
-                                {{ form_label(form.longitude) }}
-                                {{ form_widget(form.longitude) }}
-                                {{ form_errors(form.longitude) }}
-                                <small class="form-hint">Longitude entre -180 et 180. Ex: 10.181667 pour Tunis</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">URL</h3>
-                        <div class="form-field">
-                            {{ form_label(form.slug) }}
-                            {{ form_widget(form.slug) }}
-                            {{ form_errors(form.slug) }}
-                            <small class="form-hint">Laissez vide pour générer automatiquement à partir du nom français</small>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Tab 2: Traductions -->
@@ -95,9 +67,6 @@
                         <div class="translations-tabs">
                             <button type="button" class="translation-tab active" data-locale="fr">🇫🇷 Français</button>
                             <button type="button" class="translation-tab" data-locale="en">🇬🇧 English</button>
-                            <button type="button" class="translation-tab" data-locale="es">🇪🇸 Español</button>
-                            <button type="button" class="translation-tab" data-locale="de">🇩🇪 Deutsch</button>
-                            <button type="button" class="translation-tab" data-locale="it">🇮🇹 Italiano</button>
                         </div>
                         
                         {% for translation in form.translations %}
@@ -164,24 +133,6 @@
                     document.querySelector(`.translation-pane[data-locale="${locale}"]`).classList.add('active');
                 });
             });
-
-            // Auto-generate slug from French name
-            const nameFr = document.querySelector('input[name*="[translations]"][name*="[name]"]');
-            const slugField = document.querySelector('input[name="destination[slug]"]');
-            
-            if (nameFr && slugField) {
-                nameFr.addEventListener('input', function() {
-                    if (!slugField.value) {
-                        const slug = this.value
-                            .toLowerCase()
-                            .normalize('NFD')
-                            .replace(/[\u0300-\u036f]/g, '')
-                            .replace(/[^a-z0-9]+/g, '-')
-                            .replace(/(^-|-$)/g, '');
-                        slugField.value = slug;
-                    }
-                });
-            }
         });
     </script>
 {% endblock %}

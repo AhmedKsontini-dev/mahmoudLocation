@@ -40,20 +40,70 @@
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .searchable-result:hover {
     background-color: #f0f7ff;
 }
 
+/* Icône (emoji) affichée à gauche du nom dans la liste déroulante */
+.searchable-result-icon {
+    flex: 0 0 auto;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.searchable-result-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Icône de la catégorie sélectionnée, affichée dans le champ de saisie */
+.searchable-selected-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.searchable-select.has-selection-icon .searchable-input {
+    padding-left: 34px;
+}
+
 .searchable-result.searchable-create {
     color: #1976d2;
     font-weight: 500;
     background-color: #f9f9f9;
+    display: block;
 }
 
 .searchable-result.searchable-create:hover {
     background-color: #e8f0fe;
+    cursor: pointer;
+}
+
+/* États des champs Catégorie / Destination (recherche + création AJAX) */
+.searchable-result.searchable-error {
+    color: #b91c1c;
+    background-color: #fef2f2;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.searchable-result.searchable-loading,
+.searchable-result.searchable-note {
+    color: #475569;
+    background-color: #f8fafc;
+    cursor: default;
 }
 
 /* Tabs */
@@ -166,17 +216,6 @@
     color: #dc3545;
     font-size: 12px;
     margin-top: 5px;
-}
-
-.image-upload-errors[data-has-errors="true"] {
-    color: #dc3545;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-.image-upload-errors ul {
-    margin: 0;
-    padding-left: 18px;
 }
 
 .checkbox-field {

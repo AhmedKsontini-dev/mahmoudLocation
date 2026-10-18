@@ -14,9 +14,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TransferController extends AbstractController
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('/transfers/{slug}', name: 'app_transfer_show', requirements: ['slug' => '[a-z0-9-]+'], methods: ['GET', 'POST'])]
     #[Route('/{_locale}/transfers/{slug}', name: 'app_transfer_show_locale', requirements: ['_locale' => 'fr|en|it|es|de', 'slug' => '[a-z0-9-]+'], methods: ['GET', 'POST'])]
     public function show(string $slug, Request $request, TransfereRepository $repository, TransferePriceCalculator $priceCalculator, CurrencyService $currencyService, EntityManagerInterface $entityManager): Response

@@ -1,0 +1,131 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+{% block header_title %}{{ title }}{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-header-description">Complétez les informations de la catégorie.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_blog_category_index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+</div>
+
+{% if form.vars.errors|length > 0 %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'class': 'blog-category-form'}}) }}
+
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button type="button" class="tab-btn active" data-tab="general">📋 Général</button>
+                <button type="button" class="tab-btn" data-tab="translations">🌍 Traductions</button>
+            </div>
+
+            <div class="tabs-content">
+                <div class="tab-pane active" id="tab-general">
+                    <div class="form-section">
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.slug) }}
+                                {{ form_widget(form.slug) }}
+                                {{ form_errors(form.slug) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.position) }}
+                                {{ form_widget(form.position) }}
+                                {{ form_errors(form.position) }}
+                            </div>
+                            <div class="form-field checkbox-field">
+                                {{ form_widget(form.isActive) }}
+                                {{ form_label(form.isActive) }}
+                                {{ form_errors(form.isActive) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="tab-translations">
+                    <div class="form-section">
+                        {% set activeLocale = 'fr' %}
+                        {% for translation in form.translations %}
+                            {% if translation.name.vars.errors|length > 0 or translation.description.vars.errors|length > 0 %}
+                                {% set activeLocale = translation.vars.data.locale %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="translations-tabs">
+                            {% set locales = ['fr', 'en', 'es', 'de', 'it'] %}
+                            {% for locale in locales %}
+                                <button type="button" class="translation-tab {{ activeLocale == locale ? 'active' : '' }}" data-locale="{{ locale }}">
+                                    {{ locale|upper }}
+                                </button>
+                            {% endfor %}
+                        </div>
+
+                        {% for translation in form.translations %}
+                            <div class="translation-pane {{ translation.vars.data.locale == activeLocale ? 'active' : '' }}" data-locale="{{ translation.vars.data.locale }}">
+                                <div class="form-field">
+                                    {{ form_label(translation.name) }}
+                                    {{ form_widget(translation.name) }}
+                                    {{ form_errors(translation.name) }}
+                                </div>
+                                <div class="form-field">
+                                    {{ form_label(translation.description) }}
+                                    {{ form_widget(translation.description) }}
+                                    {{ form_errors(translation.description) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ path('admin_blog_category_index') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    tabBtns.forEach(item => item.classList.remove('active'));
+                    tabPanes.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('tab-' + this.getAttribute('data-tab')).classList.add('active');
+                });
+            });
+
+            const translationTabs = document.querySelectorAll('.translation-tab');
+            const translationPanes = document.querySelectorAll('.translation-pane');
+            translationTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const locale = this.getAttribute('data-locale');
+                    translationTabs.forEach(item => item.classList.remove('active'));
+                    translationPanes.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelector(`.translation-pane[data-locale="${locale}"]`).classList.add('active');
+                });
+            });
+        });
+    </script>
+{% endblock %}

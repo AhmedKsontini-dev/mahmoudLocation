@@ -5,7 +5,8 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     initSidebarToggle();
-    initActiveMenuHighlight();
+    initSidebarAccordion();
+    initSubmitGuard();
 });
 
 /**
@@ -55,21 +56,60 @@ function initSidebarToggle() {
 }
 
 /**
- * Surligner le menu actif basé sur l'URL courante
+ * Toggle the active sidebar section and keep the accordion mutually exclusive.
  */
-function initActiveMenuHighlight() {
-    const currentPath = window.location.pathname;
-    const menuLinks = document.querySelectorAll('.menu-link');
-    
-    menuLinks.forEach(link => {
-        const linkPath = new URL(link.href).pathname;
-        
-        // Correspondance exacte ou partielle
-        if (currentPath === linkPath || currentPath.startsWith(linkPath + '/')) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
+function initSidebarAccordion() {
+    const toggles = document.querySelectorAll('.menu-group-toggle');
+
+    toggles.forEach(toggle => {
+        const submenu = document.getElementById(toggle.getAttribute('aria-controls'));
+        if (!submenu) return;
+
+        submenu.inert = toggle.getAttribute('aria-expanded') !== 'true';
+        toggle.addEventListener('click', function() {
+            const wasExpanded = toggle.getAttribute('aria-expanded') === 'true';
+
+            toggles.forEach(otherToggle => {
+                const otherSubmenu = document.getElementById(otherToggle.getAttribute('aria-controls'));
+                if (!otherSubmenu) return;
+
+                const isExpanded = otherToggle === toggle ? !wasExpanded : false;
+
+                otherToggle.setAttribute('aria-expanded', String(isExpanded));
+                otherSubmenu.classList.toggle('is-open', isExpanded);
+                otherSubmenu.inert = !isExpanded;
+            });
+        });
+    });
+}
+
+/**
+ * Prevent accidental repeated submissions while a form is being sent.
+ */
+function initSubmitGuard() {
+    const forms = document.querySelectorAll('form[data-disable-submit-once]');
+
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(button => {
+                button.dataset.originalLabel = button.textContent;
+                button.disabled = true;
+                if (button instanceof HTMLButtonElement) {
+                    button.textContent = 'Envoi en cours…';
+                }
+            });
+        });
+    });
+
+    window.addEventListener('pageshow', function() {
+        forms.forEach(form => {
+            form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(button => {
+                button.disabled = false;
+                if (button instanceof HTMLButtonElement && button.dataset.originalLabel) {
+                    button.textContent = button.dataset.originalLabel;
+                }
+            });
+        });
     });
 }
 

@@ -1,57 +1,101 @@
-<nav class="admin-sidebar" id="adminSidebar">
+{% set current_route = app.request.attributes.get('_route')|default('') %}
+{% set excursions_open = current_route starts with 'admin_excursion' or current_route starts with 'admin_reservation_excursion' or current_route starts with 'admin_category' or current_route starts with 'admin_destination' %}
+{% set transfers_open = current_route starts with 'admin_transfere' or (current_route starts with 'admin_reservation' and not (current_route starts with 'admin_reservation_excursion')) %}
+{% set blog_open = current_route starts with 'admin_blog' %}
+{% set users_open = current_route starts with 'admin_user' %}
+{% set commercial_open = current_route starts with 'admin_contact' %}
+{% set settings_open = current_route starts with 'admin_saison' or current_route starts with 'admin_currency' %}
+
+<nav class="admin-sidebar" id="adminSidebar" aria-label="Navigation d'administration">
     <div class="sidebar-header">
         <h1 class="sidebar-title">Location Mahmoud</h1>
         <span class="sidebar-subtitle">Administration</span>
     </div>
-    
+
     <ul class="sidebar-menu">
         <li class="menu-item">
-            <a href="{{ path('admin_dashboard') }}" class="menu-link {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'active' : '' }}">
-                <span class="menu-icon">📊</span>
-                <span>Dashboard</span>
+            <a href="{{ path('admin_dashboard') }}" class="menu-link {{ current_route == 'admin_dashboard' ? 'active' : '' }}" aria-current="{{ current_route == 'admin_dashboard' ? 'page' : 'false' }}">
+                <span class="menu-icon" aria-hidden="true">📊</span>
+                <span>Tableau de bord</span>
             </a>
         </li>
-        <li class="menu-item">
-            <a href="{{ path('admin_transfere_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_transfere' ? 'active' : '' }}">
-                <span class="menu-icon">🚐</span>
-                <span>Transferts</span>
-            </a>
+
+        <li class="menu-item menu-group">
+            <button type="button" class="menu-link menu-group-toggle" aria-expanded="{{ excursions_open ? 'true' : 'false' }}" aria-controls="submenu-excursions">
+                <span class="menu-icon" aria-hidden="true">🏝️</span>
+                <span class="menu-group-label">Excursions</span>
+                <span class="menu-chevron" aria-hidden="true"></span>
+            </button>
+            <ul class="menu-submenu {{ excursions_open ? 'is-open' : '' }}" id="submenu-excursions" {% if not excursions_open %}inert{% endif %}>
+                <li><a href="{{ path('admin_excursion_index') }}" class="menu-link {{ current_route starts with 'admin_excursion' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_excursion' ? 'page' : 'false' }}">Gestion des excursions</a></li>
+                <li><a href="{{ path('admin_reservation_excursion_index') }}" class="menu-link {{ current_route starts with 'admin_reservation_excursion' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_reservation_excursion' ? 'page' : 'false' }}">Réservations d'excursions</a></li>
+                <li><a href="{{ path('admin_category_index') }}" class="menu-link {{ current_route starts with 'admin_category' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_category' ? 'page' : 'false' }}">Catégories d'excursions</a></li>
+                <li><a href="{{ path('admin_destination_index') }}" class="menu-link {{ current_route starts with 'admin_destination' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_destination' ? 'page' : 'false' }}">Destinations</a></li>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="{{ path('admin_saison_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_saison' ? 'active' : '' }}">
-                <span class="menu-icon">📆</span>
-                <span>Saisons</span>
-            </a>
+
+        <li class="menu-item menu-group">
+            <button type="button" class="menu-link menu-group-toggle" aria-expanded="{{ transfers_open ? 'true' : 'false' }}" aria-controls="submenu-transfers">
+                <span class="menu-icon" aria-hidden="true">🚐</span>
+                <span class="menu-group-label">Transferts</span>
+                <span class="menu-chevron" aria-hidden="true"></span>
+            </button>
+            <ul class="menu-submenu {{ transfers_open ? 'is-open' : '' }}" id="submenu-transfers" {% if not transfers_open %}inert{% endif %}>
+                <li><a href="{{ path('admin_transfere_index') }}" class="menu-link {{ current_route starts with 'admin_transfere' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_transfere' ? 'page' : 'false' }}">Gestion des transferts</a></li>
+                <li><a href="{{ path('admin_reservation_index') }}" class="menu-link {{ current_route starts with 'admin_reservation' and not (current_route starts with 'admin_reservation_excursion') ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_reservation' and not (current_route starts with 'admin_reservation_excursion') ? 'page' : 'false' }}">Réservations de transferts</a></li>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="{{ path('admin_currency_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_currency' ? 'active' : '' }}">
-                <span class="menu-icon">💰</span>
-                <span>Devises</span>
-            </a>
+
+        <li class="menu-item menu-group">
+            <button type="button" class="menu-link menu-group-toggle" aria-expanded="{{ blog_open ? 'true' : 'false' }}" aria-controls="submenu-blog">
+                <span class="menu-icon" aria-hidden="true">📝</span>
+                <span class="menu-group-label">Blog</span>
+                <span class="menu-chevron" aria-hidden="true"></span>
+            </button>
+            <ul class="menu-submenu {{ blog_open ? 'is-open' : '' }}" id="submenu-blog" {% if not blog_open %}inert{% endif %}>
+                <li><a href="{{ path('admin_blog_article_index') }}" class="menu-link {{ current_route starts with 'admin_blog_article' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_blog_article' ? 'page' : 'false' }}">Gestion des articles</a></li>
+                <li><a href="{{ path('admin_blog_category_index') }}" class="menu-link {{ current_route starts with 'admin_blog_category' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_blog_category' ? 'page' : 'false' }}">Catégories du blog</a></li>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="{{ path('admin_excursion_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_excursion' ? 'active' : '' }}">
-                <span class="menu-icon">🏝️</span>
-                <span>Excursions</span>
-            </a>
+
+        <li class="menu-item menu-group">
+            <button type="button" class="menu-link menu-group-toggle" aria-expanded="{{ users_open ? 'true' : 'false' }}" aria-controls="submenu-users">
+                <span class="menu-icon" aria-hidden="true">👥</span>
+                <span class="menu-group-label">Clients et utilisateurs</span>
+                <span class="menu-chevron" aria-hidden="true"></span>
+            </button>
+            <ul class="menu-submenu {{ users_open ? 'is-open' : '' }}" id="submenu-users" {% if not users_open %}inert{% endif %}>
+                <li><a href="{{ path('admin_user_index') }}" class="menu-link {{ users_open ? 'active' : '' }}" aria-current="{{ users_open ? 'page' : 'false' }}">Gestion des utilisateurs</a></li>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="{{ path('admin_destination_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_destination' ? 'active' : '' }}">
-                <span class="menu-icon">🌍</span>
-                <span>Destinations</span>
-            </a>
+
+        <li class="menu-item menu-group">
+            <button type="button" class="menu-link menu-group-toggle" aria-expanded="{{ commercial_open ? 'true' : 'false' }}" aria-controls="submenu-commercial">
+                <span class="menu-icon" aria-hidden="true">💬</span>
+                <span class="menu-group-label">Gestion commerciale</span>
+                <span class="menu-chevron" aria-hidden="true"></span>
+            </button>
+            <ul class="menu-submenu {{ commercial_open ? 'is-open' : '' }}" id="submenu-commercial" {% if not commercial_open %}inert{% endif %}>
+                <li><a href="{{ path('admin_contact_index') }}" class="menu-link {{ commercial_open ? 'active' : '' }}" aria-current="{{ commercial_open ? 'page' : 'false' }}">Contacts et messages</a></li>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="{{ path('admin_category_index') }}" class="menu-link {{ app.request.attributes.get('_route') starts with 'admin_category' ? 'active' : '' }}">
-                <span class="menu-icon">📁</span>
-                <span>Catégories</span>
-            </a>
+
+        <li class="menu-item menu-group">
+            <button type="button" class="menu-link menu-group-toggle" aria-expanded="{{ settings_open ? 'true' : 'false' }}" aria-controls="submenu-settings">
+                <span class="menu-icon" aria-hidden="true">⚙️</span>
+                <span class="menu-group-label">Paramètres et configuration</span>
+                <span class="menu-chevron" aria-hidden="true"></span>
+            </button>
+            <ul class="menu-submenu {{ settings_open ? 'is-open' : '' }}" id="submenu-settings" {% if not settings_open %}inert{% endif %}>
+                <li><a href="{{ path('admin_currency_index') }}" class="menu-link {{ current_route starts with 'admin_currency' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_currency' ? 'page' : 'false' }}">Gestion des devises</a></li>
+                <li><a href="{{ path('admin_saison_index') }}" class="menu-link {{ current_route starts with 'admin_saison' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_saison' ? 'page' : 'false' }}">Gestion des saisons</a></li>
+            </ul>
         </li>
     </ul>
-    
+
     <div class="sidebar-footer">
         <a href="{{ path('app_home') }}" class="sidebar-back-link">
-            <span class="menu-icon">🏠</span>
+            <span class="menu-icon" aria-hidden="true">🏠</span>
             <span>Voir le site</span>
         </a>
     </div>

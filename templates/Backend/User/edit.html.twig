@@ -1,0 +1,207 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Modifier l'utilisateur #{{ user.id }} - Admin - Location Mahmoud{% endblock %}
+
+{% block header_title %}Modifier l'utilisateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/user/index.css') }}" rel="stylesheet">
+    <style>
+        .user-edit-container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+        .user-account-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.95rem;
+            background: #f0f4fc;
+            border-radius: var(--radius-xl);
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+        .user-roles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .role-option-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            padding: 1rem 1.15rem;
+            border: 1px solid var(--color-surface-container);
+            border-radius: var(--radius-xl);
+            background: #ffffff;
+            transition: all var(--transition-fast);
+        }
+        .role-option-card:hover {
+            border-color: #cbd5e1;
+            background: #fafbfd;
+        }
+        .role-option-card input[type="checkbox"] {
+            margin-top: 0.2rem;
+            width: 1.15rem;
+            height: 1.15rem;
+            cursor: pointer;
+        }
+        .role-option-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .role-option-title {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--color-on-surface);
+            cursor: pointer;
+        }
+        .role-option-desc {
+            font-size: 0.78rem;
+            color: var(--color-outline);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="user-edit-container">
+    {# En-tête de page #}
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Modifier l'utilisateur</h1>
+            <p class="page-header-description">
+                Mise à jour des coordonnées et des droits d'accès pour le compte <strong>{{ user.email }}</strong>.
+            </p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ path('admin_user_index', {search: returnSearch, page: returnPage}) }}" class="btn btn-secondary">
+                ← Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    {# Messages flash #}
+    {% for label, messages in app.flashes %}
+        {% for flashMessage in messages %}
+            <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert">
+                <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+                <span>{{ flashMessage }}</span>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-error" role="alert">
+            <span class="alert-icon">⚠️</span>
+            <div>
+                <strong>Erreur de validation :</strong>
+                {{ form_errors(form) }}
+            </div>
+        </div>
+    {% endif %}
+
+    {# Carte de formulaire #}
+    <div class="card">
+        <div class="card-body">
+            <div class="user-account-badge">
+                <span>👤 Compte utilisateur #{{ user.id }}</span>
+                {% if isSelf %}
+                    <span class="badge badge-info">Votre compte connecté</span>
+                {% endif %}
+            </div>
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            {# Section Informations principales #}
+            <div class="form-section">
+                <h3 class="form-section-title">Coordonnées de connexion</h3>
+                <p class="form-section-description">
+                    L'adresse e-mail sert d'identifiant de connexion sur l'ensemble de la plateforme.
+                </p>
+
+                <div class="form-field">
+                    {{ form_label(form.email, 'Adresse e-mail', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'exemple@domaine.com'}}) }}
+                    {% if form.email.vars.errors|length > 0 %}
+                        <div class="form-error-message">
+                            {{ form_errors(form.email) }}
+                        </div>
+                    {% endif %}
+                    <small class="form-hint">Une adresse e-mail valide et unique est obligatoire.</small>
+                </div>
+            </div>
+
+            {# Section Rôles et autorisations #}
+            <div class="form-section">
+                <h3 class="form-section-title">Droits et autorisations</h3>
+                <p class="form-section-description">
+                    Définissez les privilèges accordés à cet utilisateur dans le système.
+                </p>
+
+                {% if isSelf %}
+                    <div class="info-note" style="border-color: #bee3f8; background: #ebf8ff; color: #2b6cb0;">
+                        🛡️ <strong>Votre propre compte :</strong> Par mesure de sécurité pour éviter tout blocage accidentel du système, vous ne pouvez pas retirer vos propres droits d'administrateur.
+                    </div>
+                {% endif %}
+
+                <div class="form-field">
+                    {{ form_label(form.roles, 'Rôles attribués', {'label_attr': {'class': 'form-label'}}) }}
+
+                    <div class="user-roles-container">
+                        {% for choice in form.roles %}
+                            <label class="role-option-card">
+                                {{ form_widget(choice) }}
+                                <div class="role-option-content">
+                                    <span class="role-option-title">
+                                        {% if choice.vars.value == 'ROLE_ADMIN' %}
+                                            🛡️ Administrateur (ROLE_ADMIN)
+                                        {% elseif choice.vars.value == 'ROLE_USER' %}
+                                            👤 Utilisateur standard (ROLE_USER)
+                                        {% else %}
+                                            {{ choice.vars.label }}
+                                        {% endif %}
+                                    </span>
+                                    <span class="role-option-desc">
+                                        {% if choice.vars.value == 'ROLE_ADMIN' %}
+                                            Accès complet au tableau de bord d'administration et aux données du backend.
+                                        {% elseif choice.vars.value == 'ROLE_USER' %}
+                                            Accès standard au site public et gestion des réservations personnelles.
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.roles.vars.errors|length > 0 %}
+                        <div class="form-error-message">
+                            {{ form_errors(form.roles) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Note de sécurité sur le mot de passe #}
+            <div class="info-note">
+                🔒 <strong>Sécurité du mot de passe :</strong> Le mot de passe de l'utilisateur n'est pas modifiable depuis cette interface pour garantir l'intégrité de l'authentification. Aucune empreinte chiffrée n'est accessible ou exposée.
+            </div>
+
+            {# Actions #}
+            <div class="form-actions">
+                <a href="{{ path('admin_user_index', {search: returnSearch, page: returnPage}) }}" class="btn btn-secondary">
+                    Annuler
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    💾 Enregistrer les modifications
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

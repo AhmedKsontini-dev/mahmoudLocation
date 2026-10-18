@@ -1,6 +1,6 @@
 {% extends 'Backend/base.html.twig' %}
 
-{% block title %}Transferts - Admin{% endblock %}
+{% block title %}Transferts - Admin - Location Mahmoud{% endblock %}
 
 {% block header_title %}Transferts{% endblock %}
 
@@ -24,29 +24,81 @@
     </div>
 </div>
 
+{# Messages Flash de notification #}
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert" style="margin-bottom: 1rem;">
+            <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+            <span>{{ flashMessage }}</span>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+{# Panneau de recherche & filtres #}
+<div class="transfere-filter-panel">
+    <form method="get" action="{{ path('admin_transfere_index') }}" class="transfere-filter-form" id="transfereFilterForm">
+        <div class="filter-input-wrapper">
+            <span class="filter-icon" aria-hidden="true">🔍</span>
+            <input type="search"
+                   name="search"
+                   id="transfereSearchInput"
+                   class="filter-input"
+                   value="{{ search }}"
+                   placeholder="Rechercher par départ, arrivée, ID, slug..."
+                   autocomplete="off"
+                   aria-label="Rechercher un transfert">
+        </div>
+
+        <select name="status" class="filter-select" aria-label="Filtrer par statut" onchange="this.form.submit()">
+            <option value="">Tous les statuts</option>
+            <option value="active" {{ currentStatus == 'active' ? 'selected' : '' }}>Actifs uniquement</option>
+            <option value="inactive" {{ currentStatus == 'inactive' ? 'selected' : '' }}>Inactifs uniquement</option>
+        </select>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary" id="btnFilterSubmit">
+                Rechercher
+            </button>
+            {% if search is not empty or currentStatus is not empty %}
+                <a href="{{ path('admin_transfere_index') }}" class="filter-reset-link" title="Réinitialiser les filtres">
+                    ✕ Réinitialiser
+                </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
 <div class="card">
-    <div class="card-body">
+    <div class="card-body" style="padding: 0;">
         <div class="table-container">
-            <table class="table">
+            <table class="table admin-data-table">
                 <thead>
                     <tr>
+                        <th style="width: 60px;">Image</th>
                         <th>Départ</th>
                         <th>Arrivée</th>
                         <th>Prix normal</th>
                         <th>Prix saison forte</th>
                         <th>Langues</th>
                         <th>Actif</th>
-                        <th></th>
+                        <th style="width: 110px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for transfere in transferts %}
-                        <tr>
-                            <td>{{ transfere.getLieuDepartTranslated(app.request.locale) }}</td>
-                            <td>{{ transfere.getLieuArriveeTranslated(app.request.locale) }}</td>
-                            <td>{{ transfere.prixNormal }}</td>
-                            <td>{{ transfere.prixSaisonForte }}</td>
-                            <td>{{ transfere.translations|length }}/5</td>
+                        <tr id="transfere-row-{{ transfere.id }}">
+                            <td>
+                                {% if transfere.image %}
+                                    <img src="{{ asset(transfere.image) }}" width="40" height="40" style="object-fit: cover; border-radius: 4px;" alt="Image">
+                                {% else %}
+                                    <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.1rem;">🚐</div>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ transfere.getLieuDepartTranslated(app.request.locale) }}</strong></td>
+                            <td><strong>{{ transfere.getLieuArriveeTranslated(app.request.locale) }}</strong></td>
+                            <td>{{ transfere.prixNormal }} TND</td>
+                            <td>{{ transfere.prixSaisonForte }} TND</td>
+                            <td>{{ transfere.translations|length }}/2</td>
                             <td>
                                 {% if transfere.actif %}
                                     <span class="badge badge-success">Oui</span>
@@ -54,20 +106,255 @@
                                     <span class="badge badge-secondary">Non</span>
                                 {% endif %}
                             </td>
-                            <td>
-                                <a href="{{ path('admin_transfere_edit', {id: transfere.id}) }}" class="btn btn-sm btn-outline">Modifier</a>
+                            <td style="text-align: right;">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown(this)">Actions</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{{ path('admin_transfere_edit', {id: transfere.id}) }}">
+                                            <span>✏️</span> Modifier
+                                        </a>
+                                        <a class="dropdown-item" href="{{ path('admin_transfere_show', {id: transfere.id}) }}">
+                                            <span>👁️</span> Voir
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <form method="post"
+                                              action="{{ path('admin_transfere_delete', {id: transfere.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce transfert ?');"
+                                              style="margin: 0;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ transfere.id) }}">
+                                            <input type="hidden" name="page" value="{{ pagination.page }}">
+                                            <input type="hidden" name="search" value="{{ search }}">
+                                            <input type="hidden" name="status" value="{{ currentStatus }}">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <span>🗑️</span> Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="7" class="empty-state">
-                                <div class="empty-state-text">Aucun transfert.</div>
+                            <td colspan="8" class="empty-state" style="padding: 3rem 1rem; text-align: center;">
+                                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🚐</div>
+                                {% if search is not empty or currentStatus is not empty %}
+                                    <div style="font-weight: 700; font-size: 1.05rem; color: var(--tr-ink);">Aucun transfert trouvé</div>
+                                    <div style="color: var(--tr-muted); margin-top: 0.25rem; font-size: 0.875rem;">Aucun transfert ne correspond à vos critères de recherche.</div>
+                                    <div style="margin-top: 1rem;">
+                                        <a href="{{ path('admin_transfere_index') }}" class="btn btn-secondary btn-sm">Réinitialiser la recherche</a>
+                                    </div>
+                                {% else %}
+                                    <div style="font-weight: 700; font-size: 1.05rem; color: var(--tr-ink);">Aucun transfert</div>
+                                    <div style="color: var(--tr-muted); margin-top: 0.25rem; font-size: 0.875rem;">Aucun transfert n'a encore été créé.</div>
+                                    <div style="margin-top: 1rem;">
+                                        <a href="{{ path('admin_transfere_new') }}" class="btn btn-primary btn-sm">Ajouter un transfert</a>
+                                    </div>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        {# Barre de pagination et résumé #}
+        {% if pagination.total > 0 %}
+            <div class="transfere-pagination-footer">
+                <div class="transfere-table-count">
+                    {% set startItem = ((pagination.page - 1) * pagination.limit) + 1 %}
+                    {% set endItem = min(pagination.page * pagination.limit, pagination.total) %}
+                    Affichage de <strong>{{ startItem }}</strong> à <strong>{{ endItem }}</strong> sur <strong>{{ pagination.total }}</strong> transfert{{ pagination.total > 1 ? 's' : '' }}
+                    {% if search is not empty %}
+                        <span class="search-indicator-tag">(recherche : « {{ search }} »)</span>
+                    {% endif %}
+                    {% if currentStatus is not empty %}
+                        <span class="search-indicator-tag">(statut : {{ currentStatus == 'active' ? 'actifs' : 'inactifs' }})</span>
+                    {% endif %}
+                </div>
+
+                {% if pagination.pages > 1 %}
+                    <nav class="pagination-nav" aria-label="Pagination des transferts">
+                        <ul class="pagination-list">
+                            {# Bouton Précédent #}
+                            <li class="pagination-item">
+                                {% if pagination.page > 1 %}
+                                    <a href="{{ path('admin_transfere_index', {page: pagination.page - 1, search: search, status: currentStatus}) }}"
+                                       class="pagination-link pagination-link--prev"
+                                       aria-label="Page précédente">
+                                        ‹ Précédent
+                                    </a>
+                                {% else %}
+                                    <span class="pagination-link pagination-link--disabled" aria-disabled="true">‹ Précédent</span>
+                                {% endif %}
+                            </li>
+
+                            {# Numérotation des pages #}
+                            {% set maxPagesToShow = 7 %}
+                            {% if pagination.pages <= maxPagesToShow %}
+                                {% for p in 1..pagination.pages %}
+                                    <li class="pagination-item">
+                                        {% if p == pagination.page %}
+                                            <span class="pagination-link active" aria-current="page">{{ p }}</span>
+                                        {% else %}
+                                            <a href="{{ path('admin_transfere_index', {page: p, search: search, status: currentStatus}) }}" class="pagination-link">{{ p }}</a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                {# Page 1 #}
+                                <li class="pagination-item">
+                                    {% if pagination.page == 1 %}
+                                        <span class="pagination-link active" aria-current="page">1</span>
+                                    {% else %}
+                                        <a href="{{ path('admin_transfere_index', {page: 1, search: search, status: currentStatus}) }}" class="pagination-link">1</a>
+                                    {% endif %}
+                                </li>
+
+                                {% if pagination.page > 3 %}
+                                    <li class="pagination-item"><span class="pagination-ellipsis">…</span></li>
+                                {% endif %}
+
+                                {# Pages centrales #}
+                                {% set startMiddle = max(2, pagination.page - 1) %}
+                                {% set endMiddle = min(pagination.pages - 1, pagination.page + 1) %}
+                                {% for p in startMiddle..endMiddle %}
+                                    <li class="pagination-item">
+                                        {% if p == pagination.page %}
+                                            <span class="pagination-link active" aria-current="page">{{ p }}</span>
+                                        {% else %}
+                                            <a href="{{ path('admin_transfere_index', {page: p, search: search, status: currentStatus}) }}" class="pagination-link">{{ p }}</a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+
+                                {% if pagination.page < pagination.pages - 2 %}
+                                    <li class="pagination-item"><span class="pagination-ellipsis">…</span></li>
+                                {% endif %}
+
+                                {# Dernière page #}
+                                <li class="pagination-item">
+                                    {% if pagination.page == pagination.pages %}
+                                        <span class="pagination-link active" aria-current="page">{{ pagination.pages }}</span>
+                                    {% else %}
+                                        <a href="{{ path('admin_transfere_index', {page: pagination.pages, search: search, status: currentStatus}) }}" class="pagination-link">{{ pagination.pages }}</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+
+                            {# Bouton Suivant #}
+                            <li class="pagination-item">
+                                {% if pagination.page < pagination.pages %}
+                                    <a href="{{ path('admin_transfere_index', {page: pagination.page + 1, search: search, status: currentStatus}) }}"
+                                       class="pagination-link pagination-link--next"
+                                       aria-label="Page suivante">
+                                        Suivant ›
+                                    </a>
+                                {% else %}
+                                    <span class="pagination-link pagination-link--disabled" aria-disabled="true">Suivant ›</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>
+
+<script>
+(function () {
+    // Referencing the currently open menu for repositioning on scroll/resize
+    var _activeMenu = null;
+    var _activeBtn  = null;
+
+    function positionMenu(menu, btn) {
+        var rect = btn.getBoundingClientRect();
+        // Reset so we can measure natural width
+        menu.style.top   = '-9999px';
+        menu.style.left  = '-9999px';
+        menu.style.right = 'auto';
+        menu.style.bottom = 'auto';
+
+        var menuW = menu.offsetWidth;
+        var menuH = menu.offsetHeight;
+        var spaceBelow = window.innerHeight - rect.bottom;
+        var spaceAbove = rect.top;
+
+        // Horizontal: align to right edge of button, stay inside viewport
+        var left = rect.right - menuW;
+        if (left < 4) left = 4;
+        if (left + menuW > window.innerWidth - 4) left = window.innerWidth - menuW - 4;
+
+        // Vertical: prefer below, flip above if needed
+        var top;
+        if (spaceBelow >= menuH + 6 || spaceBelow >= spaceAbove) {
+            top = rect.bottom + 4;
+        } else {
+            top = rect.top - menuH - 4;
+        }
+
+        menu.style.left = left + 'px';
+        menu.style.top  = top  + 'px';
+    }
+
+    function closeAll(except) {
+        document.querySelectorAll('.dropdown-menu.dropdown-menu--fixed-open').forEach(function (m) {
+            if (m !== except) {
+                var owner = m._dropdownOwner;
+                m.classList.remove('dropdown-menu--fixed-open');
+                m.style.cssText = '';
+                if (owner) {
+                    owner.appendChild(m);
+                    owner.classList.remove('open');
+                    m._dropdownOwner = null;
+                }
+            }
+        });
+        if (!except || _activeMenu !== except) {
+            _activeMenu = null;
+            _activeBtn = null;
+        }
+    }
+
+    window.toggleDropdown = function (btn) {
+        var dropdown = btn.closest('.dropdown');
+        var wasActive = _activeBtn === btn;
+
+        closeAll(null);
+
+        if (wasActive) return;
+
+        var menu = dropdown.querySelector('.dropdown-menu');
+        if (!menu) return;
+
+        menu._dropdownOwner = dropdown;
+        document.body.appendChild(menu);
+        menu.style.position = 'fixed';
+        menu.style.display  = 'block';
+        menu.style.zIndex   = '99999';
+        menu.style.margin   = '0';
+        menu.classList.add('dropdown-menu--fixed-open');
+        dropdown.classList.add('open');
+        positionMenu(menu, btn);
+        _activeMenu = menu;
+        _activeBtn  = btn;
+    };
+
+    // Reposition on scroll / resize
+    function reposition() {
+        if (_activeMenu && _activeBtn) {
+            positionMenu(_activeMenu, _activeBtn);
+        }
+    }
+    window.addEventListener('scroll', reposition, true);
+    window.addEventListener('resize', reposition);
+
+    // Close on outside click
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.dropdown') && !e.target.closest('.dropdown-menu--fixed-open')) {
+            closeAll(null);
+        }
+    }, true);
+})();
+</script>
 {% endblock %}

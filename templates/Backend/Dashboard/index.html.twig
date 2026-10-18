@@ -7,9 +7,11 @@
 {% block body %}
 <div class="page-header">
     <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-header-description">Vue d'ensemble de votre administration</p>
+        <span class="dashboard-eyebrow">ESPACE DE PILOTAGE</span>
+        <h1 class="page-title">Bonjour, {{ app.user ? app.user.email|split('@')[0]|capitalize : 'Admin' }} <span aria-hidden="true">✦</span></h1>
+        <p class="page-header-description">Voici ce qui se passe sur votre plateforme aujourd'hui.</p>
     </div>
+    <div class="dashboard-date"><span class="dashboard-live-dot"></span> Vue d'ensemble · {{ 'now'|date('d/m/Y') }}</div>
 </div>
 
 <div class="stats-grid">
@@ -59,27 +61,33 @@
     </a>
 </div>
 
-<div class="card">
+<div class="dashboard-lower-grid">
+<div class="card dashboard-status-card">
     <div class="card-header">
-        <h3 class="card-title">Réservations par statut</h3>
+        <div><span class="dashboard-section-kicker">SUIVI D'ACTIVITÉ</span><h3 class="card-title">État des réservations</h3></div>
+        <a href="{{ path('admin_reservation_index') }}" class="dashboard-text-link">Voir les réservations <span aria-hidden="true">↗</span></a>
     </div>
     <div class="card-body">
-        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                    <span class="badge badge-pending">En attente</span>
-                    <span style="font-weight: 600; color: var(--color-on-surface);">{{ stats.reservations.pending }}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                    <span class="badge badge-confirmed">Confirmées</span>
-                    <span style="font-weight: 600; color: var(--color-on-surface);">{{ stats.reservations.confirmed }}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span class="badge badge-cancelled">Annulées</span>
-                    <span style="font-weight: 600; color: var(--color-on-surface);">{{ stats.reservations.cancelled }}</span>
-                </div>
+        {% set reservationTotal = stats.reservations.pending + stats.reservations.confirmed + stats.reservations.cancelled %}
+        <div class="reservation-breakdown">
+            <div class="reservation-breakdown-head"><span>Répartition</span><strong>{{ reservationTotal }} <small>au total</small></strong></div>
+            <div class="reservation-progress" aria-hidden="true">
+                <span class="reservation-progress-pending" style="width: {{ reservationTotal > 0 ? (stats.reservations.pending / reservationTotal * 100) : 0 }}%"></span>
+                <span class="reservation-progress-confirmed" style="width: {{ reservationTotal > 0 ? (stats.reservations.confirmed / reservationTotal * 100) : 0 }}%"></span>
+                <span class="reservation-progress-cancelled" style="width: {{ reservationTotal > 0 ? (stats.reservations.cancelled / reservationTotal * 100) : 0 }}%"></span>
+            </div>
+            <div class="reservation-legend">
+                <div><span class="reservation-legend-label"><i class="legend-dot pending"></i>En attente</span><strong>{{ stats.reservations.pending }}</strong></div>
+                <div><span class="reservation-legend-label"><i class="legend-dot confirmed"></i>Confirmées</span><strong>{{ stats.reservations.confirmed }}</strong></div>
+                <div><span class="reservation-legend-label"><i class="legend-dot cancelled"></i>Annulées</span><strong>{{ stats.reservations.cancelled }}</strong></div>
             </div>
         </div>
     </div>
+</div>
+<a href="{{ path('admin_contact_index') }}" class="dashboard-inbox-card">
+    <span class="dashboard-inbox-icon" aria-hidden="true">✉</span>
+    <span class="dashboard-inbox-copy"><span class="dashboard-section-kicker">À VOTRE ÉCOUTE</span><strong>Boîte de réception</strong><small>Consultez les messages de vos voyageurs.</small></span>
+    <span class="dashboard-inbox-arrow" aria-hidden="true">↗</span>
+</a>
 </div>
 {% endblock %}

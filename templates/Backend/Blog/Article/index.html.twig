@@ -1,0 +1,99 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Articles du blog - Admin{% endblock %}
+{% block header_title %}Articles du blog{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Articles du blog</h1>
+        <p class="page-header-description">Gérez le contenu éditorial, les catégories et les publications.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_blog_article_new') }}" class="btn btn-primary">➕ Nouvel article</a>
+    </div>
+</div>
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-container">
+            <table class="table admin-data-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Titre</th>
+                        <th>Catégories</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in articles %}
+                        <tr>
+                            <td>
+                                {% if article.image %}
+                                    <img src="{{ asset(article.image) }}" alt="{{ article.imageAlt ?? article.getTitleTranslated('fr') ?? 'Image de l’article' }}" loading="lazy">
+                                {% else %}
+                                    <span class="text-muted">Aucune image</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ article.getTitleTranslated('fr') ?? '-' }}</strong><br>
+                                <small class="text-muted">{{ article.slug }}</small>
+                            </td>
+                            <td>
+                                {% if article.categories is not empty %}
+                                    {% for category in article.categories %}
+                                        <span class="badge badge-secondary">{{ category.getNameTranslated('fr') }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if article.status == 'published' %}
+                                    <span class="badge badge-success">Publié</span>
+                                {% elseif article.status == 'archived' %}
+                                    <span class="badge badge-secondary">Archivé</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Brouillon</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ article.publishedAt ? article.publishedAt|date('d/m/Y') : article.createdAt|date('d/m/Y') }}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ path('admin_blog_article_edit', {id: article.id}) }}" class="btn btn-sm btn-outline">✏️</a>
+                                    <form method="post" action="{{ path('admin_blog_article_delete', {id: article.id}) }}" onsubmit="return confirm('Supprimer cet article ?');" class="inline-form">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📝</div>
+                                    <div class="empty-state-title">Aucun article</div>
+                                    <div class="empty-state-text">Commencez par créer votre premier article.</div>
+                                    <a href="{{ path('admin_blog_article_new') }}" class="btn btn-primary">Créer un article</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

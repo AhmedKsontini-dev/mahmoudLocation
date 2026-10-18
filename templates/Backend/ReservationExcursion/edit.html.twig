@@ -1,0 +1,142 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Modifier la réservation #{{ reservation.id }} - Admin{% endblock %}
+
+{% block header_title %}Modifier la réservation d'excursion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/reservation-excursion/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+    <div>
+        <h1 class="page-title">Modifier la réservation #{{ reservation.id }}</h1>
+        <p class="page-header-description">
+            Client : <strong>{{ reservation.nomComplet }}</strong> ({{ reservation.email }})
+        </p>
+    </div>
+    <div class="page-actions" style="display: flex; gap: 0.75rem;">
+        <a href="{{ path('admin_reservation_excursion_show', redirectParams|merge({id: reservation.id})) }}" class="btn btn-secondary">
+            ← Annuler et voir les détails
+        </a>
+    </div>
+</div>
+
+{# Messages Flash #}
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert">
+            <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+            <span>{{ flashMessage }}</span>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="card" style="background: #ffffff; border: 1px solid var(--res-border); border-radius: var(--radius-xl, 0.75rem); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); max-width: 900px;">
+    <div class="card-body" style="padding: 2rem;">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="reservation-form-grid">
+                {# Section Client #}
+                <div class="form-field-group full-width" style="border-bottom: 1px solid var(--res-border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                    <h2 style="font-size: 1.05rem; font-weight: 800; color: var(--res-ink); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>👤</span> Informations du client
+                    </h2>
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.nom) }}
+                    {{ form_errors(form.nom, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.prenom) }}
+                    {{ form_errors(form.prenom, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.email, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.email) }}
+                    {{ form_errors(form.email, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.whatsapp, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.whatsapp) }}
+                    {{ form_help(form.whatsapp, {'help_attr': {'class': 'form-help'}}) }}
+                    {{ form_errors(form.whatsapp, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                {# Section Excursion #}
+                <div class="form-field-group full-width" style="border-bottom: 1px solid var(--res-border); padding-bottom: 0.5rem; margin-top: 1rem; margin-bottom: 0.5rem;">
+                    <h2 style="font-size: 1.05rem; font-weight: 800; color: var(--res-ink); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🏝️</span> Paramètres de l'excursion
+                    </h2>
+                </div>
+
+                <div class="form-field-group full-width">
+                    {{ form_label(form.excursion, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.excursion) }}
+                    {{ form_errors(form.excursion, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.dateExcursion, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.dateExcursion) }}
+                    {{ form_errors(form.dateExcursion, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.heureDepart, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.heureDepart) }}
+                    {{ form_errors(form.heureDepart, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.nombreAdultes, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.nombreAdultes) }}
+                    {{ form_errors(form.nombreAdultes, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group">
+                    {{ form_label(form.nombreEnfants, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.nombreEnfants) }}
+                    {{ form_errors(form.nombreEnfants, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                <div class="form-field-group full-width">
+                    {{ form_label(form.lieuPriseEnCharge, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.lieuPriseEnCharge) }}
+                    {{ form_errors(form.lieuPriseEnCharge, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+
+                {# Section Statut #}
+                <div class="form-field-group full-width" style="border-bottom: 1px solid var(--res-border); padding-bottom: 0.5rem; margin-top: 1rem; margin-bottom: 0.5rem;">
+                    <h2 style="font-size: 1.05rem; font-weight: 800; color: var(--res-ink); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⚙️</span> Statut administratif
+                    </h2>
+                </div>
+
+                <div class="form-field-group" style="max-width: 320px;">
+                    {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label form-label-required'}}) }}
+                    {{ form_widget(form.statut) }}
+                    {{ form_errors(form.statut, {'attr': {'class': 'form-error-message'}}) }}
+                </div>
+            </div>
+
+            {# Actions #}
+            <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--res-border); display: flex; gap: 1rem; align-items: center;">
+                <button type="submit" class="btn btn-primary" id="btnSubmitEdit">
+                    💾 Enregistrer les modifications
+                </button>
+                <a href="{{ path('admin_reservation_excursion_index', redirectParams) }}" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

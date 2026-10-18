@@ -3,3 +3,15 @@ auth:
     password_required: 'Das Passwort ist erforderlich.'
     password_min_length: 'Das Passwort muss mindestens {{ limit }} Zeichen enthalten.'
     accept_terms_error: 'Sie müssen die Nutzungsbedingungen akzeptieren.'
+contact:
+    form:
+        first_name_required: 'Der Vorname ist erforderlich.'
+        last_name_required: 'Der Nachname ist erforderlich.'
+        email_required: 'Die E-Mail-Adresse ist erforderlich.'
+        email_invalid: 'Die E-Mail-Adresse ist ungültig.'
+        phone_required: 'Die Telefonnummer ist erforderlich.'
+        request_type_required: 'Bitte wählen Sie eine Anfrageart aus.'
+        service_category_required: 'Bitte wählen Sie einen Service aus.'
+        subject_required: 'Der Betreff ist erforderlich.'
+        subject_invalid: 'Der Betreff darf keine Zeilenumbrüche oder Steuerzeichen enthalten.'
+        message_required: 'Die Nachricht ist erforderlich.'

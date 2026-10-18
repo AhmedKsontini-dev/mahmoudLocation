@@ -30,7 +30,7 @@
 
 {% if form.vars.submitted and not form.vars.valid %}
     <div class="alert alert-error">
-        <strong>Le formulaire contient des erreurs.</strong> Consultez les messages affichés sous les champs concernés, corrigez-les puis réessayez.
+        <strong>Le formulaire contient des erreurs.</strong> Le statut HTTP 422 signifie que l'enregistrement a été refusé. Corrigez les champs signalés ci-dessous puis réessayez.
         <button type="button" class="btn btn-sm btn-link" onclick="scrollToFirstError()">Aller à la première erreur</button>
     </div>
 {% endif %}
@@ -64,17 +64,17 @@
                         <div class="form-grid">
                             <div class="form-field">
                                 {{ form_label(form.category) }}
-                                <div class="searchable-select" data-field="category" data-url="{{ path('admin_category_search') }}" data-create-url="{{ path('admin_category_create') }}">
-                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une catégorie..." autocomplete="off">
+                                <div class="searchable-select" data-field="category" data-show-all="true" data-url="{{ path('admin_category_search') }}" data-create-url="{{ path('admin_category_create') }}" data-create-token="{{ csrf_token('admin_category_create') }}">
+                                    <input type="text" class="form-control searchable-input" placeholder="Sélectionner ou rechercher une catégorie..." autocomplete="off">
                                     <div class="searchable-results" style="display: none;"></div>
                                 </div>
                                 {{ form_widget(form.category, {'attr': {'style': 'display: none'}}) }}
                                 {{ form_errors(form.category) }}
-                                <small class="text-muted">Ce champ est requis. Tapez pour rechercher ou créer une nouvelle catégorie.</small>
+                                <small class="text-muted">Ce champ est requis. Cliquez pour afficher toutes les catégories, ou tapez pour rechercher.</small>
                             </div>
                             <div class="form-field">
                                 {{ form_label(form.destination) }}
-                                <div class="searchable-select" data-field="destination" data-url="{{ path('admin_destination_search') }}" data-create-url="{{ path('admin_destination_create') }}">
+                                <div class="searchable-select" data-field="destination" data-url="{{ path('admin_destination_search') }}" data-create-url="{{ path('admin_destination_create') }}" data-create-token="{{ csrf_token('admin_destination_create') }}">
                                     <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une destination..." autocomplete="off">
                                     <div class="searchable-results" style="display: none;"></div>
                                 </div>
@@ -202,13 +202,12 @@
                         <div class="translations-tabs">
                             <button type="button" class="translation-tab active" data-locale="fr">🇫🇷 Français</button>
                             <button type="button" class="translation-tab" data-locale="en">🇬🇧 English</button>
-                            <button type="button" class="translation-tab" data-locale="es">🇪🇸 Español</button>
-                            <button type="button" class="translation-tab" data-locale="de">🇩🇪 Deutsch</button>
                             <button type="button" class="translation-tab" data-locale="it">🇮🇹 Italiano</button>
                         </div>
                         
                         {% for translation in form.translations %}
                             <div class="translation-pane {{ translation.vars.data.locale == 'fr' ? 'active' : '' }}" data-locale="{{ translation.vars.data.locale }}">
+                                {{ form_widget(translation.locale) }}
                                 <div class="form-field">
                                     {{ form_label(translation.title) }}
                                     {{ form_widget(translation.title) }}
@@ -254,9 +253,7 @@
                                     <div class="form-field">
                                         {{ form_label(image.imageFile) }}
                                         {{ form_widget(image.imageFile) }}
-                                        <div class="image-upload-errors" data-has-errors="{{ image.imageFile.vars.errors|length > 0 ? 'true' : 'false' }}">
-                                            {{ form_errors(image.imageFile) }}
-                                        </div>
+                                        {{ form_errors(image.imageFile) }}
                                         {% if image.vars.data and image.vars.data.imagePath %}
                                             <img src="{{ asset(image.vars.data.imagePath) }}" alt="" class="preview-image">
                                         {% endif %}
@@ -318,6 +315,7 @@
                                         {% for trans in itinerary.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.locale) }}
                                                 <div class="sub-field">
                                                     {{ form_label(trans.title) }}
                                                     {{ form_widget(trans.title) }}
@@ -369,6 +367,7 @@
                                         {% for trans in feature.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.locale) }}
                                                 <div class="sub-field">
                                                     {{ form_label(trans.title) }}
                                                     {{ form_widget(trans.title) }}
@@ -425,6 +424,7 @@
                                         {% for trans in inclusion.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.locale) }}
                                                 <div class="sub-field">
                                                     {{ form_label(trans.text) }}
                                                     {{ form_widget(trans.text) }}
@@ -471,6 +471,7 @@
                                         {% for trans in faq.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.locale) }}
                                                 <div class="sub-field">
                                                     {{ form_label(trans.question) }}
                                                     {{ form_widget(trans.question) }}
@@ -522,6 +523,7 @@
                                         {% for trans in badge.translations %}
                                             <div class="sub-collection-item">
                                                 <small>{{ trans.vars.data ? trans.vars.data.locale|upper : trans.vars.name|upper }}</small>
+                                                {{ form_widget(trans.locale) }}
                                                 <div class="sub-field">
                                                     {{ form_label(trans.text) }}
                                                     {{ form_widget(trans.text) }}

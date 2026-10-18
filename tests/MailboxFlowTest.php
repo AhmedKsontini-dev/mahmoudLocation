@@ -51,7 +51,34 @@ class MailboxFlowTest extends WebTestCase
                 self::assertStringContainsString($marker, $content, sprintf('Marker "%s" should be present', $marker));
             }
 
-            // 2) Archiver le message.
+            // 2) Marquer le message comme lu puis non lu.
+            self::assertFalse($contact->isRead());
+            $readForm = $crawler->filter('form[action="/admin/contacts/'.$contactId.'/read"]');
+            self::assertCount(1, $readForm);
+            $client->request('POST', '/admin/contacts/'.$contactId.'/read', [
+                '_token' => $readForm->filter('input[name="_token"]')->attr('value'),
+                '_return_folder' => 'inbox',
+            ]);
+            self::assertResponseRedirects();
+
+            $entityManager = static::getContainer()->get('doctrine')->getManager();
+            $contact = $entityManager->getRepository(Contact::class)->find($contactId);
+            self::assertTrue($contact->isRead());
+
+            $crawler = $client->request('GET', '/admin/contacts?selected='.$contactId);
+            $unreadForm = $crawler->filter('form[action="/admin/contacts/'.$contactId.'/unread"]');
+            self::assertCount(1, $unreadForm);
+            $client->request('POST', '/admin/contacts/'.$contactId.'/unread', [
+                '_token' => $unreadForm->filter('input[name="_token"]')->attr('value'),
+                '_return_folder' => 'inbox',
+            ]);
+            self::assertResponseRedirects();
+
+            $entityManager = static::getContainer()->get('doctrine')->getManager();
+            $contact = $entityManager->getRepository(Contact::class)->find($contactId);
+            self::assertFalse($contact->isRead());
+
+            // 3) Archiver le message.
             $token = $crawler->filter('input[name="_csrf_archive"]')->attr('value');
             $client->request('POST', '/admin/contacts/'.$contactId.'/archive', ['_csrf_archive' => $token, '_return_folder' => 'inbox']);
             self::assertResponseRedirects();

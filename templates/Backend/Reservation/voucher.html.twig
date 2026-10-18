@@ -1,0 +1,271 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Voucher #{{ reservation.id }} - Location Mahmoud{% endblock %}
+
+{% block header_title %}Voucher de réservation #{{ reservation.id }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/reservation/voucher.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+{# Barre d'actions supérieure (Écran uniquement, masquée à l'impression) #}
+<div class="voucher-page-actions no-print">
+    <div class="voucher-actions-left">
+        <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary">
+            <span>←</span> Retour aux réservations
+        </a>
+        <a href="{{ path('admin_reservation_show', {id: reservation.id}) }}" class="btn btn-outline">
+            <span>👁️</span> Détails complets
+        </a>
+    </div>
+    <div class="voucher-actions-right">
+        <button type="button" class="btn btn-primary btn-print" onclick="window.print()">
+            <span>🖨️</span> Imprimer le voucher
+        </button>
+    </div>
+</div>
+
+{# Document Voucher officiel #}
+<div class="voucher-container">
+    <div class="voucher-card" id="voucherPrintArea">
+        {# En-tête de marque et métadonnées du voucher #}
+        <header class="voucher-header">
+            <div class="voucher-brand-info">
+                <h1 class="voucher-brand-title">Location Mahmoud</h1>
+                <div class="voucher-brand-tagline">Transport Touristique & Transferts Privés en Tunisie</div>
+                <div class="voucher-brand-contact">
+                    Tél : +216 71 000 000 / +216 98 000 111 &bull; Email : contact@location-mahmoud.com<br>
+                    Licence de transport touristique &bull; Service 24h/24 & 7j/7
+                </div>
+            </div>
+
+            <div class="voucher-meta-box">
+                <span class="voucher-document-type">Bon d'échange / Voucher</span>
+                <div class="voucher-ref-number">#{{ '%05d'|format(reservation.id) }}</div>
+                <div class="voucher-date-issued">
+                    Émis le : {{ reservation.createdAt|date('d/m/Y à H:i') }}
+                </div>
+                <div>
+                    {% if reservation.status.value == 'confirmed' %}
+                        <span class="voucher-status-badge voucher-status--confirmed">✓ Confirmée</span>
+                    {% elseif reservation.status.value == 'pending' %}
+                        <span class="voucher-status-badge voucher-status--pending">⏳ En attente</span>
+                    {% elseif reservation.status.value == 'cancelled' %}
+                        <span class="voucher-status-badge voucher-status--cancelled">✕ Annulée</span>
+                    {% else %}
+                        <span class="voucher-status-badge">{{ reservation.status.value }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        {# Section 1 : Informations Client #}
+        <section class="voucher-section">
+            <h2 class="voucher-section-title">
+                <span>👤</span> Informations Client
+            </h2>
+            <div class="voucher-grid">
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Nom complet</span>
+                    <span class="voucher-field-value voucher-field-value--highlight">
+                        {{ reservation.nom }} {{ reservation.prenom }}
+                    </span>
+                </div>
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Téléphone</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.telephone }}
+                    </span>
+                </div>
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Email</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.email }}
+                    </span>
+                </div>
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Type de réservation</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.transfereType.value == 'return' ? '🔄 Aller-retour' : '➡️ Aller simple' }}
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        {# Section 2 : Détails du Transfert Aller #}
+        <section class="voucher-section">
+            <h2 class="voucher-section-title">
+                <span>🚐</span> Détails du Transfert
+            </h2>
+
+            <div class="voucher-route-box">
+                <div class="voucher-route-title">
+                    <span>
+                        Trajet aller : 
+                        <strong>
+                            {% if reservation.transfere %}
+                                {{ reservation.transfere.lieuDepart }} → {{ reservation.transfere.lieuArrivee }}
+                            {% else %}
+                                {{ reservation.pickupLocation }} → {{ reservation.dropoffLocation }}
+                            {% endif %}
+                        </strong>
+                    </span>
+                    <span class="voucher-route-badge">Aller</span>
+                </div>
+                <div class="voucher-grid">
+                    <div class="voucher-field">
+                        <span class="voucher-field-label">Date de prise en charge</span>
+                        <span class="voucher-field-value voucher-field-value--highlight">
+                            {{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : 'Non spécifiée' }}
+                        </span>
+                    </div>
+                    <div class="voucher-field">
+                        <span class="voucher-field-label">Heure de prise en charge</span>
+                        <span class="voucher-field-value voucher-field-value--highlight">
+                            {{ reservation.pickupTime ? reservation.pickupTime|date('H:i') : 'Non spécifiée' }}
+                        </span>
+                    </div>
+                    <div class="voucher-field">
+                        <span class="voucher-field-label">Lieu exact de départ (Pick-up)</span>
+                        <span class="voucher-field-value">
+                            {{ reservation.pickupLocation }}
+                        </span>
+                    </div>
+                    <div class="voucher-field">
+                        <span class="voucher-field-label">Lieu exact d'arrivée (Drop-off)</span>
+                        <span class="voucher-field-value">
+                            {{ reservation.dropoffLocation }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {# Bloc Trajet Retour (si trajet aller-retour) #}
+            {% if reservation.transfereType.value == 'return' %}
+                <div class="voucher-route-box voucher-route-box--return">
+                    <div class="voucher-route-title">
+                        <span>
+                            Trajet retour : 
+                            <strong>
+                                {{ reservation.returnPickupLocation ?? reservation.dropoffLocation }} → {{ reservation.returnDropoffLocation ?? reservation.pickupLocation }}
+                            </strong>
+                        </span>
+                        <span class="voucher-route-badge" style="background: #e0e7ff; color: #3730a3; border-color: #c7d2fe;">Retour</span>
+                    </div>
+                    <div class="voucher-grid">
+                        <div class="voucher-field">
+                            <span class="voucher-field-label">Date de retour</span>
+                            <span class="voucher-field-value voucher-field-value--highlight">
+                                {{ reservation.returnPickupDate ? reservation.returnPickupDate|date('d/m/Y') : 'Non spécifiée' }}
+                            </span>
+                        </div>
+                        <div class="voucher-field">
+                            <span class="voucher-field-label">Heure de retour</span>
+                            <span class="voucher-field-value voucher-field-value--highlight">
+                                {{ reservation.returnPickupTime ? reservation.returnPickupTime|date('H:i') : 'Non spécifiée' }}
+                            </span>
+                        </div>
+                        <div class="voucher-field">
+                            <span class="voucher-field-label">Lieu de prise en charge retour</span>
+                            <span class="voucher-field-value">
+                                {{ reservation.returnPickupLocation ?? '-' }}
+                            </span>
+                        </div>
+                        <div class="voucher-field">
+                            <span class="voucher-field-label">Lieu de dépose retour</span>
+                            <span class="voucher-field-value">
+                                {{ reservation.returnDropoffLocation ?? '-' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        {# Section 3 : Passagers, Vol & Logistique #}
+        <section class="voucher-section">
+            <h2 class="voucher-section-title">
+                <span>✈️</span> Passagers & Logistique de vol
+            </h2>
+            <div class="voucher-grid">
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Nombre de passagers</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.nombrePassagers }} passager{{ reservation.nombrePassagers > 1 ? 's' : '' }}
+                    </span>
+                </div>
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Nombre de bagages</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.nombreBagages }} bagage{{ reservation.nombreBagages > 1 ? 's' : '' }}
+                    </span>
+                </div>
+
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Numéro de vol</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.numeroVol ? reservation.numeroVol : 'Non spécifié' }}
+                    </span>
+                </div>
+                <div class="voucher-field">
+                    <span class="voucher-field-label">Compagnie aérienne</span>
+                    <span class="voucher-field-value">
+                        {{ reservation.compagnieVol ? reservation.compagnieVol : 'Non spécifiée' }}
+                    </span>
+                </div>
+            </div>
+
+            {% if reservation.message %}
+                <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: var(--vc-bg-light); border-radius: var(--vc-radius); border-left: 3px solid var(--vc-primary);">
+                    <div class="voucher-field-label" style="margin-bottom: 0.25rem;">Demande spéciale / Remarques client :</div>
+                    <div style="font-size: 0.85rem; font-style: italic; color: var(--vc-ink);">
+                        « {{ reservation.message }} »
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        {# Section 4 : Récapitulatif Tarifaire #}
+        <section class="voucher-section">
+            <div class="voucher-pricing-box">
+                <div class="voucher-pricing-details">
+                    <span class="voucher-pricing-label">Montant Total de la Réservation</span>
+                    <span class="voucher-pricing-note">Prix enregistré lors de la réservation (TVA & frais inclus)</span>
+                </div>
+                <div class="voucher-total-amount">
+                    {{ reservation.prixTotal }} {{ reservation.devise }}
+                </div>
+            </div>
+        </section>
+
+        {# Section 5 : Instructions au voyageur & chauffeur #}
+        <div class="voucher-instructions-box">
+            <div class="voucher-instructions-title">
+                <span>ℹ️</span> Instructions importantes pour la prise en charge
+            </div>
+            <ul style="padding-left: 1.25rem; margin: 0; list-style-type: disc;">
+                <li>Veuillez présenter ce bon d'échange (imprimé ou sur smartphone) au chauffeur lors de votre prise en charge.</li>
+                <li><strong>À l'aéroport :</strong> Le chauffeur vous attendra à la sortie de la zone sous douane avec une pancarte à votre nom. En cas de retard de vol, le chauffeur suit votre vol en temps réel si le numéro de vol a été transmis.</li>
+                <li><strong>À l'hôtel / adresse privée :</strong> Veuillez vous présenter à la réception ou devant l'adresse 10 minutes avant l'heure convenue.</li>
+                <li><strong>Assistance & Urgence 24/7 :</strong> En cas de difficulté pour localiser votre chauffeur, appelez immédiatement le <strong>+216 71 000 000</strong> ou par WhatsApp au <strong>+216 98 000 111</strong>.</li>
+            </ul>
+        </div>
+
+        {# Signatures / Émargement pour impression #}
+        <div class="voucher-signatures">
+            <div class="voucher-signature-box">
+                <span class="voucher-signature-label">Signature du passager</span>
+            </div>
+            <div class="voucher-signature-box">
+                <span class="voucher-signature-label">Visa / Cachet du transporteur</span>
+            </div>
+        </div>
+
+        <div class="voucher-footer-note">
+            Location Mahmoud &bull; Document officiel généré le {{ 'now'|date('d/m/Y H:i') }} &bull; Réf. #{{ '%05d'|format(reservation.id) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

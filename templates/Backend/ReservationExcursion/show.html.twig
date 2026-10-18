@@ -1,0 +1,215 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Détails réservation #{{ reservation.id }} - Admin{% endblock %}
+
+{% block header_title %}Détails de la réservation d'excursion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/reservation-excursion/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+{% set exc = reservation.excursion %}
+{% set mainImage = exc.images|filter(i => i.isMain)|first ?: exc.images|first %}
+
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+    <div>
+        <h1 class="page-title">Réservation d’excursion #{{ reservation.id }}</h1>
+        <p class="page-header-description">
+            Client : <strong>{{ reservation.nomComplet }}</strong> — Enregistrée le {{ reservation.createdAt|date('d/m/Y à H:i') }}
+        </p>
+    </div>
+    <div class="page-actions" style="display: flex; gap: 0.75rem;">
+        <a href="{{ path('admin_reservation_excursion_index') }}" class="btn btn-secondary">
+            ← Retour à la liste
+        </a>
+        <a href="{{ path('admin_reservation_excursion_edit', {id: reservation.id}) }}" class="btn btn-primary">
+            ✏️ Modifier la réservation
+        </a>
+    </div>
+</div>
+
+{# Messages Flash #}
+{% for label, messages in app.flashes %}
+    {% for flashMessage in messages %}
+        <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert">
+            <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+            <span>{{ flashMessage }}</span>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="reservation-show-layout">
+    {# Colonne principale : Détails Excursion et Client #}
+    <div>
+        {# Carte Excursion #}
+        <div class="detail-card">
+            <div class="detail-card-header">
+                <span style="font-size: 1.25rem;">🏝️</span>
+                <h2 class="detail-card-title">Informations sur l'excursion</h2>
+            </div>
+            <div class="detail-card-body">
+                {% if mainImage and mainImage.imagePath %}
+                    <div class="excursion-hero-card">
+                        <img src="{{ asset(mainImage.imagePath) }}" alt="{{ exc.getTitleTranslated('fr') ?: exc.slug }}" class="excursion-hero-image">
+                    </div>
+                {% endif %}
+
+                <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                        <h3 style="margin: 0 0 0.35rem; font-size: 1.25rem; font-weight: 800; color: var(--res-ink);">
+                            {{ exc.getTitleTranslated('fr') ?: exc.slug }}
+                        </h3>
+                        {% if exc.category %}
+                            <span class="badge" style="background: #e2e8f0; color: #334155;">
+                                📁 {{ exc.category.getNameTranslated('fr') ?: exc.category.slug }}
+                            </span>
+                        {% endif %}
+                        {% if exc.destination %}
+                            <span class="badge" style="background: #f1f5f9; color: #475569;">
+                                📍 {{ exc.destination.getNameTranslated('fr') ?: exc.destination.slug }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% if exc.slug %}
+                        <a href="{{ path('app_detail_excursion', {slug: exc.slug}) }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+                            🌐 Voir la fiche publique ↗
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Date prévue</span>
+                        <span class="detail-value" style="font-size: 1.1rem; color: var(--res-primary);">
+                            📅 {{ reservation.dateExcursion ? reservation.dateExcursion|date('d/m/Y') : 'Non définie' }}
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Heure de départ</span>
+                        <span class="detail-value" style="font-size: 1.1rem; color: var(--res-primary);">
+                            ⏰ {{ reservation.heureDepart ? reservation.heureDepart|date('H:i') : 'Non définie' }}
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Participants</span>
+                        <span class="detail-value">
+                            👥 {{ reservation.nombreAdultes }} adulte{{ reservation.nombreAdultes > 1 ? 's' : '' }}
+                            {% if reservation.nombreEnfants > 0 %}
+                                + {{ reservation.nombreEnfants }} enfant{{ reservation.nombreEnfants > 1 ? 's' : '' }}
+                            {% endif %}
+                            <small style="color: var(--res-muted); font-weight: normal;">(total : {{ reservation.totalParticipants }})</small>
+                        </span>
+                    </div>
+
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <span class="detail-label">Lieu de prise en charge complet</span>
+                        <div style="background: #f8fafc; border: 1px solid var(--res-border); border-radius: 0.5rem; padding: 0.85rem 1rem; margin-top: 0.25rem; font-weight: 600; color: #1e293b; line-height: 1.5;">
+                            📍 {{ reservation.lieuPriseEnCharge }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Carte Client #}
+        <div class="detail-card">
+            <div class="detail-card-header">
+                <span style="font-size: 1.25rem;">👤</span>
+                <h2 class="detail-card-title">Informations du client</h2>
+            </div>
+            <div class="detail-card-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Nom complet</span>
+                        <span class="detail-value">{{ reservation.nomComplet }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Nom</span>
+                        <span class="detail-value">{{ reservation.nom }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Prénom</span>
+                        <span class="detail-value">{{ reservation.prenom }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Adresse e-mail</span>
+                        <span class="detail-value">
+                            <a href="mailto:{{ reservation.email }}" style="color: var(--res-primary); text-decoration: none;">
+                                ✉️ {{ reservation.email }}
+                            </a>
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Numéro WhatsApp</span>
+                        <span class="detail-value">
+                            {% if reservation.whatsapp %}
+                                {% set waNum = reservation.whatsapp|replace({' ': '', '+': '', '-': '', '(': '', ')': '', '.': ''}) %}
+                                <a href="https://wa.me/{{ waNum }}" target="_blank" rel="noopener noreferrer" class="whatsapp-link" style="font-size: 1rem;">
+                                    💬 {{ reservation.whatsapp }}
+                                </a>
+                            {% else %}
+                                <span style="color: var(--res-muted);">N/A</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Colonne latérale : Informations Administratives #}
+    <div>
+        <div class="detail-card">
+            <div class="detail-card-header">
+                <span style="font-size: 1.25rem;">📋</span>
+                <h2 class="detail-card-title">Informations administratives</h2>
+            </div>
+            <div class="detail-card-body">
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div class="detail-item">
+                        <span class="detail-label">Identifiant réservation</span>
+                        <span class="reservation-id-badge" style="font-size: 1.1rem; width: fit-content;">
+                            #{{ reservation.id }}
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Statut actuel</span>
+                        <div>
+                            <span class="badge {{ reservation.statutBadgeClass }}" style="font-size: 0.9rem; padding: 0.4rem 0.85rem;">
+                                {{ reservation.statutLabel }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Date & Heure d'enregistrement</span>
+                        <span class="detail-value">
+                            🗓️ {{ reservation.createdAt|date('d/m/Y') }} à {{ reservation.createdAt|date('H:i:s') }}
+                        </span>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid var(--res-border); margin: 0.5rem 0;">
+
+                    <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                        <a href="{{ path('admin_reservation_excursion_edit', {id: reservation.id}) }}" class="btn btn-primary" style="width: 100%; text-align: center; justify-content: center;">
+                            ✏️ Modifier cette réservation
+                        </a>
+                        <a href="{{ path('admin_reservation_excursion_index') }}" class="btn btn-secondary" style="width: 100%; text-align: center; justify-content: center;">
+                            ← Retour à la liste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

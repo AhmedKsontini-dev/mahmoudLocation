@@ -110,6 +110,9 @@ home:
         tab_excursion: "Tours y Excursiones"
         lbl_departure: "Lugar de Salida"
         lbl_destination: Destino
+        no_transfer_available: "No hay transfer disponible"
+        no_destination_available: "No hay destino disponible"
+        no_excursion_available: "No hay excursión disponible"
         lbl_date: "Fecha y Hora"
         lbl_passengers: Pasajeros
         btn_search_transfer: "Buscar Traslado"
@@ -152,6 +155,7 @@ home:
         pill: "Precios Fijos y Transparentes"
         title: "Traslados Aeroportuarios Populares"
         sub: "Tarifas fijas garantizadas con todos los peajes incluidos. Sin cargos ocultos ni tarifas por retrasos en los vuelos."
+        card_desc: "Traslado privado cómodo y puntual."
     excursions:
         pill: "Viajes de un Día Privados"
         title: "Explora Túnez"
@@ -187,7 +191,7 @@ navbar:
     about: Nosotros
     contact: Contacto
 footer:
-    brand: "Tunisia Travel"
+    brand: "Yassmine Guide"
     description: "Movilidad ejecutiva, alquiler de coches premium y traslados privados seguros en Túnez. Licencia nacional y transporte turístico certificado ISO."
     license: "Licencia A n°7482"
     insurance: "Seguro AXA Pro"
@@ -210,7 +214,7 @@ footer:
     support_client: "Atención al Cliente"
     support_hq: "Sede Central"
     support_address: "Avenida Habib Bourguiba, Túnez"
-    copyright: "Copyright © 2026 Tunisia Travel & Mobility. Todos los derechos reservados."
+    copyright: "Copyright © 2026 Yassmine Guide. Todos los derechos reservados."
     legal: "Aviso Legal"
     cgv: "Condiciones de Venta"
     privacy: "Política de Privacidad"
@@ -296,8 +300,9 @@ contact:
         phone_required: "El teléfono es requerido"
         service_category_required: "El servicio es requerido"
         subject_required: "El asunto es requerido"
+        subject_invalid: "El asunto no puede contener saltos de línea ni caracteres de control."
         message_required: "El mensaje es requerido"
-        success_message: "Su mensaje ha sido enviado exitosamente. Responderemos lo antes posible."
+        success_message: "Hemos recibido su solicitud. Responderemos lo antes posible."
         error_message: "Ocurrió un error al enviar el mensaje. Por favor, inténtelo de nuevo."
         request_type: "Tipo de solicitud"
         request_type_required: "Selecciona un tipo de solicitud."

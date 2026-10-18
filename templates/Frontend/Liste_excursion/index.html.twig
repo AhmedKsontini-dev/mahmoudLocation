@@ -151,6 +151,36 @@ function setDuration(btn, value) {
                     </div>
                 </div>
 
+                {# --- Catégories (même liste radio que les destinations) --- #}
+                <div class="filter-group">
+                    <h3 class="filter-group__title">CATÉGORIES</h3>
+                    <div class="filter-list">
+                        {% if categories|length > 0 %}
+                            <div class="filter-item">
+                                <label>
+                                    <input type="radio" name="category" value=""
+                                        {% if not activeFilters.category %}checked{% endif %}
+                                        onchange="document.getElementById('filter-form').submit()">
+                                    Toutes les catégories
+                                </label>
+                            </div>
+                            {% for category in categories %}
+                                <div class="filter-item">
+                                    <label>
+                                        <input type="radio" name="category" value="{{ category.id }}"
+                                            {% if activeFilters.category == category.id ~ '' %}checked{% endif %}
+                                            onchange="document.getElementById('filter-form').submit()">
+                                        {{ (category.icon ? category.icon ~ ' ' : '') ~ (category.getNameTranslated(_locale) ?? category.slug) }}
+                                    </label>
+                                    <span class="filter-item__count">{{ categoryCounts[category.id] ?? 0 }}</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="font-size:13px;color:var(--color-text-muted);">Aucune catégorie disponible.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
                 {# --- Durée (dynamique) --- #}
                 {% if durations|length > 0 %}
                 <div class="filter-group">
@@ -293,7 +323,11 @@ function setDuration(btn, value) {
                     </article>
                     {% else %}
                     <div class="col-span-full py-12 text-center text-on-surface-variant font-body-md text-body-md">
-                        Aucune excursion n'est disponible pour le moment.
+                        {% if activeFilters.category %}
+                            Aucune excursion publiée ne correspond à la catégorie sélectionnée.
+                        {% else %}
+                            Aucune excursion n'est disponible pour le moment.
+                        {% endif %}
                     </div>
                     {% endfor %}
 

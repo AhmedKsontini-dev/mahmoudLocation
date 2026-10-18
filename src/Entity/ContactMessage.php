@@ -16,8 +16,11 @@ class ContactMessage
     private ?int $id = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Contact $contact = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $recipientName = null;
 
     #[ORM\Column(length: 20, enumType: ContactMessageStatus::class)]
     private ?ContactMessageStatus $status = null;
@@ -89,6 +92,18 @@ class ContactMessage
     public function setRecipient(string $recipient): static
     {
         $this->recipient = $recipient;
+
+        return $this;
+    }
+
+    public function getRecipientName(): ?string
+    {
+        return $this->recipientName;
+    }
+
+    public function setRecipientName(?string $recipientName): static
+    {
+        $this->recipientName = $recipientName;
 
         return $this;
     }

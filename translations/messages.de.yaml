@@ -110,6 +110,9 @@ home:
         tab_excursion: "Touren & Ausflüge"
         lbl_departure: Abholort
         lbl_destination: Zielort
+        no_transfer_available: "Kein Transfer verfügbar"
+        no_destination_available: "Kein Ziel verfügbar"
+        no_excursion_available: "Keine Tour verfügbar"
         lbl_date: "Datum & Uhrzeit"
         lbl_passengers: Passagiere
         btn_search_transfer: "Transfer Suchen"
@@ -152,6 +155,7 @@ home:
         pill: "Feste & Transparente Preise"
         title: "Beliebte Flughafentransfers"
         sub: "Garantierte Festpreise inkl. aller Autobahngebühren. Keine Zusatzkosten für Flugverspätungen."
+        card_desc: "Komfortabler und pünktlicher Privattransfer."
     excursions:
         pill: "Private Tagesausflüge"
         title: "Entdecken Sie Tunesien"
@@ -187,7 +191,7 @@ navbar:
     about: "Über Uns"
     contact: Kontakt
 footer:
-    brand: "Tunisia Travel"
+    brand: "Yassmine Guide"
     description: "Executive Mobilität, Premium-Mietwagen und sichere private Transfers in Tunesien. Nationale Lizenz & ISO-zertifizierter Transport."
     license: "Lizenz A n°7482"
     insurance: "AXA Pro Versicherung"
@@ -210,7 +214,7 @@ footer:
     support_client: Kundenservice
     support_hq: Hauptsitz
     support_address: "Avenue Habib Bourguiba, Tunis"
-    copyright: "Copyright © 2026 Tunisia Travel & Mobility. Alle Rechte vorbehalten."
+    copyright: "Copyright © 2026 Yassmine Guide. Alle Rechte vorbehalten."
     legal: Impressum
     cgv: AGB
     privacy: Datenschutz
@@ -296,8 +300,9 @@ contact:
         phone_required: "Telefon ist erforderlich"
         service_category_required: "Service ist erforderlich"
         subject_required: "Betreff ist erforderlich"
+        subject_invalid: "Der Betreff darf keine Zeilenumbrüche oder Steuerzeichen enthalten."
         message_required: "Nachricht ist erforderlich"
-        success_message: "Ihre Nachricht wurde erfolgreich gesendet. Wir werden so schnell wie möglich antworten."
+        success_message: "Ihre Anfrage ist eingegangen. Wir werden so schnell wie möglich antworten."
         error_message: "Beim Senden der Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
         request_type: "Art der Anfrage"
         request_type_required: "Bitte wählen Sie eine Art der Anfrage aus."

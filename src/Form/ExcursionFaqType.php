@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Config\LocaleConfig;
+use App\Form\EventListener\AlignSubmittedTranslationsByLocaleListener;
 use App\Entity\ExcursionFaqTranslation;
 
 class ExcursionFaqType extends AbstractType
@@ -21,12 +22,10 @@ class ExcursionFaqType extends AbstractType
             ->add('position', IntegerType::class, [
                 'label' => 'Position',
                 'attr' => ['class' => 'form-control'],
-                'data' => 0,
             ])
             ->add('isActive', CheckboxType::class, [
                 'label' => 'Active',
                 'required' => false,
-                'data' => true,
             ])
             ->add('translations', CollectionType::class, [
                 'entry_type' => ExcursionFaqTranslationType::class,
@@ -39,11 +38,15 @@ class ExcursionFaqType extends AbstractType
             ])
         ;
 
+        // La soumission est réalignée par locale sur l'ordre réel de la collection
+        // (l'ordre de chargement Doctrine n'est pas garanti).
+        $builder->get('translations')->addEventSubscriber(new AlignSubmittedTranslationsByLocaleListener());
+
         // Initialize translations for new entities
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $faq = $event->getData();
             if ($faq && $faq->getTranslations()->isEmpty()) {
-                $locales = LocaleConfig::getSupportedLocales();
+                $locales = LocaleConfig::getExcursionFormLocales();
                 foreach ($locales as $locale) {
                     $translation = new ExcursionFaqTranslation();
                     $translation->setLocale($locale);

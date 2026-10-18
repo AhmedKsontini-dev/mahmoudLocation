@@ -1,0 +1,199 @@
+<div class="table-container">
+    <table class="table user-table admin-data-table">
+        <thead>
+            <tr>
+                <th style="width: 80px;">ID</th>
+                <th>Utilisateur</th>
+                <th style="width: 220px;">Rôles & Accès</th>
+                <th style="width: 180px; text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr class="user-row {{ app.user and app.user.id == user.id ? 'current-user-row' : '' }}">
+                    <td>
+                        <span class="user-id">#{{ user.id }}</span>
+                    </td>
+                    <td>
+                        <div class="user-identity">
+                            <div class="user-avatar" aria-hidden="true">
+                                {{ user.email|first|upper }}
+                            </div>
+                            <div class="user-meta">
+                                <div class="user-email-line">
+                                    <strong class="user-email">{{ user.email }}</strong>
+                                    {% if app.user and app.user.id == user.id %}
+                                        <span class="badge badge-info badge-self" title="Votre compte connecté">Vous</span>
+                                    {% endif %}
+                                </div>
+                                <span class="user-identifier-sub">Identifiant unique : {{ user.userIdentifier }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="user-roles-badges">
+                            {% if 'ROLE_ADMIN' in user.roles %}
+                                <span class="badge badge-primary role-badge role-badge--admin">
+                                    <span class="role-icon">🛡️</span> Administrateur
+                                </span>
+                            {% else %}
+                                <span class="badge badge-secondary role-badge role-badge--user">
+                                    <span class="role-icon">👤</span> Utilisateur standard
+                                </span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="table-actions" style="justify-content: flex-end;">
+                            <a href="{{ path('admin_user_edit', {id: user.id, search: search, page: pagination.page}) }}"
+                               class="btn btn-sm btn-outline btn-edit-user"
+                               title="Modifier l'utilisateur {{ user.email }}">
+                                ✏️ Modifier
+                            </a>
+
+                            {% if app.user and app.user.id == user.id %}
+                                <button type="button"
+                                        class="btn btn-sm btn-secondary btn-delete-disabled"
+                                        disabled
+                                        title="Vous ne pouvez pas supprimer votre propre compte administrateur.">
+                                    🚫 Supprimer
+                                </button>
+                            {% else %}
+                                <form method="post"
+                                      action="{{ path('admin_user_delete', {id: user.id, search: search, page: pagination.page}) }}"
+                                      onsubmit="return confirm('Confirmez-vous la suppression définitive du compte « {{ user.email|e('js') }} » ?\nCette opération est irréversible.');"
+                                      class="inline-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger btn-delete-user"
+                                            title="Supprimer l'utilisateur {{ user.email }}">
+                                        🗑️ Supprimer
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            {% if search is not empty %}
+                                <div class="empty-state-title">Aucun utilisateur trouvé</div>
+                                <div class="empty-state-text">
+                                    Aucun résultat pour la recherche <strong>« {{ search }} »</strong>.
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <a href="{{ path('admin_user_index') }}" class="btn btn-secondary btn-sm">Effacer la recherche</a>
+                                </div>
+                            {% else %}
+                                <div class="empty-state-title">Aucun utilisateur</div>
+                                <div class="empty-state-text">Aucun compte utilisateur n'est encore enregistré en base de données.</div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Barre de pagination et résumé #}
+{% if pagination.total > 0 %}
+    <div class="table-footer user-pagination-footer">
+        <div class="table-count user-table-count">
+            {% set startItem = ((pagination.page - 1) * pagination.limit) + 1 %}
+            {% set endItem = min(pagination.page * pagination.limit, pagination.total) %}
+            Affichage de <strong>{{ startItem }}</strong> à <strong>{{ endItem }}</strong> sur <strong>{{ pagination.total }}</strong> utilisateur{{ pagination.total > 1 ? 's' : '' }}
+            {% if search is not empty %}
+                <span class="search-indicator-tag">(filtré par « {{ search }} »)</span>
+            {% endif %}
+        </div>
+
+        {% if pagination.pages > 1 %}
+            <nav class="pagination-nav" aria-label="Pagination des utilisateurs">
+                <ul class="pagination-list">
+                    {# Bouton Précédent #}
+                    <li class="pagination-item">
+                        {% if pagination.page > 1 %}
+                            <a href="{{ path('admin_user_index', {page: pagination.page - 1, search: search}) }}"
+                               class="pagination-link pagination-link--prev"
+                               aria-label="Page précédente">
+                                ‹ Précédent
+                            </a>
+                        {% else %}
+                            <span class="pagination-link pagination-link--disabled">‹ Précédent</span>
+                        {% endif %}
+                    </li>
+
+                    {# Numéros de pages avec gestion intelligente #}
+                    {% set maxPagesToShow = 7 %}
+                    {% if pagination.pages <= maxPagesToShow %}
+                        {% for p in 1..pagination.pages %}
+                            <li class="pagination-item">
+                                {% if p == pagination.page %}
+                                    <span class="pagination-link active" aria-current="page">{{ p }}</span>
+                                {% else %}
+                                    <a href="{{ path('admin_user_index', {page: p, search: search}) }}" class="pagination-link">{{ p }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        {# Page 1 #}
+                        <li class="pagination-item">
+                            {% if pagination.page == 1 %}
+                                <span class="pagination-link active" aria-current="page">1</span>
+                            {% else %}
+                                <a href="{{ path('admin_user_index', {page: 1, search: search}) }}" class="pagination-link">1</a>
+                            {% endif %}
+                        </li>
+
+                        {% if pagination.page > 3 %}
+                            <li class="pagination-item"><span class="pagination-ellipsis">…</span></li>
+                        {% endif %}
+
+                        {# Pages centrales #}
+                        {% set startMiddle = max(2, pagination.page - 1) %}
+                        {% set endMiddle = min(pagination.pages - 1, pagination.page + 1) %}
+                        {% for p in startMiddle..endMiddle %}
+                            <li class="pagination-item">
+                                {% if p == pagination.page %}
+                                    <span class="pagination-link active" aria-current="page">{{ p }}</span>
+                                {% else %}
+                                    <a href="{{ path('admin_user_index', {page: p, search: search}) }}" class="pagination-link">{{ p }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+
+                        {% if pagination.page < pagination.pages - 2 %}
+                            <li class="pagination-item"><span class="pagination-ellipsis">…</span></li>
+                        {% endif %}
+
+                        {# Dernière page #}
+                        <li class="pagination-item">
+                            {% if pagination.page == pagination.pages %}
+                                <span class="pagination-link active" aria-current="page">{{ pagination.pages }}</span>
+                            {% else %}
+                                <a href="{{ path('admin_user_index', {page: pagination.pages, search: search}) }}" class="pagination-link">{{ pagination.pages }}</a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
+
+                    {# Bouton Suivant #}
+                    <li class="pagination-item">
+                        {% if pagination.page < pagination.pages %}
+                            <a href="{{ path('admin_user_index', {page: pagination.page + 1, search: search}) }}"
+                               class="pagination-link pagination-link--next"
+                               aria-label="Page suivante">
+                                Suivant ›
+                            </a>
+                        {% else %}
+                            <span class="pagination-link pagination-link--disabled">Suivant ›</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+{% endif %}

@@ -6,6 +6,12 @@ final class LocaleConfig
 {
     public const SUPPORTED_LOCALES = ['fr', 'en', 'es', 'de', 'it'];
 
+    public const EXCURSION_FORM_LOCALES = ['fr', 'en', 'it'];
+
+    public const TRANSFERE_FORM_LOCALES = ['fr', 'en'];
+
+    public const DESTINATION_FORM_LOCALES = ['fr', 'en'];
+
     public const LABELS = [
         'fr' => 'Français',
         'en' => 'English',
@@ -17,6 +23,16 @@ final class LocaleConfig
     public static function getSupportedLocales(): array
     {
         return self::SUPPORTED_LOCALES;
+    }
+
+    public static function getExcursionFormLocales(): array
+    {
+        return self::EXCURSION_FORM_LOCALES;
+    }
+
+    public static function getDestinationFormLocales(): array
+    {
+        return self::DESTINATION_FORM_LOCALES;
     }
 
     private function __construct()

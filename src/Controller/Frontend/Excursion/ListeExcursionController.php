@@ -20,7 +20,9 @@ class ListeExcursionController extends AbstractController
 
         // --- Lecture des filtres GET ---
         $filters = [
+            'category'         => $request->query->get('category'),
             'destination'      => $request->query->get('destination'),
+            'excursion'        => $request->query->get('excursion'),
             'duration_minutes' => $request->query->get('duration_minutes'),
             'min_price'        => $request->query->get('min_price'),
             'max_price'        => $request->query->get('max_price'),
@@ -32,9 +34,11 @@ class ListeExcursionController extends AbstractController
         $totalPages      = (int) ceil($totalExcursions / $limit);
 
         // --- Données utilitaires pour les filtres ---
-        $destinations = $excursionRepository->findDestinationsUsedByActiveExcursions();
-        $durations    = $excursionRepository->findDistinctDurations();
-        $priceRange   = $excursionRepository->findPriceRange();
+        $categories     = $excursionRepository->findCategoriesUsedByActiveExcursions();
+        $categoryCounts = $excursionRepository->countPublishedExcursionsByCategory();
+        $destinations   = $excursionRepository->findDestinationsUsedByActiveExcursions();
+        $durations      = $excursionRepository->findDistinctDurations();
+        $priceRange     = $excursionRepository->findPriceRange();
 
         return $this->render('Frontend/Liste_excursion/index.html.twig', [
             'registrationForm' => $this->createForm(RegistrationFormType::class, new User())->createView(),
@@ -45,6 +49,8 @@ class ListeExcursionController extends AbstractController
             'limit'            => $limit,
             '_locale'          => $request->getLocale(),
             // Filtres dynamiques
+            'categories'       => $categories,
+            'categoryCounts'   => $categoryCounts,
             'destinations'     => $destinations,
             'durations'        => $durations,
             'priceRange'       => $priceRange,

@@ -48,6 +48,20 @@ class ExcursionRepository extends ServiceEntityRepository
     /**
      * @return Excursion[]
      */
+    public function findAvailableExcursions(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.status IN (:statuses)')
+            ->setParameter('statuses', [Excursion::STATUS_ACTIVE, 'published'])
+            ->andWhere('e.destination IS NOT NULL')
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Excursion[]
+     */
     public function findLatestActive(int $limit = 4): array
     {
         return $this->createQueryBuilder('e')
@@ -57,6 +71,90 @@ class ExcursionRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return array<int, array{id: int, name: string}>
+     */
+    public function findExcursionDestinations(string $locale = 'fr'): array
+    {
+        $destinations = [];
+
+        foreach ($this->findAvailableExcursions() as $excursion) {
+            $destination = $excursion->getDestination();
+            if ($destination === null) {
+                continue;
+            }
+
+            $name = $destination->getNameTranslated($locale)
+                ?? $destination->getTranslation('fr')?->getName();
+
+            if ($name === null || $name === '') {
+                continue;
+            }
+
+            $destinations[$destination->getId()] = [
+                'id' => $destination->getId(),
+                'name' => $name,
+            ];
+        }
+
+        return array_values($destinations);
+    }
+
+    /**
+     * @return array<int, array{id: int|null, title: string, destination: string, price: float, slug: string|null}>
+     */
+    public function findExcursionsByDestination(?int $destinationId, string $locale = 'fr'): array
+    {
+        if ($destinationId === null) {
+            return [];
+        }
+
+        $excursions = $this->createQueryBuilder('e')
+            ->where('e.destination = :destination')
+            ->andWhere('e.status IN (:statuses)')
+            ->setParameter('destination', $destinationId)
+            ->setParameter('statuses', [Excursion::STATUS_ACTIVE, 'published'])
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $items = [];
+        foreach ($excursions as $excursion) {
+            $title = $excursion->getTitleTranslated($locale)
+                ?? $excursion->getTranslation('fr')?->getTitle()
+                ?? $excursion->getSlug();
+
+            $items[] = [
+                'id' => $excursion->getId(),
+                'title' => $title,
+                'destination' => $excursion->getDestination()?->getNameTranslated($locale) ?? $excursion->getDestination()?->getTranslation('fr')?->getName() ?? '',
+                'price' => (float) $excursion->getPriceAdult(),
+                'slug' => $excursion->getSlug(),
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return array<int, array{destinationId: int, destination: string, excursions: array<int, array{id: int|null, title: string, price: float, slug: string|null}>}>
+     */
+    public function findBookingData(string $locale = 'fr'): array
+    {
+        $data = [];
+
+        foreach ($this->findExcursionDestinations($locale) as $destination) {
+            $destinationId = $destination['id'];
+            $data[] = [
+                'destinationId' => $destinationId,
+                'destination' => $destination['name'],
+                'excursions' => $this->findExcursionsByDestination($destinationId, $locale),
+            ];
+        }
+
+        return $data;
     }
 
     public function findBySlug(string $slug): ?Excursion
@@ -73,7 +171,7 @@ class ExcursionRepository extends ServiceEntityRepository
      *
      * @param int   $page
      * @param int   $limit
-     * @param array $filters Keys: destination (int), duration_minutes (int), min_price (float), max_price (float)
+     * @param array $filters Keys: destination (int), category (int), duration_minutes (int), min_price (float), max_price (float)
      */
     public function getPaginatedExcursions(int $page, int $limit, array $filters = []): Paginator
     {
@@ -82,10 +180,26 @@ class ExcursionRepository extends ServiceEntityRepository
             ->setParameter('statuses', ['active', 'published'])
             ->orderBy('e.id', 'DESC');
 
+        // --- Filtre catégorie (ID) ---
+        if (!empty($filters['category'])) {
+            $qb->andWhere('e.category = :category')
+               ->setParameter('category', (int) $filters['category']);
+        }
+
         // --- Filtre destination (ID) ---
         if (!empty($filters['destination'])) {
             $qb->andWhere('e.destination = :destination')
                ->setParameter('destination', (int) $filters['destination']);
+        }
+
+        // --- Filtre excursion spécifique (slug ou ID) ---
+        if (!empty($filters['excursion'])) {
+            $excursionFilter = trim((string) $filters['excursion']);
+            if ($excursionFilter !== '') {
+                $qb->andWhere('(e.slug = :excursionSlug OR e.id = :excursionId)')
+                   ->setParameter('excursionSlug', $excursionFilter)
+                   ->setParameter('excursionId', is_numeric($excursionFilter) ? (int) $excursionFilter : 0);
+            }
         }
 
         // --- Filtre durée totale en minutes ---
@@ -110,6 +224,61 @@ class ExcursionRepository extends ServiceEntityRepository
            ->setMaxResults($limit);
 
         return new Paginator($qb->getQuery());
+    }
+
+    /**
+     * Returns Category entities that have at least one active/published excursion.
+     * Reuses the same visibility rule as getPaginatedExcursions so the filter
+     * only ever offers categories that can actually return results.
+     *
+     * @return \App\Entity\Category[]
+     */
+    public function findCategoriesUsedByActiveExcursions(): array
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('c')
+            ->from(\App\Entity\Category::class, 'c')
+            ->join('c.excursions', 'e')
+            ->where('e.status IN (:statuses)')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('statuses', ['active', 'published'])
+            ->setParameter('active', true)
+            ->groupBy('c.id')
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Compte les excursions visibles (actives ou publiées) de chaque catégorie
+     * active : COUNT + GROUP BY avec exactement les mêmes conditions de visibilité
+     * que getPaginatedExcursions — les brouillons et inactifs ne sont jamais comptés.
+     * COUNT(DISTINCT e.id) évite tout doublon si une même excursion était associée
+     * plusieurs fois à une catégorie via les relations Doctrine.
+     *
+     * @return array<int, int> categoryId => nombre d'excursions publiées
+     */
+    public function countPublishedExcursionsByCategory(): array
+    {
+        $rows = $this->getEntityManager()->createQueryBuilder()
+            ->select('c.id AS category_id', 'COUNT(DISTINCT e.id) AS total')
+            ->from(\App\Entity\Category::class, 'c')
+            ->innerJoin('c.excursions', 'e')
+            ->where('e.status IN (:statuses)')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('statuses', ['active', 'published'])
+            ->setParameter('active', true)
+            ->groupBy('c.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[(int) $row['category_id']] = (int) $row['total'];
+        }
+
+        return $counts;
     }
 
     /**

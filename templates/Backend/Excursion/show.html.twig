@@ -4,7 +4,13 @@
 
 {% block header_title %}{{ excursion.getTranslation('fr')?.title ?? 'Excursion' }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/excursion/detail.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
+<div class="excursion-show">
 <div class="page-header">
     <div>
         <h1 class="page-title">{{ excursion.getTranslation('fr')?.title ?? 'Excursion' }}</h1>
@@ -289,5 +295,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}

@@ -5,18 +5,24 @@ namespace App\Controller\Admin;
 use App\Entity\Contact;
 use App\Entity\ContactMessage;
 use App\Enum\ContactMessageStatus;
+use App\Form\AdminContactMessageType;
 use App\Repository\ContactMessageRepository;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Email as EmailConstraint;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/admin/contacts', name: 'admin_contact_')]
 class ContactController extends AbstractController
@@ -34,21 +40,113 @@ class ContactController extends AbstractController
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
 
-    private const FOLDERS = ['inbox', 'pinned', 'sent', 'drafts', 'archived'];
+    private const FOLDERS = ['inbox', 'pinned', 'sent', 'failed', 'drafts', 'archived'];
 
     private const REQUEST_TYPES = ['information', 'reservation', 'group_quote', 'partnership'];
 
     private const ATTACHMENT_DIRECTORY = 'uploads/mailbox';
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(ContactRepository $contactRepository, ContactMessageRepository $messageRepository): Response
+    public function index(
+        ContactRepository $contactRepository,
+        ContactMessageRepository $messageRepository
+    ): Response
     {
         return $this->render('Backend/Contact/index.html.twig', [
             'inboxContacts' => $contactRepository->findInbox(),
             'archivedContacts' => $contactRepository->findArchived(),
             'pinnedContacts' => $contactRepository->findPinned(),
             'sentMessages' => $messageRepository->findSent(),
+            'failedMessages' => $messageRepository->findFailed(),
             'draftMessages' => $messageRepository->findDrafts(),
+            'unreadCount' => $contactRepository->countUnread(),
+            'repliedContactIds' => $messageRepository->findContactIdsWithSentMessages(),
+        ]);
+    }
+
+    #[Route('/new-message', name: 'new_message', methods: ['GET', 'POST'])]
+    public function newMessage(
+        Request $request,
+        MailerInterface $mailer,
+        LoggerInterface $logger,
+        ValidatorInterface $validator,
+        ContactRepository $contactRepository,
+        EntityManagerInterface $entityManager,
+        #[\Symfony\Component\DependencyInjection\Attribute\Autowire('%app.mailer.from_email%')] string $fromEmail,
+        #[\Symfony\Component\DependencyInjection\Attribute\Autowire('%app.mailer.from_name%')] string $fromName
+    ): Response {
+        $form = $this->createForm(AdminContactMessageType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $configuredFromEmail = trim($fromEmail);
+            $recipientEmail = trim((string) $data['recipient']);
+            $recipientName = trim((string) ($data['recipientName'] ?? ''));
+            $subject = trim((string) $data['subject']);
+            $body = (string) $data['body'];
+
+            $message = (new ContactMessage())
+                ->setContact(null)
+                ->setRecipient($recipientEmail)
+                ->setRecipientName($recipientName !== '' ? $recipientName : null)
+                ->setSubject($subject)
+                ->setBody($body);
+
+            if ($configuredFromEmail === '' || count($validator->validate($configuredFromEmail, new EmailConstraint())) > 0) {
+                $message->setStatus(ContactMessageStatus::FAILED);
+                $entityManager->persist($message);
+                $entityManager->flush();
+                $logger->error('New contact message failed because the configured sender address is missing or invalid.', ['messageId' => $message->getId()]);
+                $this->addFlash('error', 'L’adresse d’expédition du site est absente ou invalide. Aucun e-mail n’a été envoyé.');
+
+                return $this->renderNewMessageForm($form, $contactRepository);
+            }
+
+            $message->setStatus(ContactMessageStatus::SENDING);
+            $entityManager->persist($message);
+            $entityManager->flush();
+
+            try {
+                $email = (new Email())
+                    ->from(new Address($configuredFromEmail, $fromName))
+                    ->to($recipientName !== '' ? new Address($recipientEmail, $recipientName) : $recipientEmail)
+                    ->subject($subject)
+                    ->text($body);
+                $mailer->send($email);
+            } catch (TransportExceptionInterface|RfcComplianceException $exception) {
+                $message->setStatus(ContactMessageStatus::FAILED)->setUpdatedAt(new \DateTimeImmutable());
+                $entityManager->flush();
+                $logger->error('New contact message could not be sent.', [
+                    'exceptionClass' => $exception::class,
+                    'messageId' => $message->getId(),
+                ]);
+                $this->addFlash('error', 'L’envoi de l’e-mail a échoué. Vérifiez la configuration du service de messagerie.');
+
+                return $this->renderNewMessageForm($form, $contactRepository);
+            }
+
+            $now = new \DateTimeImmutable();
+            $message
+                ->setStatus(ContactMessageStatus::SENT)
+                ->setSentAt($now)
+                ->setUpdatedAt($now);
+            $entityManager->flush();
+
+            $logger->info('New contact message accepted by the mail transport.', ['messageId' => $message->getId()]);
+            $this->addFlash('success', 'Le message a été accepté par le service de messagerie. Cela ne confirme pas sa livraison dans la boîte du destinataire.');
+
+            return $this->redirectToRoute('admin_contact_index');
+        }
+
+        return $this->renderNewMessageForm($form, $contactRepository);
+    }
+
+    private function renderNewMessageForm(FormInterface $form, ContactRepository $contactRepository): Response
+    {
+        return $this->render('Backend/Contact/new_message.html.twig', [
+            'form' => $form,
+            'recipientSuggestions' => $contactRepository->findRecentRecipientAddresses(),
         ]);
     }
 
@@ -58,6 +156,36 @@ class ContactController extends AbstractController
         return $this->render('Backend/Contact/show.html.twig', [
             'contact' => $contact,
         ]);
+    }
+
+    #[Route('/{id}/read', name: 'read', methods: ['POST'])]
+    public function markRead(Contact $contact, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isCsrfTokenValid('read'.$contact->getId(), $request->request->getString('_token'))) {
+            $this->addFlash('error', 'Jeton de sécurité invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('admin_contact_index', $this->returnParams($request, $contact->getId()));
+        }
+
+        $contact->setIsRead(true);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('admin_contact_index', $this->returnParams($request, $contact->getId()));
+    }
+
+    #[Route('/{id}/unread', name: 'unread', methods: ['POST'])]
+    public function markUnread(Contact $contact, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isCsrfTokenValid('unread'.$contact->getId(), $request->request->getString('_token'))) {
+            $this->addFlash('error', 'Jeton de sécurité invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('admin_contact_index', $this->returnParams($request, $contact->getId()));
+        }
+
+        $contact->setIsRead(false);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('admin_contact_index', $this->returnParams($request, $contact->getId()));
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
@@ -169,7 +297,9 @@ class ContactController extends AbstractController
         LoggerInterface $logger,
         ContactMessageRepository $messageRepository,
         EntityManagerInterface $entityManager,
-        #[Autowire('%env(MAILER_DSN)%')] string $mailerDsn
+        ValidatorInterface $validator,
+        #[\Symfony\Component\DependencyInjection\Attribute\Autowire('%app.mailer.from_email%')] string $fromEmail,
+        #[\Symfony\Component\DependencyInjection\Attribute\Autowire('%app.mailer.from_name%')] string $fromName
     ): Response {
         if (!$this->isCsrfTokenValid('reply'.$contact->getId(), $request->request->getString('_csrf_reply'))) {
             $this->addFlash('error', 'Jeton de sécurité invalide. Veuillez réessayer.');
@@ -195,35 +325,52 @@ class ContactController extends AbstractController
             return $this->redirectToRoute('admin_contact_index', $this->redirectParamsForDraft($request, $contact, $draft));
         }
 
-        $subject = 'Re: '.$contact->getSubject();
+        $subject = $this->replySubject((string) $contact->getSubject());
         $draftAttachmentPath = $draft?->getAttachmentPath();
+        $configuredFromEmail = trim($fromEmail);
+        $recipientEmail = trim((string) $contact->getEmail());
 
-        $email = (new Email())
-            ->from($this->resolveSenderAddress($mailerDsn))
-            ->to((string) $contact->getEmail())
-            ->subject($subject)
-            ->text($replyMessage.$this->quotedOriginalMessage($contact));
+        if (
+            $configuredFromEmail === ''
+            || count($validator->validate($configuredFromEmail, new EmailConstraint())) > 0
+            || count($validator->validate($recipientEmail, new EmailConstraint())) > 0
+        ) {
+            $this->addFailedReply($contact, $recipientEmail, $subject, $replyMessage, $entityManager);
+            $logger->error('Contact reply could not be sent because a sender or recipient address is invalid.', [
+                'contactId' => $contact->getId(),
+            ]);
+            $this->addFlash('error', "L’adresse d’expédition ou du destinataire est invalide. Aucun e-mail n’a été envoyé.");
+
+            return $this->redirectToRoute('admin_contact_index', $this->redirectParamsForDraft($request, $contact, $draft));
+        }
 
         $storedAttachment = null;
 
-        if ($attachment !== null) {
-            $storedAttachment = $this->storeAttachment($attachment);
-            $email->attach($attachment->getContent(), $storedAttachment['name'], (string) $attachment->getMimeType());
-        } elseif ($draftAttachmentPath !== null && is_file($this->attachmentAbsolutePath($draftAttachmentPath))) {
-            $email->attachFromPath($this->attachmentAbsolutePath($draftAttachmentPath), (string) $draft?->getAttachmentName());
-        }
-
         try {
+            $email = (new Email())
+                ->from(new Address($configuredFromEmail, $fromName))
+                ->to(new Address($recipientEmail, trim($contact->getFirstName().' '.$contact->getLastName())))
+                ->subject($subject)
+                ->text($replyMessage.$this->quotedOriginalMessage($contact));
+
+            if ($attachment !== null) {
+                $storedAttachment = $this->storeAttachment($attachment);
+                $email->attach($attachment->getContent(), $storedAttachment['name'], (string) $attachment->getMimeType());
+            } elseif ($draftAttachmentPath !== null && is_file($this->attachmentAbsolutePath($draftAttachmentPath))) {
+                $email->attachFromPath($this->attachmentAbsolutePath($draftAttachmentPath), (string) $draft?->getAttachmentName());
+            }
+
             $mailer->send($email);
-        } catch (\Throwable $exception) {
+        } catch (TransportExceptionInterface|RfcComplianceException $exception) {
             if ($storedAttachment !== null) {
                 $this->deleteStoredAttachment($storedAttachment['path']);
             }
 
             $logger->error('Échec de l\'envoi de la réponse au contact {contactId}.', [
                 'contactId' => $contact->getId(),
-                'exception' => $exception,
+                'exceptionClass' => $exception::class,
             ]);
+            $this->addFailedReply($contact, $recipientEmail, $subject, $replyMessage, $entityManager);
             $this->addFlash('error', "L'envoi de l'email a échoué. Vérifiez la configuration SMTP (MAILER_DSN).");
 
             return $this->redirectToRoute('admin_contact_index', $this->redirectParamsForDraft($request, $contact, $draft));
@@ -244,11 +391,14 @@ class ContactController extends AbstractController
 
         $sentMessage
             ->setStatus(ContactMessageStatus::SENT)
-            ->setRecipient((string) $contact->getEmail())
+            ->setRecipient($recipientEmail)
+            ->setRecipientName(trim($contact->getFirstName().' '.$contact->getLastName()))
             ->setSubject($subject)
             ->setBody($replyMessage)
             ->setUpdatedAt($now)
             ->setSentAt($now);
+
+        $contact->setIsRead(true);
 
         if ($storedAttachment !== null) {
             $sentMessage->setAttachmentName($storedAttachment['name'])->setAttachmentPath($storedAttachment['path']);
@@ -315,7 +465,8 @@ class ContactController extends AbstractController
         $draft
             ->setStatus(ContactMessageStatus::DRAFT)
             ->setRecipient((string) $contact->getEmail())
-            ->setSubject('Re: '.$contact->getSubject())
+            ->setRecipientName(trim($contact->getFirstName().' '.$contact->getLastName()))
+            ->setSubject($this->replySubject((string) $contact->getSubject()))
             ->setBody($body)
             ->setUpdatedAt(new \DateTimeImmutable());
 
@@ -356,6 +507,37 @@ class ContactController extends AbstractController
         $this->addFlash('success', 'Le brouillon a été supprimé.');
 
         return $this->redirectToRoute('admin_contact_index', ['folder' => 'drafts']);
+    }
+
+    #[Route('/messages/{id}/delete', name: 'message_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function deleteSentMessage(
+        int $id,
+        Request $request,
+        ContactMessageRepository $messageRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $message = $messageRepository->find($id);
+
+        if (
+            !$message instanceof ContactMessage
+            || !in_array($message->getStatus(), [ContactMessageStatus::SENT, ContactMessageStatus::FAILED], true)
+        ) {
+            throw $this->createNotFoundException('Message introuvable.');
+        }
+
+        if (!$this->isCsrfTokenValid('message_delete'.$message->getId(), $request->request->getString('_token'))) {
+            $this->addFlash('error', 'Jeton de sécurité invalide. Veuillez réessayer.');
+
+            return $this->redirectToRoute('admin_contact_index', $this->returnParams($request));
+        }
+
+        $this->deleteStoredAttachment($message->getAttachmentPath());
+        $entityManager->remove($message);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le message a été supprimé.');
+
+        return $this->redirectToRoute('admin_contact_index', $this->returnParams($request));
     }
 
     /**
@@ -501,19 +683,32 @@ class ContactController extends AbstractController
         return $this->getParameter('kernel.project_dir').'/public/'.$relativePath;
     }
 
-    private function resolveSenderAddress(string $mailerDsn): string
+    private function addFailedReply(
+        Contact $contact,
+        string $recipient,
+        string $subject,
+        string $body,
+        EntityManagerInterface $entityManager
+    ): void {
+        $now = new \DateTimeImmutable();
+        $failedMessage = (new ContactMessage())
+            ->setContact($contact)
+            ->setRecipient($recipient)
+            ->setRecipientName(trim($contact->getFirstName().' '.$contact->getLastName()))
+            ->setSubject($subject)
+            ->setBody($body)
+            ->setStatus(ContactMessageStatus::FAILED)
+            ->setUpdatedAt($now);
+
+        $entityManager->persist($failedMessage);
+        $entityManager->flush();
+    }
+
+    private function replySubject(string $subject): string
     {
-        $user = parse_url($mailerDsn, PHP_URL_USER);
+        $subject = trim((string) preg_replace('/^(?:\s*re\s*:\s*)+/iu', '', trim($subject)));
 
-        if (is_string($user)) {
-            $address = urldecode($user);
-
-            if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
-                return $address;
-            }
-        }
-
-        return 'no-reply@locationmahmoud.tn';
+        return 'Re: '.$subject;
     }
 
     private function quotedOriginalMessage(Contact $contact): string

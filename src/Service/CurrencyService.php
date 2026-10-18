@@ -25,9 +25,16 @@ class CurrencyService
 
     public function getCurrent(): CurrencyRate
     {
-        $code = $this->requestStack->getSession()->get(self::SESSION_KEY, self::DEFAULT_CODE);
+        try {
+            $code = $this->requestStack->getSession()?->get(self::SESSION_KEY, self::DEFAULT_CODE) ?? self::DEFAULT_CODE;
+        } catch (\Throwable) {
+            $code = self::DEFAULT_CODE;
+        }
+
         return $this->repository->findOneBy(['code' => $code])
-            ?? $this->repository->findOneBy(['code' => self::DEFAULT_CODE]);
+            ?? $this->repository->findOneBy(['code' => self::DEFAULT_CODE])
+            ?? $this->repository->findOneBy([])
+            ?? (new CurrencyRate())->setCode(self::DEFAULT_CODE)->setSymbol('DT')->setRate('1.000000');
     }
 
     public function setCurrent(string $code): bool
@@ -50,6 +57,19 @@ class CurrencyService
     public function format(string|int|float $amount, ?CurrencyRate $currency = null): string
     {
         $currency ??= $this->getCurrent();
-        return number_format($this->convert($amount, $currency), 2, ',', ' ').' '.$currency->getCode();
+        $code = $currency->getCode();
+        $fractionDigits = $code === 'TND' ? 3 : 2;
+        $decimalSeparator = $code === 'USD' ? '.' : ',';
+        $thousandsSeparator = $code === 'USD' ? ',' : ' ';
+        $formattedAmount = number_format(
+            $this->convert($amount, $currency),
+            $fractionDigits,
+            $decimalSeparator,
+            $thousandsSeparator
+        );
+
+        return $code === 'USD'
+            ? $currency->getSymbol().$formattedAmount
+            : $formattedAmount.' '.$currency->getSymbol();
     }
 }

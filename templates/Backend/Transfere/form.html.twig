@@ -47,11 +47,41 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                {{ form_label(form.description) }}
-                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(form.description) }}
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                {{ form_label(form.imageFile) }}
+                {{ form_widget(form.imageFile, {'attr': {'class': 'form-control', 'accept': 'image/jpeg, image/png, image/webp', 'onchange': 'previewImage(event)'}}) }}
+                {{ form_errors(form.imageFile) }}
+                
+                <div class="mt-2" style="margin-top: 10px;">
+                    <img id="imagePreview" src="{{ form.vars.value.image ? asset(form.vars.value.image) : '' }}" style="max-width: 200px; display: {{ form.vars.value.image ? 'block' : 'none' }}; border-radius: 8px;" alt="Aperçu de l'image">
+                </div>
+                
+                <script>
+                    function previewImage(event) {
+                        const file = event.target.files[0];
+                        const preview = document.getElementById('imagePreview');
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.src = e.target.result;
+                                preview.style.display = 'block';
+                            }
+                            reader.readAsDataURL(file);
+                        } else {
+                            preview.src = '';
+                            preview.style.display = 'none';
+                        }
+                    }
+                </script>
             </div>
+
+            {% if form.description is defined %}
+                <div class="form-group">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.description) }}
+                </div>
+            {% endif %}
         </div>
         
         <div class="form-section">
@@ -61,6 +91,7 @@
             <div class="form-row form-row-3">
                 {% for translationForm in form.translations %}
                     {% set locale = translationForm.vars.data.locale %}
+                    {% if locale in ['fr', 'en'] %}
                     <div class="form-group">
                         <div class="translation-card">
                             <div class="translation-card-header">
@@ -86,6 +117,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

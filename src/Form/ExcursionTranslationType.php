@@ -4,11 +4,13 @@ namespace App\Form;
 
 use App\Config\LocaleConfig;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,13 +18,24 @@ class ExcursionTranslationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $translation = $event->getData();
-            $form = $event->getForm();
-            $locale = $translation ? $translation->getLocale() : 'fr';
+        // La locale identifie la traduction (contrainte UNIQUE excursion+locale) :
+        // elle voyage dans un champ caché plutôt que de reposer sur l'index.
+        $configureFields = static function (FormInterface $form, string $locale): void {
             $isFrench = $locale === 'fr';
 
             $form
+                ->add('locale', HiddenType::class, [
+                    'label' => false,
+                    // Une soumission qui ne poste pas de locale (onglet ouvert avant
+                    // l'existence de ce champ caché) ne doit jamais écrire null dans
+                    // la propriété typée : la traduction conserve sa propre identité,
+                    // sinon la locale par défaut du projet.
+                    'empty_data' => static function (FormInterface $form): string {
+                        $translation = $form->getParent()?->getData();
+                        $locale = \is_object($translation) && method_exists($translation, 'getLocale') ? $translation->getLocale() : null;
+                        return \is_string($locale) && '' !== $locale ? $locale : 'fr';
+                    },
+                ])
                 ->add('title', TextType::class, [
                     'label' => 'Titre',
                     'attr' => ['class' => 'form-control'],
@@ -61,6 +74,19 @@ class ExcursionTranslationType extends AbstractType
                     'attr' => ['class' => 'form-control', 'rows' => 3],
                 ])
             ;
+        };
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($configureFields) {
+            $translation = $event->getData();
+            $locale = $translation ? $translation->getLocale() : 'fr';
+            $configureFields($event->getForm(), $locale);
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($configureFields) {
+            $data = $event->getData();
+            if (\is_array($data) && isset($data['locale']) && \is_string($data['locale']) && $data['locale'] !== '') {
+                $configureFields($event->getForm(), $data['locale']);
+            }
         });
     }
 

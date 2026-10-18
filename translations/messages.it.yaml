@@ -110,6 +110,9 @@ home:
         tab_excursion: "Tour & Escursioni"
         lbl_departure: "Luogo di Partenza"
         lbl_destination: Destinazione
+        no_transfer_available: "Nessun trasferimento disponibile"
+        no_destination_available: "Nessuna destinazione disponibile"
+        no_excursion_available: "Nessuna escursione disponibile"
         lbl_date: "Data & Ora"
         lbl_passengers: Passeggeri
         btn_search_transfer: "Cerca Trasferimento"
@@ -156,6 +159,7 @@ home:
         pill: "Prezzi Fissi e Trasparenti"
         title: "Trasferimenti Aeroportuali Popolari"
         sub: "Tariffe fisse garantite con tutti i pedaggi autostradali inclusi. Nessun costo extra o commissione per ritardi dei voli."
+        card_desc: "Trasferimento privato confortevole e puntuale."
     excursions:
         pill: "Gite Giornaliere Private"
         title: "Esplora la Tunisia"
@@ -191,7 +195,7 @@ navbar:
     about: "Chi Siamo"
     contact: Contatti
 footer:
-    brand: "Tunisia Travel"
+    brand: "Yassmine Guide"
     description: "Mobilità executive, noleggio auto premium e trasferimenti privati sicuri in Tunisia. Licenza nazionale & trasporto turistico certificato ISO."
     license: "Licenza A n°7482"
     insurance: "Assicurazione AXA Pro"
@@ -214,7 +218,7 @@ footer:
     support_client: "Servizio Clienti"
     support_hq: "Sede Centrale"
     support_address: "Avenue Habib Bourguiba, Tunisi"
-    copyright: "Copyright © 2026 Tunisia Travel & Mobility. Tutti i diritti riservati."
+    copyright: "Copyright © 2026 Yassmine Guide. Tutti i diritti riservati."
     legal: "Note Legali"
     cgv: "Condizioni di Vendita"
     privacy: "Politica sulla Privacy"
@@ -300,8 +304,9 @@ contact:
         phone_required: "Il telefono è richiesto"
         service_category_required: "Il servizio è richiesto"
         subject_required: "L'oggetto è richiesto"
+        subject_invalid: "L'oggetto non può contenere ritorni a capo o caratteri di controllo."
         message_required: "Il messaggio è richiesto"
-        success_message: "Il tuo messaggio è stato inviato con successo. Risponderemo il prima possibile."
+        success_message: "La tua richiesta è stata ricevuta. Risponderemo il prima possibile."
         error_message: "Si è verificato un errore durante l'invio del messaggio. Riprova."
         request_type: "Tipo di richiesta"
         request_type_required: "Seleziona un tipo di richiesta."
@@ -370,3 +375,21 @@ contact:
     invalid_email: "Inserisci un indirizzo e-mail valido."
     email_required: "L’indirizzo e-mail è obbligatorio."
     password_required: "La password è obbligatoria."
+excursion_reservation:
+    success:
+        title: "La tua richiesta di prenotazione dell’escursione è stata registrata con successo!"
+        message: "Il nostro team ti contatterà per confermare i dettagli della tua escursione."
+    summary:
+        excursion: "Escursione"
+        customer: "Cliente"
+        date_time: "Data e ora"
+        date_time_value: "%date% alle %time%"
+        participants: "Partecipanti"
+        adult_one: "adulto"
+        adult_other: "adulti"
+        child_one: "bambino"
+        child_other: "bambini"
+        pickup_location: "Luogo di prelievo"
+        status: "Stato"
+    status:
+        pending: "In attesa di conferma"

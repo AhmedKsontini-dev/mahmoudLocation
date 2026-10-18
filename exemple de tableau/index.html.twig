@@ -1,0 +1,125 @@
+{% extends 'baseBack.html.twig' %}
+
+{% block title %}📋 Liste des excursions{% endblock %}
+
+{% block body %}
+<style>
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+}
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    text-align: right;
+}
+</style>
+
+<div class="container mt-4">
+    <h1 class="mb-3">📋 Liste des excursions</h1>
+
+    <!-- 🔔 Messages flash -->
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <!-- ➕ Bouton Ajouter -->
+    <a href="{{ path('admin_excursion_new') }}" class="btn btn-primary mb-3">➕ Ajouter une excursion</a>
+
+    <!-- 📊 Tableau des excursions -->
+    <table class="table table-bordered table-hover align-middle datatable">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Titre</th>
+                <th>Catégorie</th>
+                <th>Durée</th>
+                <th>Prix / Personne</th>
+                <th>Localisation</th>
+                <th>Actif</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for excursion in excursions %}
+                <tr>
+                    <td>{{ excursion.id }}</td>
+                    <td>
+                        {% if excursion.imagePrincipale %}
+                            <img src="{{ asset('uploads/images/' ~ excursion.imagePrincipale) }}" 
+                                alt="{{ excursion.titre }}" class="rounded" width="80" height="50">
+                        {% else %}
+                            <span class="text-muted">Aucune image</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ excursion.titre }}</td>
+                    <td>{{ excursion.categorie ?: '—' }}</td>
+                    <td>{{ excursion.duree ?: '—' }}</td>
+                    <td>{{ excursion.prixParPersonne }} TND</td>
+                    <td>{{ excursion.localisation ?: '—' }}</td>
+                    <td>
+                        {% if excursion.actif %}
+                            <span class="badge bg-success">✅</span>
+                        {% else %}
+                            <span class="badge bg-secondary">❌</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-primary dropdown-toggle" 
+                                    type="button" 
+                                    id="dropdownMenuButton{{ excursion.id }}" 
+                                    data-bs-toggle="dropdown" 
+                                    aria-expanded="false">
+                                Actions
+                            </button>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ excursion.id }}">
+
+                                <!-- Groupe 1 : Voir / Modifier -->
+                                <li><a class="dropdown-item" href="{{ path('admin_excursion_show', {id: excursion.id}) }}">👁️ Voir</a></li>
+                                <li><a class="dropdown-item" href="{{ path('admin_excursion_edit', {id: excursion.id}) }}">✏️ Modifier</a></li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <!-- Groupe 2 : Détails -->
+                                <li><a class="dropdown-item" href="{{ path('excursion_details_add', {id: excursion.id}) }}">📄 Ajouter détail</a></li>
+                                <li><a class="dropdown-item" href="{{ path('excursion_details_list_by_excursion', {id: excursion.id}) }}">📋 Voir détails</a></li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <!-- Groupe 3 : Itinéraire -->
+                                <li><a class="dropdown-item" href="{{ path('itineraire_new', {id: excursion.id}) }}">🗺️ Ajouter itinéraire</a></li>
+                                <li><a class="dropdown-item" href="{{ path('itineraire_table', {id: excursion.id}) }}">👁️ Voir itinéraire</a></li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <!-- Groupe 4 : Images & suppression -->
+                                <li><a class="dropdown-item" href="{{ path('admin_image_excursion_new', {excursionId: excursion.id}) }}">🖼️ Gérer images</a></li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+                                    <form method="post" action="{{ path('admin_excursion_delete', {id: excursion.id}) }}" 
+                                        onsubmit="return confirm('Voulez-vous vraiment supprimer cette excursion ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ excursion.id) }}">
+                                        <button class="dropdown-item text-danger" type="submit">🗑️ Supprimer</button>
+                                    </form>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </td>
+
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted">Aucune excursion enregistrée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Config\LocaleConfig;
+use App\Form\EventListener\AlignSubmittedTranslationsByLocaleListener;
 use App\Entity\ExcursionBadgeTranslation;
 
 class ExcursionBadgeType extends AbstractType
@@ -31,7 +32,6 @@ class ExcursionBadgeType extends AbstractType
             ->add('isActive', CheckboxType::class, [
                 'label' => 'Active',
                 'required' => false,
-                'data' => true,
             ])
             ->add('translations', CollectionType::class, [
                 'entry_type' => ExcursionBadgeTranslationType::class,
@@ -44,11 +44,15 @@ class ExcursionBadgeType extends AbstractType
             ])
         ;
 
+        // La soumission est réalignée par locale sur l'ordre réel de la collection
+        // (l'ordre de chargement Doctrine n'est pas garanti).
+        $builder->get('translations')->addEventSubscriber(new AlignSubmittedTranslationsByLocaleListener());
+
         // Initialize translations for new entities
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $badge = $event->getData();
             if ($badge && $badge->getTranslations()->isEmpty()) {
-                $locales = LocaleConfig::getSupportedLocales();
+                $locales = LocaleConfig::getExcursionFormLocales();
                 foreach ($locales as $locale) {
                     $translation = new ExcursionBadgeTranslation();
                     $translation->setLocale($locale);

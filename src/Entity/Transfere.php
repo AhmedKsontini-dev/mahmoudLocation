@@ -47,6 +47,9 @@ class Transfere
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     /** @var Collection<int, TransfereTranslation> */
     #[ORM\OneToMany(mappedBy: 'transfere', targetEntity: TransfereTranslation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $translations;
@@ -76,6 +79,9 @@ class Transfere
     public function setActif(bool $actif): static { $this->actif = $actif; return $this; }
     public function getSlug(): ?string { return $this->slug; }
     public function setSlug(string $slug): static { $this->slug = $slug; return $this; }
+    
+    public function getImage(): ?string { return $this->image; }
+    public function setImage(?string $image): static { $this->image = $image; return $this; }
 
     /** @return Collection<int, TransfereTranslation> */
     public function getTranslations(): Collection { return $this->translations; }

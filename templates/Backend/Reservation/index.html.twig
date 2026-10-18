@@ -1,70 +1,571 @@
 {% extends 'Backend/base.html.twig' %}
 
-{% block title %}Réservations - Admin{% endblock %}
+{% block title %}Réservations - Admin - Location Mahmoud{% endblock %}
 
 {% block header_title %}Réservations{% endblock %}
 
-{% block body %}
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Réservations</h1>
-        <p class="page-header-description">Gérez les réservations de transferts.</p>
-    </div>
-</div>
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/reservation/index.css') }}" rel="stylesheet">
+{% endblock %}
 
-<div class="card">
-    <div class="card-body">
-        <div class="table-container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Client</th>
-                        <th>Email</th>
-                        <th>Transfert</th>
-                        <th>Date de pickup</th>
-                        <th>Statut</th>
-                        <th>Prix</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reservation in reservations %}
+{% block body %}
+<div class="reservation-index">
+    {# En-tête de page #}
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Gestion des réservations</h1>
+            <p class="page-header-description">Gérez, suivez et mettez à jour le statut des réservations de transferts.</p>
+        </div>
+    </div>
+
+    {# Messages Flash de notification #}
+    {% for label, messages in app.flashes %}
+        {% for flashMessage in messages %}
+            <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert">
+                <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+                <span>{{ flashMessage }}</span>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# Cartes statistiques d'ensemble #}
+    <div class="reservation-stats-grid">
+        <div class="reservation-stat-card">
+            <div class="reservation-stat-icon reservation-stat-icon--total" aria-hidden="true">🧾</div>
+            <div class="reservation-stat-info">
+                <span class="reservation-stat-label">Total réservations</span>
+                <span class="reservation-stat-value">{{ stats.total }}</span>
+            </div>
+        </div>
+        <div class="reservation-stat-card">
+            <div class="reservation-stat-icon reservation-stat-icon--pending" aria-hidden="true">⏳</div>
+            <div class="reservation-stat-info">
+                <span class="reservation-stat-label">En attente</span>
+                <span class="reservation-stat-value">{{ stats.pending }}</span>
+            </div>
+        </div>
+        <div class="reservation-stat-card">
+            <div class="reservation-stat-icon reservation-stat-icon--confirmed" aria-hidden="true">✅</div>
+            <div class="reservation-stat-info">
+                <span class="reservation-stat-label">Confirmées</span>
+                <span class="reservation-stat-value">{{ stats.confirmed }}</span>
+            </div>
+        </div>
+        <div class="reservation-stat-card">
+            <div class="reservation-stat-icon reservation-stat-icon--cancelled" aria-hidden="true">❌</div>
+            <div class="reservation-stat-info">
+                <span class="reservation-stat-label">Annulées</span>
+                <span class="reservation-stat-value">{{ stats.cancelled }}</span>
+            </div>
+        </div>
+    </div>
+
+    {# Panneau de recherche & filtres #}
+    <div class="reservation-filter-panel">
+        <form method="get" action="{{ path('admin_reservation_index') }}" class="reservation-filter-form" id="reservationFilterForm">
+            <div class="filter-input-wrapper">
+                <span class="filter-icon" aria-hidden="true">🔍</span>
+                <input type="search"
+                       name="search"
+                       id="reservationSearchInput"
+                       class="filter-input"
+                       value="{{ search }}"
+                       placeholder="Rechercher par ID, client, email, téléphone..."
+                       autocomplete="off"
+                       aria-label="Rechercher une réservation">
+            </div>
+
+            <select name="status" class="filter-select" aria-label="Filtrer par statut" onchange="this.form.submit()">
+                <option value="">Tous les statuts</option>
+                <option value="pending" {{ currentStatus == 'pending' ? 'selected' : '' }}>En attente</option>
+                <option value="confirmed" {{ currentStatus == 'confirmed' ? 'selected' : '' }}>Confirmée</option>
+                <option value="cancelled" {{ currentStatus == 'cancelled' ? 'selected' : '' }}>Annulée</option>
+            </select>
+
+            <select name="type" class="filter-select" aria-label="Filtrer par type de trajet" onchange="this.form.submit()">
+                <option value="">Tous les types de trajet</option>
+                <option value="one_way" {{ currentType == 'one_way' ? 'selected' : '' }}>Aller simple</option>
+                <option value="return" {{ currentType == 'return' ? 'selected' : '' }}>Aller-retour</option>
+            </select>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary" id="btnFilterSubmit">
+                    Rechercher
+                </button>
+                {% if search is not empty or currentStatus is not empty or currentType is not empty %}
+                    <a href="{{ path('admin_reservation_index') }}" class="filter-reset-link" title="Réinitialiser tous les filtres">
+                        ✕ Réinitialiser
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {# Carte principale : Tableau des réservations #}
+    <div class="card" id="reservationCard">
+        <div class="card-body" style="padding: 0;">
+            <div class="table-container">
+                <table class="table reservation-table admin-data-table">
+                    <thead>
                         <tr>
-                            <td>{{ reservation.createdAt|date('d/m/Y H:i') }}</td>
-                            <td>{{ reservation.nom }} {{ reservation.prenom }}</td>
-                            <td>{{ reservation.email }}</td>
-                            <td>{{ reservation.transfere ? reservation.transfere.lieuDepart ~ ' → ' ~ reservation.transfere.lieuArrivee : 'N/A' }}</td>
-                            <td>{{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : 'N/A' }} {{ reservation.pickupTime ? reservation.pickupTime|date('H:i') : '' }}</td>
-                            <td>
-                                {% if reservation.status.value == 'pending' %}
-                                    <span class="badge badge-pending">En attente</span>
-                                {% elseif reservation.status.value == 'confirmed' %}
-                                    <span class="badge badge-confirmed">Confirmée</span>
-                                {% elseif reservation.status.value == 'cancelled' %}
-                                    <span class="badge badge-cancelled">Annulée</span>
+                            <th style="width: 85px;">ID</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Email</th>
+                            <th>Transfert & Trajet</th>
+                            <th>Date de pickup</th>
+                            <th style="width: 140px;">Statut</th>
+                            <th>Prix</th>
+                            <th style="width: 110px; text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr id="reservation-row-{{ reservation.id }}">
+                                <td>
+                                    <span class="reservation-id">#{{ reservation.id }}</span>
+                                </td>
+                                <td>
+                                    <div>{{ reservation.createdAt|date('d/m/Y') }}</div>
+                                    <small style="color: var(--res-muted);">{{ reservation.createdAt|date('H:i') }}</small>
+                                </td>
+                                <td>
+                                    <div class="client-name">{{ reservation.nom }} {{ reservation.prenom }}</div>
+                                    {% if reservation.telephone %}
+                                        <div class="client-phone-sub">{{ reservation.telephone }}</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="mailto:{{ reservation.email }}" style="color: var(--color-primary); text-decoration: none;">
+                                        {{ reservation.email }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div>
+                                        {% if reservation.transfere %}
+                                            <strong>{{ reservation.transfere.lieuDepart }}</strong> → <strong>{{ reservation.transfere.lieuArrivee }}</strong>
+                                        {% else %}
+                                            <span style="color: var(--res-muted);">{{ reservation.pickupLocation }} → {{ reservation.dropoffLocation }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <span class="trip-type-tag {{ reservation.transfereType.value == 'return' ? 'trip-type-tag--return' : '' }}">
+                                        {{ reservation.transfereType.value == 'return' ? '🔄 Aller-retour' : '➡️ Aller simple' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div>{{ reservation.pickupDate ? reservation.pickupDate|date('d/m/Y') : 'N/A' }}</div>
+                                    <small style="color: var(--res-muted);">{{ reservation.pickupTime ? reservation.pickupTime|date('H:i') : '' }}</small>
+                                </td>
+                                <td>
+                                    {# Badge cliquable pour modifier le statut rapidement #}
+                                    <div class="dropdown status-dropdown" id="status-dropdown-{{ reservation.id }}">
+                                        <button type="button"
+                                                class="badge-clickable badge {% if reservation.status.value == 'pending' %}badge-pending{% elseif reservation.status.value == 'confirmed' %}badge-confirmed{% elseif reservation.status.value == 'cancelled' %}badge-cancelled{% endif %}"
+                                                onclick="toggleDropdown(this)"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                title="Cliquer pour changer le statut">
+                                            <span class="status-label">
+                                                {% if reservation.status.value == 'pending' %}
+                                                    En attente
+                                                {% elseif reservation.status.value == 'confirmed' %}
+                                                    Confirmée
+                                                {% elseif reservation.status.value == 'cancelled' %}
+                                                    Annulée
+                                                {% else %}
+                                                    {{ reservation.status.value }}
+                                                {% endif %}
+                                            </span>
+                                            <span class="status-caret" aria-hidden="true">▾</span>
+                                        </button>
+                                        <div class="dropdown-menu status-dropdown-menu">
+                                            <div class="status-menu-title">Changer le statut</div>
+                                            <button type="button"
+                                                    class="dropdown-item status-action-item {% if reservation.status.value == 'confirmed' %}is-active{% endif %}"
+                                                    data-status="confirmed"
+                                                    onclick="updateReservationStatus({{ reservation.id }}, 'confirmed', '{{ csrf_token('status_' ~ reservation.id) }}', this)">
+                                                <div class="status-action-item-left">
+                                                    <span class="status-pill status-pill-confirmed"></span>
+                                                    <span>Confirmer</span>
+                                                </div>
+                                                {% if reservation.status.value == 'confirmed' %}<span class="status-check">✓</span>{% endif %}
+                                            </button>
+                                            <button type="button"
+                                                    class="dropdown-item status-action-item {% if reservation.status.value == 'pending' %}is-active{% endif %}"
+                                                    data-status="pending"
+                                                    onclick="updateReservationStatus({{ reservation.id }}, 'pending', '{{ csrf_token('status_' ~ reservation.id) }}', this)">
+                                                <div class="status-action-item-left">
+                                                    <span class="status-pill status-pill-pending"></span>
+                                                    <span>En attente</span>
+                                                </div>
+                                                {% if reservation.status.value == 'pending' %}<span class="status-check">✓</span>{% endif %}
+                                            </button>
+                                            <button type="button"
+                                                    class="dropdown-item status-action-item text-danger {% if reservation.status.value == 'cancelled' %}is-active{% endif %}"
+                                                    data-status="cancelled"
+                                                    onclick="updateReservationStatus({{ reservation.id }}, 'cancelled', '{{ csrf_token('status_' ~ reservation.id) }}', this)">
+                                                <div class="status-action-item-left">
+                                                    <span class="status-pill status-pill-cancelled"></span>
+                                                    <span>Annuler</span>
+                                                </div>
+                                                {% if reservation.status.value == 'cancelled' %}<span class="status-check">✓</span>{% endif %}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="reservation-price">{{ reservation.prixTotal }} {{ reservation.devise }}</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    {# Menu déroulant compact Actions (même principe que /admin/transferts) #}
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-sm btn-outline dropdown-toggle" onclick="toggleDropdown(this)">Actions</button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="{{ path('admin_reservation_show', {id: reservation.id}) }}">
+                                                <span>👁️</span> Show
+                                            </a>
+                                            <a class="dropdown-item" href="{{ path('admin_reservation_voucher', {id: reservation.id}) }}">
+                                                <span>📄</span> Voucher
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <form method="post"
+                                                  action="{{ path('admin_reservation_delete', {id: reservation.id}) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement la réservation #{{ reservation.id }} ?');"
+                                                  style="margin: 0;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
+                                                <input type="hidden" name="search" value="{{ search }}">
+                                                <input type="hidden" name="status" value="{{ currentStatus }}">
+                                                <input type="hidden" name="type" value="{{ currentType }}">
+                                                <input type="hidden" name="page" value="{{ pagination.page }}">
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <span>🗑️</span> Supprimer
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center" style="padding: 3rem 1rem;">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon" style="font-size: 2.5rem; margin-bottom: 0.5rem;">🧾</div>
+                                        {% if search is not empty or currentStatus is not empty or currentType is not empty %}
+                                            <div class="empty-state-title" style="font-weight: 700; font-size: 1.1rem; color: var(--res-ink);">
+                                                Aucune réservation trouvée
+                                            </div>
+                                            <div class="empty-state-text" style="color: var(--res-muted); margin-top: 0.25rem;">
+                                                Aucun résultat ne correspond à vos critères de recherche ou filtres actuels.
+                                            </div>
+                                            <div style="margin-top: 1rem;">
+                                                <a href="{{ path('admin_reservation_index') }}" class="btn btn-secondary btn-sm">
+                                                    Effacer les critères de recherche
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            <div class="empty-state-title" style="font-weight: 700; font-size: 1.1rem; color: var(--res-ink);">
+                                                Aucune réservation
+                                            </div>
+                                            <div class="empty-state-text" style="color: var(--res-muted); margin-top: 0.25rem;">
+                                                Aucune réservation de transfert n'a encore été enregistrée dans la base de données.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Barre de pagination et résumé en bas du tableau #}
+            {% if pagination.total > 0 %}
+                <div class="reservation-pagination-footer">
+                    <div class="reservation-table-count">
+                        {% set startItem = ((pagination.page - 1) * pagination.limit) + 1 %}
+                        {% set endItem = min(pagination.page * pagination.limit, pagination.total) %}
+                        Affichage de <strong>{{ startItem }}</strong> à <strong>{{ endItem }}</strong> sur <strong>{{ pagination.total }}</strong> réservation{{ pagination.total > 1 ? 's' : '' }}
+                        {% if search is not empty %}
+                            <span class="search-indicator-tag">(recherche : « {{ search }} »)</span>
+                        {% endif %}
+                        {% if currentStatus is not empty %}
+                            <span class="search-indicator-tag">(statut : {{ currentStatus == 'pending' ? 'en attente' : (currentStatus == 'confirmed' ? 'confirmée' : 'annulée') }})</span>
+                        {% endif %}
+                        {% if currentType is not empty %}
+                            <span class="search-indicator-tag">(type : {{ currentType == 'one_way' ? 'aller simple' : 'aller-retour' }})</span>
+                        {% endif %}
+                    </div>
+
+                    {% if pagination.pages > 1 %}
+                        <nav class="pagination-nav" aria-label="Pagination des réservations">
+                            <ul class="pagination-list">
+                                {# Bouton Précédent #}
+                                <li class="pagination-item">
+                                    {% if pagination.page > 1 %}
+                                        <a href="{{ path('admin_reservation_index', {page: pagination.page - 1, search: search, status: currentStatus, type: currentType}) }}"
+                                           class="pagination-link pagination-link--prev"
+                                           aria-label="Page précédente">
+                                            ‹ Précédent
+                                        </a>
+                                    {% else %}
+                                        <span class="pagination-link pagination-link--disabled">‹ Précédent</span>
+                                    {% endif %}
+                                </li>
+
+                                {# Numérotation des pages #}
+                                {% set maxPagesToShow = 7 %}
+                                {% if pagination.pages <= maxPagesToShow %}
+                                    {% for p in 1..pagination.pages %}
+                                        <li class="pagination-item">
+                                            {% if p == pagination.page %}
+                                                <span class="pagination-link active" aria-current="page">{{ p }}</span>
+                                            {% else %}
+                                                <a href="{{ path('admin_reservation_index', {page: p, search: search, status: currentStatus, type: currentType}) }}" class="pagination-link">{{ p }}</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    {# Page 1 #}
+                                    <li class="pagination-item">
+                                        {% if pagination.page == 1 %}
+                                            <span class="pagination-link active" aria-current="page">1</span>
+                                        {% else %}
+                                            <a href="{{ path('admin_reservation_index', {page: 1, search: search, status: currentStatus, type: currentType}) }}" class="pagination-link">1</a>
+                                        {% endif %}
+                                    </li>
+
+                                    {% if pagination.page > 3 %}
+                                        <li class="pagination-item"><span class="pagination-ellipsis">…</span></li>
+                                    {% endif %}
+
+                                    {# Pages centrales #}
+                                    {% set startMiddle = max(2, pagination.page - 1) %}
+                                    {% set endMiddle = min(pagination.pages - 1, pagination.page + 1) %}
+                                    {% for p in startMiddle..endMiddle %}
+                                        <li class="pagination-item">
+                                            {% if p == pagination.page %}
+                                                <span class="pagination-link active" aria-current="page">{{ p }}</span>
+                                            {% else %}
+                                                <a href="{{ path('admin_reservation_index', {page: p, search: search, status: currentStatus, type: currentType}) }}" class="pagination-link">{{ p }}</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+
+                                    {% if pagination.page < pagination.pages - 2 %}
+                                        <li class="pagination-item"><span class="pagination-ellipsis">…</span></li>
+                                    {% endif %}
+
+                                    {# Dernière page #}
+                                    <li class="pagination-item">
+                                        {% if pagination.page == pagination.pages %}
+                                            <span class="pagination-link active" aria-current="page">{{ pagination.pages }}</span>
+                                        {% else %}
+                                            <a href="{{ path('admin_reservation_index', {page: pagination.pages, search: search, status: currentStatus, type: currentType}) }}" class="pagination-link">{{ pagination.pages }}</a>
+                                        {% endif %}
+                                    </li>
                                 {% endif %}
-                            </td>
-                            <td>{{ reservation.prixTotal }} {{ reservation.devise }}</td>
-                            <td>
-                                <a href="{{ path('admin_reservation_show', {id: reservation.id}) }}" class="btn btn-sm btn-outline">Voir</a>
-                                <a href="{{ path('admin_reservation_edit', {id: reservation.id}) }}" class="btn btn-sm btn-outline">Modifier</a>
-                                <form method="post" action="{{ path('admin_reservation_delete', {id: reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?');" style="display: inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reservation.id) }}">
-                                    <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="8" class="empty-state">
-                                <div class="empty-state-text">Aucune réservation.</div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+                                {# Bouton Suivant #}
+                                <li class="pagination-item">
+                                    {% if pagination.page < pagination.pages %}
+                                        <a href="{{ path('admin_reservation_index', {page: pagination.page + 1, search: search, status: currentStatus, type: currentType}) }}"
+                                           class="pagination-link pagination-link--next"
+                                           aria-label="Page suivante">
+                                            Suivant ›
+                                        </a>
+                                    {% else %}
+                                        <span class="pagination-link pagination-link--disabled">Suivant ›</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </nav>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // ── Dropdown engine: positionne en position:fixed pour échapper à overflow ──
+        (function () {
+            var _activeMenu = null;
+            var _activeBtn  = null;
+
+            function positionMenu(menu, btn) {
+                var rect = btn.getBoundingClientRect();
+                menu.style.top   = '-9999px';
+                menu.style.left  = '-9999px';
+                menu.style.right = 'auto';
+                menu.style.bottom = 'auto';
+
+                var menuW = menu.offsetWidth;
+                var menuH = menu.offsetHeight;
+                var spaceBelow = window.innerHeight - rect.bottom;
+                var spaceAbove = rect.top;
+
+                var left = Math.max(4, Math.min(rect.right - menuW, window.innerWidth - menuW - 4));
+
+                var top;
+                if (spaceBelow >= menuH + 6 || spaceBelow >= spaceAbove) {
+                    top = rect.bottom + 4;
+                } else if (spaceAbove >= menuH + 6) {
+                    top = rect.top - menuH - 4;
+                } else {
+                    top = Math.max(4, window.innerHeight - menuH - 4);
+                }
+
+                menu.style.left = left + 'px';
+                menu.style.top  = top  + 'px';
+            }
+
+            // Ferme les menus Actions téléportés et les remet dans leur parent
+            function closeFixedMenus(except) {
+                document.querySelectorAll('.dropdown-menu.dropdown-menu--fixed-open').forEach(function (m) {
+                    if (m !== except) {
+                        var owner = m._dropdownOwner;
+                        m.classList.remove('dropdown-menu--fixed-open');
+                        m.style.cssText = '';
+                        if (owner) {
+                            owner.appendChild(m);
+                            owner.classList.remove('open');
+                            m._dropdownOwner = null;
+                        }
+                    }
+                });
+                if (!except) { _activeMenu = null; _activeBtn = null; }
+            }
+
+            window.toggleDropdown = function (btn) {
+                var dropdown     = btn.closest('.dropdown');
+                var wasOpen      = dropdown.classList.contains('open');
+
+                closeFixedMenus(null);
+
+                if (wasOpen) return;
+
+                var menu = dropdown.querySelector('.dropdown-menu');
+                if (!menu) return;
+
+                menu._dropdownOwner = dropdown;
+                document.body.appendChild(menu);
+                menu.style.position = 'fixed';
+                menu.style.zIndex   = '99999';
+                menu.style.margin   = '0';
+                menu.style.display  = 'block';
+                menu.classList.add('dropdown-menu--fixed-open');
+                dropdown.classList.add('open');
+                positionMenu(menu, btn);
+                _activeMenu = menu;
+                _activeBtn  = btn;
+            };
+
+            function reposition() {
+                if (_activeMenu && _activeBtn) positionMenu(_activeMenu, _activeBtn);
+            }
+            window.addEventListener('scroll', reposition, true);
+            window.addEventListener('resize', reposition);
+            window.closeAdminDropdownMenus = function() {
+                closeFixedMenus(null);
+            };
+
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.dropdown') && !e.target.closest('.dropdown-menu--fixed-open')) {
+                    closeFixedMenus(null);
+                }
+            }, true);
+        })();
+
+        // Mise à jour rapide du statut par requête AJAX
+        function updateReservationStatus(id, newStatus, token, itemBtn) {
+            var dropdown = document.getElementById('status-dropdown-' + id);
+            var badgeBtn = dropdown.querySelector('.badge-clickable');
+            var labelSpan = badgeBtn.querySelector('.status-label');
+            var oldText = labelSpan.textContent;
+
+            // Feedback visuel de traitement
+            badgeBtn.style.opacity = '0.6';
+            badgeBtn.style.pointerEvents = 'none';
+
+            var formData = new FormData();
+            formData.append('status', newStatus);
+            formData.append('_token', token);
+
+            fetch('{{ path('admin_reservation_index') }}/' + id + '/status', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(function(response) {
+                return response.json().then(function(data) {
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Erreur lors de la mise à jour du statut.');
+                    }
+                    return data;
+                });
+            })
+            .then(function(data) {
+                badgeBtn.style.opacity = '1';
+                badgeBtn.style.pointerEvents = '';
+
+                if (data.success) {
+                    // Mettre à jour l'apparence et le texte du badge
+                    badgeBtn.className = 'badge-clickable badge ' + data.badgeClass;
+                    labelSpan.textContent = data.label;
+
+                    // Mettre à jour l'option active dans le menu déroulant
+                    dropdown.querySelectorAll('.status-action-item').forEach(function(btn) {
+                        btn.classList.remove('is-active');
+                        var check = btn.querySelector('.status-check');
+                        if (check) check.remove();
+                    });
+                    itemBtn.classList.add('is-active');
+                    var checkSpan = document.createElement('span');
+                    checkSpan.className = 'status-check';
+                    checkSpan.textContent = '✓';
+                    itemBtn.appendChild(checkSpan);
+
+                    // Fermer et restaurer le menu après la mise à jour
+                    window.closeAdminDropdownMenus();
+
+                    // Afficher la notification toast
+                    showToast(data.message || 'Le statut a été mis à jour.', data.emailSent === false ? 'error' : 'success');
+                } else {
+                    badgeBtn.style.opacity = '1';
+                    badgeBtn.style.pointerEvents = '';
+                    labelSpan.textContent = oldText;
+                    showToast(data.message || 'Impossible de mettre à jour le statut.', 'error');
+                }
+            })
+            .catch(function(error) {
+                badgeBtn.style.opacity = '1';
+                badgeBtn.style.pointerEvents = '';
+                labelSpan.textContent = oldText;
+                showToast(error.message || 'Erreur réseau ou permission insuffisante.', 'error');
+            });
+        }
+
+        // Notification flottante moderne (Toast)
+        function showToast(message, type) {
+            var toast = document.getElementById('admin-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'admin-toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.className = 'admin-toast admin-toast-' + (type || 'success') + ' show';
+            clearTimeout(toast.timeoutId);
+            toast.timeoutId = setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+    </script>
 {% endblock %}

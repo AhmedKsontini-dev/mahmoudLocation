@@ -144,6 +144,10 @@ class Excursion
     #[ORM\OneToMany(mappedBy: 'excursion', targetEntity: Reservation::class)]
     private Collection $reservations;
 
+    /** @var Collection<int, ReservationExcursion> */
+    #[ORM\OneToMany(mappedBy: 'excursion', targetEntity: ReservationExcursion::class)]
+    private Collection $reservationExcursions;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
@@ -155,6 +159,7 @@ class Excursion
         $this->badges = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->reservations = new ArrayCollection();
+        $this->reservationExcursions = new ArrayCollection();
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
     }
@@ -460,12 +465,30 @@ class Excursion
         return $this->reservations;
     }
 
+    /** @return Collection<int, ReservationExcursion> */
+    public function getReservationExcursions(): Collection
+    {
+        return $this->reservationExcursions;
+    }
+
     public function addTranslation(ExcursionTranslation $translation): static
     {
-        if (!$this->translations->contains($translation)) {
-            $this->translations->add($translation);
-            $translation->setExcursion($this);
+        if ($this->translations->contains($translation)) {
+            return $this;
         }
+
+        // Une seule traduction par locale (contrainte UNIQUE excursion_id + locale) :
+        // une traduction existante pour la même locale est remplacée, jamais dupliquée.
+        foreach ($this->translations as $existing) {
+            if ($existing->getLocale() === $translation->getLocale()) {
+                $this->removeTranslation($existing);
+                break;
+            }
+        }
+
+        $this->translations->add($translation);
+        $translation->setExcursion($this);
+
         return $this;
     }
 
@@ -610,6 +633,16 @@ class Excursion
         if ($this->reservations->removeElement($reservation) && $reservation->getExcursion() === $this) {
             $reservation->setExcursion(null);
         }
+        return $this;
+    }
+
+    public function addReservationExcursion(ReservationExcursion $reservation): static
+    {
+        if (!$this->reservationExcursions->contains($reservation)) {
+            $this->reservationExcursions->add($reservation);
+            $reservation->setExcursion($this);
+        }
+
         return $this;
     }
 

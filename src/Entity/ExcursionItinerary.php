@@ -144,10 +144,22 @@ class ExcursionItinerary
 
     public function addTranslation(ExcursionItineraryTranslation $translation): static
     {
-        if (!$this->translations->contains($translation)) {
-            $this->translations->add($translation);
-            $translation->setExcursionItinerary($this);
+        if ($this->translations->contains($translation)) {
+            return $this;
         }
+
+        // Une seule traduction par locale (contrainte UNIQUE excursion_itinerary_id + locale) :
+        // une traduction existante pour la même locale est remplacée, jamais dupliquée.
+        foreach ($this->translations as $existing) {
+            if ($existing->getLocale() === $translation->getLocale()) {
+                $this->removeTranslation($existing);
+                break;
+            }
+        }
+
+        $this->translations->add($translation);
+        $translation->setExcursionItinerary($this);
+
         return $this;
     }
 

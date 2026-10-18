@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Annulation de votre réservation d'excursion</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#26344d;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f6fb;padding:28px 12px;">
+    <tr><td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e4e9f1;border-radius:14px;overflow:hidden;">
+            <tr><td style="padding:24px 28px;background:#c02626;color:#ffffff;font-size:20px;font-weight:bold;">{{ siteName }}</td></tr>
+            <tr><td style="padding:28px;">
+                <h1 style="margin:0 0 18px;font-size:22px;color:#18243a;">Votre réservation d'excursion a été annulée</h1>
+                <p style="margin:0 0 16px;line-height:1.65;">Bonjour{% if clientName %} {{ clientName }}{% endif %},</p>
+                <p style="margin:0 0 22px;line-height:1.65;">Nous vous informons que votre réservation pour l’excursion <strong>« {{ excursionTitle }} »</strong> a été annulée.</p>
+
+                <h2 style="margin:0 0 12px;font-size:16px;color:#26344d;">Détails de la réservation concernée</h2>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border:1px solid #e4e9f1;">
+                    {% if reservation.id %}
+                        <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Référence</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;font-weight:bold;">#{{ reservation.id }}</td></tr>
+                    {% endif %}
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Excursion</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;font-weight:bold;">{{ excursionTitle }}</td></tr>
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Date initialement prévue</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;">{{ reservation.dateExcursion ? reservation.dateExcursion|date('d/m/Y') : '' }}</td></tr>
+                    <tr><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#68758b;">Statut actuel</td><td style="padding:10px;border-bottom:1px solid #e4e9f1;color:#c02626;font-weight:bold;">Annulée</td></tr>
+                </table>
+
+                <p style="margin:22px 0 0;line-height:1.65;">Si vous pensez qu’il s’agit d’une erreur ou pour toute demande de renseignement, n’hésitez pas à contacter notre service client.</p>
+                <p style="margin:20px 0 0;line-height:1.65;">Cordialement,<br><strong>L’équipe {{ siteName }}</strong></p>
+            </td></tr>
+        </table>
+    </td></tr>
+</table>
+</body>
+</html>

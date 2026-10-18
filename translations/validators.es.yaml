@@ -3,3 +3,15 @@ auth:
     password_required: 'La contraseña es obligatoria.'
     password_min_length: 'La contraseña debe contener al menos {{ limit }} caracteres.'
     accept_terms_error: 'Debes aceptar las condiciones de uso.'
+contact:
+    form:
+        first_name_required: 'El nombre es obligatorio.'
+        last_name_required: 'El apellido es obligatorio.'
+        email_required: 'El correo electrónico es obligatorio.'
+        email_invalid: 'La dirección de correo electrónico no es válida.'
+        phone_required: 'El teléfono es obligatorio.'
+        request_type_required: 'Selecciona un tipo de solicitud.'
+        service_category_required: 'Selecciona un servicio.'
+        subject_required: 'El asunto es obligatorio.'
+        subject_invalid: 'El asunto no puede contener saltos de línea ni caracteres de control.'
+        message_required: 'El mensaje es obligatorio.'

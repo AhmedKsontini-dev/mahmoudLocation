@@ -1,4 +1,15 @@
-/* Transfere Index Page Styles */
+/* ==========================================================================
+   Gestion des Transferts - Backend Admin
+   Location Mahmoud
+   ========================================================================== */
+
+:root {
+    --tr-border: #e2e8f0;
+    --tr-ink: #0f172a;
+    --tr-muted: #64748b;
+    --tr-primary: #00377a;
+    --tr-primary-hover: #002a5c;
+}
 
 .page-header-description {
     color: var(--color-on-surface-variant);
@@ -11,4 +22,216 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-top: 0.5rem;
+}
+
+/* ---------- Panneau de recherche & filtres ---------- */
+.transfere-filter-panel {
+    background: #ffffff;
+    border: 1px solid var(--tr-border);
+    border-radius: var(--radius-xl, 0.75rem);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-bottom: 1.25rem;
+    overflow: visible;
+}
+
+.transfere-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #fbfcfe;
+    flex-wrap: wrap;
+}
+
+.filter-input-wrapper {
+    position: relative;
+    flex: 1 1 16rem;
+    min-width: 220px;
+}
+
+.filter-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #94a3b8;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.filter-input {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 1rem 0 2.35rem;
+    border: 1px solid var(--tr-border);
+    border-radius: var(--radius-md, 0.375rem);
+    background: #ffffff;
+    font-size: 0.875rem;
+    color: var(--tr-ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.filter-input:focus {
+    border-color: var(--tr-primary);
+    box-shadow: 0 0 0 3px rgba(0, 55, 122, 0.15);
+}
+
+.filter-select {
+    height: 2.5rem;
+    padding: 0 2rem 0 0.85rem;
+    border: 1px solid var(--tr-border);
+    border-radius: var(--radius-md, 0.375rem);
+    background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") no-repeat right 0.65rem center / 1rem;
+    font-size: 0.875rem;
+    color: var(--tr-ink);
+    cursor: pointer;
+    outline: none;
+    min-width: 170px;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+    border-color: var(--tr-primary);
+    box-shadow: 0 0 0 3px rgba(0, 55, 122, 0.15);
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.filter-reset-link {
+    font-size: 0.8125rem;
+    color: var(--tr-muted);
+    text-decoration: none;
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-md, 0.375rem);
+    transition: all 0.15s ease;
+}
+
+.filter-reset-link:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+/* ---------- Table & Dropdowns ---------- */
+.dropdown { position: relative; display: inline-block; }
+.dropdown-toggle { cursor: pointer; }
+.dropdown-toggle::after { content: ''; display: inline-block; margin-left: 0.35em; vertical-align: 0.2em; border-top: 0.3em solid; border-right: 0.3em solid transparent; border-left: 0.3em solid transparent; }
+.dropdown-menu { display: none; position: absolute; right: 0; z-index: 1000; min-width: 10rem; padding: 0.35rem 0; background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 0.375rem; box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+.dropdown.open .dropdown-menu { display: block; }
+.dropdown-item { display: block; width: 100%; padding: 0.4rem 1rem; font-size: 0.875rem; color: #374151; text-decoration: none; white-space: nowrap; border: none; background: none; text-align: left; cursor: pointer; }
+.dropdown-item:hover { background: #f3f4f6; color: #111827; }
+.dropdown-item.text-danger { color: #dc2626; }
+.dropdown-item.text-danger:hover { background: #fef2f2; color: #b91c1c; }
+.dropdown-divider { height: 0; margin: 0.25rem 0; border-top: 1px solid #e5e7eb; }
+
+/* ---------- Pagination Footer ---------- */
+.transfere-pagination-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.15rem 1.5rem;
+    background: #ffffff;
+    border-top: 1px solid var(--tr-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.transfere-table-count {
+    font-size: 0.825rem;
+    color: var(--tr-muted);
+}
+
+.transfere-table-count strong {
+    color: var(--tr-ink);
+}
+
+.search-indicator-tag {
+    color: var(--tr-primary);
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
+.pagination-nav {
+    display: flex;
+    align-items: center;
+}
+
+.pagination-list {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination-item {
+    display: inline-flex;
+}
+
+.pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.65rem;
+    border-radius: var(--radius-md, 0.375rem);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--tr-ink);
+    background: #ffffff;
+    border: 1px solid var(--tr-border);
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+
+.pagination-link:hover:not(.active):not(.pagination-link--disabled) {
+    background: #f8fafc;
+    color: var(--tr-primary);
+    border-color: #cbd5e1;
+}
+
+.pagination-link.active {
+    background: var(--tr-primary);
+    color: #ffffff;
+    border-color: var(--tr-primary);
+    box-shadow: 0 2px 6px rgba(0, 55, 122, 0.25);
+}
+
+.pagination-link--disabled {
+    color: #94a3b8;
+    background: #f8fafc;
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: var(--tr-border);
+}
+
+.pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 2.25rem;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .transfere-pagination-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    
+    .pagination-list {
+        flex-wrap: wrap;
+    }
 }

@@ -16,14 +16,17 @@ class TransfereTranslationType extends AbstractType
             ->add('lieuDepart', TextType::class, [
                 'label' => 'Lieu de départ',
                 'required' => false,
+                'attr' => ['placeholder' => "Ex. : Aéroport Tunis-Carthage"],
             ])
             ->add('lieuArrivee', TextType::class, [
                 'label' => "Lieu d'arrivée",
                 'required' => false,
+                'attr' => ['placeholder' => "Ex. : Hôtel à Hammamet"],
             ])
             ->add('duree', TextType::class, [
                 'label' => 'Durée',
                 'required' => false,
+                'attr' => ['placeholder' => "Ex. : 1 h 15 min"],
             ]);
     }
 

@@ -1,109 +1,449 @@
-// Helper functions for searchable select
-function displayResults(results, query, createUrl, container, hiddenSelect, input, fieldName) {
-    container.innerHTML = '';
-    
-    if (results.length === 0) {
-        const createOption = document.createElement('div');
-        createOption.className = 'searchable-result searchable-create';
-        createOption.textContent = `+ Ajouter "${query}"`;
-        createOption.addEventListener('click', function() {
-            createNewEntity(query, createUrl, hiddenSelect, input, container, fieldName);
-        });
-        container.appendChild(createOption);
-    } else {
-        results.forEach(result => {
-            const option = document.createElement('div');
-            option.className = 'searchable-result';
-            option.textContent = result.name;
-            option.addEventListener('click', function() {
-                selectEntity(result.id, result.name, hiddenSelect, input, container);
-            });
-            container.appendChild(option);
-        });
-    }
-    
-    container.style.display = 'block';
+// ── Champs Catégorie / Destination : recherche et création en AJAX ──
+// Un objet « field » regroupe tout le contexte d'un champ .searchable-select.
+
+const FIELD_LABELS = { category: 'catégorie', destination: 'destination' };
+
+function fieldLabel(fieldName) {
+    return FIELD_LABELS[fieldName] || 'valeur';
 }
 
-function selectEntity(id, name, hiddenSelect, input, container) {
+function normalizeText(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+// Message clair quand le serveur ne fournit pas son propre libellé.
+function fallbackHttpMessage(status) {
+    if (status === 400) return 'Requête refusée par le serveur : la saisie est invalide.';
+    if (status === 403 || status === 419) return 'Session expirée. Rechargez la page puis réessayez.';
+    if (status === 404) return 'Adresse du serveur introuvable. Prévenez un administrateur.';
+    if (status === 409) return 'Cette valeur existe déjà mais n\'a pas pu être récupérée.';
+    if (status >= 500) return 'Erreur serveur : l\'enregistrement a échoué.';
+    return 'Erreur inattendue (code ' + status + ').';
+}
+
+// Vérifie le statut HTTP et le Content-Type AVANT de parser : le HTML d'une page
+// d'erreur Symfony ne doit jamais être donné à JSON.parse() ni affiché brut.
+function parseJsonResponse(response, context) {
+    return response.text().then(function(text) {
+        const contentType = (response.headers.get('content-type') || '').toLowerCase();
+        let payload = null;
+
+        if (contentType.indexOf('json') !== -1) {
+            try {
+                payload = JSON.parse(text);
+            } catch (parseError) {
+                payload = null;
+            }
+        }
+
+        if (payload === null) {
+            // La réponse brute est journalisée pour le diagnostic, pas affichée à l'utilisateur.
+            console.error(context + ' : réponse serveur illisible', {
+                status: response.status,
+                contentType: contentType,
+                body: text.slice(0, 500)
+            });
+            throw new Error(response.ok
+                ? 'Réponse du serveur illisible. Réessayez.'
+                : fallbackHttpMessage(response.status));
+        }
+
+        if (!response.ok) {
+            console.error(context + ' : erreur HTTP ' + response.status, payload);
+            throw new Error(payload.error || fallbackHttpMessage(response.status));
+        }
+
+        return payload;
+    });
+}
+
+function dedupeResults(results) {
+    const seen = {};
+
+    return results.filter(function(result) {
+        if (!result || !result.id || seen[result.id]) return false;
+        seen[result.id] = true;
+        return true;
+    });
+}
+
+function findExactMatch(results, query) {
+    const needle = normalizeText(query);
+
+    return results.find(function(result) {
+        return normalizeText(result.name) === needle;
+    });
+}
+
+function showFieldMessage(field, message, className, onRetry) {
+    field.container.innerHTML = '';
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'searchable-result ' + className;
+    messageEl.textContent = message;
+
+    if (onRetry) {
+        messageEl.addEventListener('click', onRetry);
+        messageEl.title = 'Cliquer pour réessayer';
+    }
+
+    field.container.appendChild(messageEl);
+    field.container.style.display = 'block';
+}
+
+function showFieldNotice(field, message) {
+    showFieldMessage(field, message, 'searchable-note');
+
+    window.setTimeout(function() {
+        field.container.style.display = 'none';
+    }, 2600);
+}
+
+function showFieldError(field, message, onRetry) {
+    showFieldMessage(field, '⚠ ' + message, 'searchable-error', onRetry);
+}
+
+// L'option est ajoutée au <select> si elle n'y figure pas encore : sans option
+// correspondante, la valeur ne serait pas transmise au formulaire de l'excursion.
+function selectEntity(id, name, hiddenSelect, input, container, field, icon) {
+    let option = hiddenSelect.querySelector('option[value="' + id + '"]');
+
+    if (!option) {
+        option = document.createElement('option');
+        option.value = id;
+        hiddenSelect.appendChild(option);
+    }
+
+    option.textContent = name;
     hiddenSelect.value = id;
     input.value = name;
     container.style.display = 'none';
+
+    // L'icône de la catégorie sélectionnée s'affiche dans le champ, à gauche de la saisie.
+    if (field) {
+        setFieldIcon(field, icon || '');
+    }
+
+    hiddenSelect.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-function createNewEntity(name, createUrl, hiddenSelect, input, container, fieldName) {
-    fetch(createUrl, {
+// Affiche (ou retire) l'icône de la valeur sélectionnée dans le champ.
+function setFieldIcon(field, icon) {
+    if (!field.iconEl) return;
+
+    if (icon) {
+        field.iconEl.textContent = icon;
+        field.iconEl.style.display = 'inline-block';
+        field.select.classList.add('has-selection-icon');
+    } else {
+        field.iconEl.textContent = '';
+        field.iconEl.style.display = 'none';
+        field.select.classList.remove('has-selection-icon');
+    }
+}
+
+// Interroge le serveur et renvoie les résultats dédupliqués, sans les afficher.
+function requestEntities(field, query) {
+    return fetch(field.searchUrl + '?q=' + encodeURIComponent(query), {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(response) {
+        return parseJsonResponse(response, 'Recherche ' + fieldLabel(field.fieldName));
+    })
+    .then(function(data) {
+        return dedupeResults(Array.isArray(data && data.results) ? data.results : []);
+    });
+}
+
+function searchEntities(field) {
+    const query = field.input.value.trim();
+    const requestId = ++field.requestId;
+
+    // Les champs « ouverture sur clic » affichent la liste complète même sans texte.
+    if (query.length < 2 && !field.showAll) {
+        field.container.style.display = 'none';
+        return Promise.resolve([]);
+    }
+
+    return requestEntities(field, query).then(function(results) {
+        // Une saisie plus récente rend obsolètes les résultats qui arrivent après.
+        if (requestId === field.requestId) {
+            displayResults(field, results, query);
+        }
+
+        return results;
+    });
+}
+
+// Ouvre la liste complète des catégories enregistrées, sans exiger de saisie.
+function openFullList(field) {
+    const requestId = ++field.requestId;
+
+    return requestEntities(field, '').then(function(results) {
+        if (requestId === field.requestId) {
+            displayResults(field, results, '');
+        }
+
+        return results;
+    }).catch(function(error) {
+        showFieldError(field, error.message, function() {
+            openFullList(field);
+        });
+    });
+}
+
+function displayResults(field, results, query) {
+    const container = field.container;
+    container.innerHTML = '';
+
+    if (results.length === 0 && '' === query) {
+        // Aucune catégorie en base : message clair, sans erreur ni proposition de création.
+        showFieldMessage(field, 'Aucune ' + fieldLabel(field.fieldName) + ' disponible', 'searchable-note');
+        return;
+    }
+
+    results.forEach(function(result) {
+        const option = document.createElement('div');
+        option.className = 'searchable-result';
+        option.setAttribute('data-id', result.id);
+
+        if (result.icon) {
+            const iconEl = document.createElement('span');
+            iconEl.className = 'searchable-result-icon';
+            iconEl.textContent = result.icon;
+            option.appendChild(iconEl);
+        }
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'searchable-result-label';
+        labelEl.textContent = result.name;
+        option.appendChild(labelEl);
+
+        option.addEventListener('click', function() {
+            selectEntity(result.id, result.name, field.hiddenSelect, field.input, container, field, result.icon);
+        });
+        container.appendChild(option);
+    });
+
+    // La création n'est proposée que si aucun choix ne porte déjà ce nom exact.
+    if (query && !findExactMatch(results, query)) {
+        const createOption = document.createElement('div');
+        createOption.className = 'searchable-result searchable-create';
+        createOption.textContent = '+ Ajouter "' + query + '"';
+        createOption.addEventListener('click', function() {
+            createNewEntity(field, query);
+        });
+        container.appendChild(createOption);
+    }
+
+    container.style.display = 'block';
+}
+
+function createNewEntity(field, name) {
+    if (field.busy) return Promise.resolve();
+
+    field.busy = true;
+    showFieldMessage(field, 'Création de la ' + fieldLabel(field.fieldName) + ' « ' + name + ' »…', 'searchable-loading');
+
+    return fetch(field.createUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': field.csrfToken
         },
-        body: JSON.stringify({ name: name })
+        body: JSON.stringify({ name: name, _token: field.csrfToken })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert('Erreur: ' + data.error);
+    .then(function(response) {
+        return parseJsonResponse(response, 'Création ' + fieldLabel(field.fieldName));
+    })
+    .then(function(data) {
+        if (!data || !data.id) {
+            // Aucune option n'est posée tant que l'enregistrement n'est pas confirmé.
+            showFieldError(field, (data && data.error) || ('La ' + fieldLabel(field.fieldName) + ' n\'a pas été enregistrée.'), function() {
+                createNewEntity(field, name);
+            });
             return;
         }
-        selectEntity(data.id, data.name, hiddenSelect, input, container);
+
+        // Une catégorie créée en AJAX n'a pas encore d'icône : on retire celle de l'ancienne sélection.
+        selectEntity(data.id, data.name || name, field.hiddenSelect, field.input, field.container, field, '');
+        showFieldNotice(field, data.existed
+            ? '« ' + (data.name || name) + ' » existait déjà : elle a été réutilisée.'
+            : '« ' + (data.name || name) + ' » a été créée et sélectionnée.');
     })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Erreur lors de la création: ' + error.message);
+    .catch(function(error) {
+        showFieldError(field, error.message, function() {
+            createNewEntity(field, name);
+        });
+    })
+    .finally(function() {
+        field.busy = false;
     });
+}
+
+// Touche Entrée : réutilise la valeur existante à l'identique, sinon la crée,
+// sans jamais soumettre le formulaire principal.
+function handleFieldEnter(field) {
+    const query = field.input.value.trim();
+
+    window.clearTimeout(field.timer);
+
+    if (query === '') {
+        showFieldError(field, 'Saisissez un nom de ' + fieldLabel(field.fieldName) + ' avant de valider.');
+        return;
+    }
+
+    if (field.busy) return;
+
+    field.busy = true;
+    showFieldMessage(field, 'Vérification de « ' + query + ' »…', 'searchable-loading');
+
+    searchEntities(field)
+        .then(function(results) {
+            field.busy = false;
+
+            const exact = findExactMatch(results, query);
+            if (exact) {
+                selectEntity(exact.id, exact.name, field.hiddenSelect, field.input, field.container, field, exact.icon);
+                showFieldNotice(field, '« ' + exact.name + ' » a été sélectionnée.');
+                return;
+            }
+
+            if (results.length > 0) {
+                displayResults(field, results, query);
+            }
+
+            return createNewEntity(field, query);
+        })
+        .catch(function(error) {
+            field.busy = false;
+            showFieldError(field, error.message);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     // Searchable select with create option
-    const searchableSelects = document.querySelectorAll('.searchable-select');
-    
-    searchableSelects.forEach(select => {
+    const fields = [];
+
+    document.querySelectorAll('.searchable-select').forEach(function(select) {
         const input = select.querySelector('.searchable-input');
-        const resultsContainer = select.querySelector('.searchable-results');
+        const container = select.querySelector('.searchable-results');
         const hiddenSelect = select.nextElementSibling;
-        const searchUrl = select.getAttribute('data-url');
-        const createUrl = select.getAttribute('data-create-url');
-        const fieldName = select.getAttribute('data-field');
-        
-        let debounceTimer;
-        
+
+        if (!input || !container || !hiddenSelect || hiddenSelect.tagName !== 'SELECT') {
+            console.error('Champ searchable-select mal configuré :', select);
+            return;
+        }
+
+        // L'icône de la valeur sélectionnée est affichée dans le champ, à gauche de la saisie.
+        const iconEl = document.createElement('span');
+        iconEl.className = 'searchable-selected-icon';
+        iconEl.setAttribute('aria-hidden', 'true');
+        iconEl.style.display = 'none';
+        select.insertBefore(iconEl, input);
+
+        const field = {
+            select: select,
+            input: input,
+            container: container,
+            iconEl: iconEl,
+            hiddenSelect: hiddenSelect,
+            searchUrl: select.getAttribute('data-url'),
+            createUrl: select.getAttribute('data-create-url'),
+            csrfToken: select.getAttribute('data-create-token') || '',
+            fieldName: select.getAttribute('data-field'),
+            // data-show-all : la liste complète s'ouvre au clic, sans saisie préalable.
+            showAll: select.getAttribute('data-show-all') === 'true',
+            timer: null,
+            busy: false,
+            requestId: 0
+        };
+
+        fields.push(field);
+
         // Load initial value if already selected
         if (hiddenSelect.value) {
-            const selectedOption = hiddenSelect.querySelector(`option[value="${hiddenSelect.value}"]`);
+            const selectedOption = hiddenSelect.querySelector('option[value="' + hiddenSelect.value + '"]');
             if (selectedOption) {
                 input.value = selectedOption.text;
             }
+
+            // En modification (ou après erreurs de validation), l'icône de la catégorie
+            // déjà enregistrée est récupérée depuis la liste complète fournie par le serveur.
+            if (field.showAll) {
+                requestEntities(field, '').then(function(results) {
+                    const match = results.find(function(result) {
+                        return String(result.id) === String(hiddenSelect.value);
+                    });
+                    if (match) {
+                        setFieldIcon(field, match.icon || '');
+                        if (match.name && (!selectedOption || selectedOption.text !== match.name)) {
+                            input.value = match.name;
+                        }
+                    }
+                }).catch(function() {
+                    // L'affichage du nom sans icône reste acceptable si le serveur est indisponible.
+                });
+            }
         }
-        
+
+        function runSearch() {
+            searchEntities(field).catch(function(error) {
+                showFieldError(field, error.message);
+            });
+        }
+
         input.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            clearTimeout(debounceTimer);
-            
-            if (query.length < 2) {
-                resultsContainer.style.display = 'none';
+            window.clearTimeout(field.timer);
+
+            if (this.value.trim().length < 2 && !field.showAll) {
+                container.style.display = 'none';
                 return;
             }
-            
-            debounceTimer = setTimeout(() => {
-                fetch(`${searchUrl}?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        displayResults(data.results, query, createUrl, resultsContainer, hiddenSelect, input, fieldName);
-                    })
-                    .catch(error => console.error('Error:', error));
-            }, 300);
+
+            field.timer = window.setTimeout(runSearch, 300);
         });
-        
-        input.addEventListener('focus', function() {
-            if (this.value.trim().length >= 2) {
-                this.dispatchEvent(new Event('input'));
+
+        function openOnInteraction() {
+            if (field.showAll) {
+                // Clic/focus : toutes les catégories s'affichent immédiatement,
+                // même si le champ porte déjà une sélection.
+                window.clearTimeout(field.timer);
+                openFullList(field);
+            } else if (input.value.trim().length >= 2) {
+                runSearch();
+            }
+        }
+
+        input.addEventListener('focus', openOnInteraction);
+
+        // Le clic sur un champ déjà focalisé ne déclenche pas « focus » : la liste
+        // doit malgré tout se rouvrir (elle a pu être fermée par un clic extérieur).
+        input.addEventListener('click', function() {
+            if (field.showAll && container.style.display === 'none') {
+                openFullList(field);
             }
         });
-        
-        document.addEventListener('click', function(e) {
-            if (!select.contains(e.target)) {
-                resultsContainer.style.display = 'none';
+
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                // La touche Entrée ajoute/selectionne la valeur, elle ne soumet pas le formulaire.
+                event.preventDefault();
+                handleFieldEnter(field);
+            }
+        });
+    });
+
+    // Ferme les listes déroulantes au clic en dehors du champ
+    document.addEventListener('click', function(event) {
+        fields.forEach(function(field) {
+            if (!field.select.contains(event.target)) {
+                field.container.style.display = 'none';
             }
         });
     });
@@ -125,15 +465,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('tab-' + tabId).classList.add('active');
         });
     });
-
-    const imagePane = document.getElementById('tab-images');
-    const imageErrors = imagePane?.querySelectorAll('.image-upload-errors[data-has-errors="true"]');
-    if (imageErrors?.length) {
-        const imageTab = document.querySelector('.tab-btn[data-tab="images"]');
-        imageTab?.classList.add('has-error');
-        imageTab?.click();
-        imageErrors[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
 
     // Translation tabs functionality
     const translationTabs = document.querySelectorAll('.translation-tab');
@@ -162,12 +493,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!collectionContainer) return;
             
             const prototype = collectionContainer.getAttribute('data-prototype');
-            const indices = Array.from(collectionContainer.children, item => {
-                const fieldName = item.querySelector('[name]')?.name || '';
-                const match = fieldName.match(/\[(\d+)\]/);
-                return match ? Number(match[1]) : -1;
+            // L'index du nouveau élément doit dépasser tous les indices encore
+            // présents dans le DOM : children.length réutiliserait un index après
+            // une suppression (doublon [n]) et désynchroniserait la collection
+            // soumise de la collection Doctrine côté serveur.
+            const indexRegex = new RegExp('^excursion\\[' + collectionName + '\\]\\[(\\d+)\\]');
+            let maxIndex = -1;
+            collectionContainer.querySelectorAll('input, select, textarea').forEach(function(el) {
+                const match = el.name ? el.name.match(indexRegex) : null;
+                if (match) {
+                    maxIndex = Math.max(maxIndex, parseInt(match[1], 10));
+                }
             });
-            const index = Math.max(-1, ...indices) + 1;
+            const index = maxIndex + 1;
             const newFormHtml = prototype.replace(/__name__/g, index);
             
             const tempDiv = document.createElement('div');
@@ -176,24 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             newForm.classList.add('collection-item');
             collectionContainer.appendChild(newForm);
-            
-            // Initialize nested translation collections if they exist
-            const subCollections = newForm.querySelectorAll('.sub-collection');
-            subCollections.forEach(subCollection => {
-                const subPrototype = subCollection.getAttribute('data-prototype');
-                if (subPrototype) {
-                    const locales = ['fr', 'en', 'es', 'de', 'it'];
-                    locales.forEach((locale, localeIndex) => {
-                        const subIndex = localeIndex;
-                        const subFormHtml = subPrototype.replace(/__name__/g, subIndex);
-                        const subTempDiv = document.createElement('div');
-                        subTempDiv.innerHTML = subFormHtml;
-                        const subForm = subTempDiv.firstElementChild;
-                        subForm.classList.add('sub-collection-item');
-                        subCollection.appendChild(subForm);
-                    });
-                }
-            });
             
             // Add remove button functionality
             const removeBtn = newForm.querySelector('.remove-collection');
@@ -235,8 +555,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Auto-generate slug from French title
-    const titleFr = document.querySelector('input[name*="[translations]"][name*="[title]"]');
+    // Le panneau français est identifié par data-locale, jamais par un index
+    // de collection : les clés Doctrine peuvent être non contiguës ou réordonnées.
+    const frenchPane = document.querySelector('.translation-pane[data-locale="fr"]');
+    const titleFr = frenchPane ? frenchPane.querySelector('input[name*="[title]"]') : null;
     const slugField = document.querySelector('input[name="excursion[slug]"]');
     
     if (titleFr && slugField) {
@@ -259,8 +581,9 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             const categorySelect = document.querySelector('select[name="excursion[category]"]');
             const destinationSelect = document.querySelector('select[name="excursion[destination]"]');
-            const titleFr = document.querySelector('input[name="excursion[translations][0][title]"]');
-            const descFr = document.querySelector('textarea[name="excursion[translations][0][description]"]');
+            const frPane = document.querySelector('.translation-pane[data-locale="fr"]');
+            const titleFr = frPane ? frPane.querySelector('input[name*="[title]"]') : null;
+            const descFr = frPane ? frPane.querySelector('textarea[name*="[description]"]') : null;
             
             let isValid = true;
             let errorMessage = '';

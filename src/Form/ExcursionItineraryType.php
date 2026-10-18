@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Config\LocaleConfig;
+use App\Form\EventListener\AlignSubmittedTranslationsByLocaleListener;
 use App\Entity\ExcursionItineraryTranslation;
 
 class ExcursionItineraryType extends AbstractType
@@ -41,7 +42,6 @@ class ExcursionItineraryType extends AbstractType
             ->add('position', IntegerType::class, [
                 'label' => 'Position',
                 'attr' => ['class' => 'form-control'],
-                'data' => 0,
             ])
             ->add('translations', CollectionType::class, [
                 'entry_type' => ExcursionItineraryTranslationType::class,
@@ -54,11 +54,15 @@ class ExcursionItineraryType extends AbstractType
             ])
         ;
 
+        // La soumission est réalignée par locale sur l'ordre réel de la collection
+        // (l'ordre de chargement Doctrine n'est pas garanti).
+        $builder->get('translations')->addEventSubscriber(new AlignSubmittedTranslationsByLocaleListener());
+
         // Initialize translations for new entities
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $itinerary = $event->getData();
             if ($itinerary && $itinerary->getTranslations()->isEmpty()) {
-                $locales = LocaleConfig::getSupportedLocales();
+                $locales = LocaleConfig::getExcursionFormLocales();
                 foreach ($locales as $locale) {
                     $translation = new ExcursionItineraryTranslation();
                     $translation->setLocale($locale);

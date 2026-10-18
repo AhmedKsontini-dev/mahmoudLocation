@@ -1,0 +1,138 @@
+/* Shared visual language for admin CRUD, settings, contact and reservation pages. */
+.admin-main > .page-header:not(:has(.dashboard-eyebrow)) {
+    position: relative;
+    margin-bottom: 1.35rem;
+    padding: .25rem 0 .95rem;
+    border-bottom: 1px solid #e7ebf2;
+}
+.admin-main > .page-header:not(:has(.dashboard-eyebrow)) .page-title { font-size: clamp(1.55rem, 2vw, 1.9rem); }
+.admin-main > .page-header:not(:has(.dashboard-eyebrow)) .page-actions { gap: .55rem; }
+.admin-main > .page-header:not(:has(.dashboard-eyebrow)) .page-header-description { max-width: 43rem; }
+.admin-main > .page-header .quick-actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .7rem; }
+.admin-main > .page-header .quick-actions .btn { min-height: 32px; }
+
+/* List pages */
+.admin-main > .card { border: 1px solid #e5eaf2; border-radius: 15px; box-shadow: 0 6px 22px rgba(24,39,75,.045); }
+.admin-main > .card > .card-body { padding: 1.2rem; }
+.admin-main > .card .table-container { overflow: auto; border: 1px solid #e9edf4; border-radius: 12px; box-shadow: none; }
+.admin-main > .card .table { min-width: 620px; }
+.admin-main > .card .table th { padding: .82rem 1rem; background: #f7f9fc; color: #7b889e; font-size: .66rem; font-weight: 800; letter-spacing: .075em; }
+.admin-main > .card .table td { padding: .86rem 1rem; color: #53617a; font-size: .8rem; }
+.admin-main > .card .table td strong { color: #2b3952; }
+.admin-main > .card .table tbody tr:hover { background: #f8faff; }
+.admin-main > .card .table .btn { min-height: 32px; padding: .4rem .7rem; border-radius: 8px; }
+.admin-main > .card .table .empty-state { padding: 2rem 1rem; white-space: normal; }
+.admin-main > .card .table .empty-state-text { color: #7c899d; }
+.info-note { margin-bottom: 1rem; padding: .85rem 1rem; border: 1px solid #dfe9fb; border-radius: 10px; background: #f4f8ff; color: #4f6587; font-size: .8rem; line-height: 1.55; }
+
+/* Forms and nested form sections */
+.admin-main > .card:has(form) { max-width: 1120px; margin-inline: auto; }
+.admin-main > .card:has(form) > .card-body { padding: clamp(1rem, 2.4vw, 2rem); }
+.admin-main form:not(.mailbox-inline-form) .form-section { margin: 0 0 1.25rem; padding: 1.15rem; border: 1px solid #e8edf4; border-radius: 13px; background: linear-gradient(180deg, #fff, #fcfdff); }
+.admin-main form:not(.mailbox-inline-form) .form-section-title,
+.admin-main form:not(.mailbox-inline-form) .section-title { margin: 0 0 1rem; padding-bottom: .7rem; border-bottom: 1px solid #edf0f5; color: #283851; font-size: .91rem; font-weight: 800; letter-spacing: -.015em; }
+.admin-main form:not(.mailbox-inline-form) .form-section-description { margin: -.4rem 0 1rem; color: #78869b; font-size: .78rem; line-height: 1.55; }
+.admin-main form:not(.mailbox-inline-form) .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; }
+.admin-main form:not(.mailbox-inline-form) .form-field { min-width: 0; margin-bottom: .9rem; }
+.admin-main form:not(.mailbox-inline-form) .form-field > label,
+.admin-main form:not(.mailbox-inline-form) .form-group > label,
+.admin-main form:not(.mailbox-inline-form) .form-label { display: block; margin: 0 0 .42rem; color: #3c4b64; font-size: .76rem; font-weight: 750; }
+.admin-main form:not(.mailbox-inline-form) .form-control:not([type=checkbox]):not([type=radio]),
+.admin-main form:not(.mailbox-inline-form) select,
+.admin-main form:not(.mailbox-inline-form) textarea,
+.admin-main form:not(.mailbox-inline-form) input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]) { width: 100%; min-height: 42px; border: 1px solid #dfe5ee; border-radius: 9px; background-color: #fbfcfe; color: #273650; font: inherit; font-size: .82rem; transition: border-color .16s ease, box-shadow .16s ease, background .16s ease; }
+.admin-main form:not(.mailbox-inline-form) textarea { min-height: 105px; padding: .7rem .8rem; resize: vertical; }
+.admin-main form:not(.mailbox-inline-form) .form-control:not([type=checkbox]):not([type=radio]):focus,
+.admin-main form:not(.mailbox-inline-form) select:focus,
+.admin-main form:not(.mailbox-inline-form) textarea:focus,
+.admin-main form:not(.mailbox-inline-form) input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]):focus { outline: 0; border-color: #8aaff1; background-color: #fff; box-shadow: 0 0 0 4px rgba(52,118,246,.09); }
+.admin-main form:not(.mailbox-inline-form) .form-hint,
+.admin-main form:not(.mailbox-inline-form) .form-text { display: block; margin-top: .38rem; color: #8894a7; font-size: .69rem; line-height: 1.5; }
+.admin-main form:not(.mailbox-inline-form) .form-error-message,
+.admin-main form:not(.mailbox-inline-form) .invalid-feedback { color: #b83f39; font-size: .72rem; }
+.blog-article-form .form-field ul { margin: .35rem 0 0; padding: 0; list-style: none; color: #b83f39; font-size: .72rem; line-height: 1.45; }
+.blog-article-form .form-field:has(ul) input:not([type=checkbox]):not([type=radio]),
+.blog-article-form .form-field:has(ul) select,
+.blog-article-form .form-field:has(ul) textarea,
+.blog-article-form .form-field:has(ul) .editor-content { border-color: #d77872 !important; box-shadow: 0 0 0 2px rgba(184,63,57,.08); }
+.blog-article-form .form-error-summary { margin-bottom: 1rem; }
+.blog-article-form .form-error-summary ul { margin: .5rem 0 0; padding-left: 1.25rem; }
+.blog-article-form .form-error-summary a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.blog-article-form .form-error-summary a:hover { color: #7f2925; }
+.admin-main form:not(.mailbox-inline-form) .form-actions,
+.admin-main .form-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .55rem; padding-top: 1rem; border-top: 1px solid #ebeff5; }
+.admin-main form:not(.mailbox-inline-form) .form-check,
+.admin-main form:not(.mailbox-inline-form) .checkbox-field { display: flex; align-items: center; gap: .55rem; min-height: 42px; padding: .6rem .75rem; border: 1px solid #e8edf4; border-radius: 9px; background: #f9fbfe; }
+.admin-main form:not(.mailbox-inline-form) .form-check label,
+.admin-main form:not(.mailbox-inline-form) .checkbox-field label { margin: 0; color: #53617a; font-size: .77rem; font-weight: 650; }
+.admin-main form:not(.mailbox-inline-form) input[type=checkbox] { width: 17px; height: 17px; accent-color: #286ce4; }
+
+/* Tabbed category and excursion editors */
+.tabs-container { overflow: hidden; border: 1px solid #e8edf4; border-radius: 13px; background: #fff; }
+.tabs-nav { display: flex; gap: .35rem; padding: .55rem; border-bottom: 1px solid #e8edf4; background: #f7f9fc; }
+.tab-btn { padding: .65rem .9rem; border-radius: 8px; color: #6d7b91; font-size: .76rem; font-weight: 750; transition: background .15s ease, color .15s ease; }
+.tab-btn.active { background: #fff; color: #205bd2; box-shadow: 0 2px 8px rgba(24,39,75,.08); }
+.tab-pane { padding: 1rem; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+.translation-tabs, .translations-tabs { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .9rem; }
+.translation-tab { padding: .4rem .65rem; border: 1px solid #e6ebf2; border-radius: 8px; background: #fff; color: #728097; font-size: .7rem; font-weight: 700; }
+.translation-tab.active { border-color: #cbdcf8; background: #eff5ff; color: #205bd2; }
+.translation-pane { display: none; }
+.translation-pane.active { display: block; }
+
+/* Reservation and contact details */
+.admin-main .detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .65rem; }
+.admin-main .detail-item { min-width: 0; padding: .8rem .9rem; border: 1px solid #e9edf4; border-radius: 10px; background: #fbfcfe; }
+.admin-main .detail-label { display: block; margin-bottom: .28rem; color: #8390a4; font-size: .64rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.admin-main .detail-value { display: block; overflow-wrap: anywhere; color: #2b3952; font-size: .8rem; font-weight: 650; line-height: 1.55; }
+.admin-main .detail-item.full-width { grid-column: 1 / -1; }
+.admin-main .form-actions form { margin: 0; }
+.admin-main .form-actions form .btn { min-height: 38px; }
+
+/* Contact inbox */
+.mailbox-page { --mailbox-line: #e7ebf2; --mailbox-ink: #1b2941; gap: 1rem; }
+.mailbox-header { align-items: center; padding: 1.2rem 1.4rem; border: 1px solid #e4eaf3; border-radius: 15px; background: radial-gradient(ellipse at 95% 0%, #eef5ff, transparent 35%), #fff; box-shadow: 0 5px 18px rgba(24,39,75,.04); }
+.mailbox-title-icon { display: grid; place-items: center; width: 43px; height: 43px; border: 1px solid #dce7fb; border-radius: 13px; background: #edf4ff; color: #2864c7; font-size: 1.1rem; }
+.mailbox-header .page-title { font-size: 1.55rem; }
+.mailbox-header .page-header-description { font-size: .79rem; }
+.mailbox-layout { gap: .8rem; }
+.mailbox-panel, .mailbox-reader { border-color: #e5eaf2; border-radius: 13px; box-shadow: 0 4px 14px rgba(24,39,75,.04); }
+.mailbox-folders-panel { padding: .75rem; background: #fff; }
+.mailbox-folder { min-height: 39px; border-radius: 9px; font-size: .76rem; }
+.mailbox-folder.active { background: #edf4ff; color: #205bd2; box-shadow: inset 3px 0 #3476f6; }
+.mailbox-list-panel { background: #fff; }
+.mailbox-search { padding: .75rem; }
+.mailbox-search input { min-height: 39px; border-color: #e5eaf2; border-radius: 9px; background: #fafbfd; font-size: .76rem; }
+.mailbox-tabs { padding-inline: .75rem; }
+.mailbox-tab { padding: .35rem .65rem; border-color: #e6ebf2; background: #fff; font-size: .68rem; }
+.mailbox-tab.active { border-color: #205bd2; background: #205bd2; }
+.mailbox-item { padding: .8rem .85rem; border-color: #edf0f5; }
+.mailbox-item.active { background: #f0f5ff; box-shadow: inset 3px 0 #3476f6; }
+.mailbox-reader { background: #fff; }
+.mailbox-reader-toolbar { padding: .7rem .9rem; border-color: #edf0f5; }
+.mailbox-reader-body { padding: 1.25rem; }
+.mailbox-reader-subject { color: #1d2d48; font-size: 1.2rem; font-weight: 750; letter-spacing: -.025em; }
+.mailbox-reply-textarea { border-radius: 10px; background: #fbfcfe; }
+.mailbox-folder-section { color: #8a96a8; font-size: .64rem; letter-spacing: .12em; }
+
+@media (max-width: 768px) {
+    .admin-main > .page-header:not(:has(.dashboard-eyebrow)) { align-items: flex-start; }
+    .admin-main > .page-header:not(:has(.dashboard-eyebrow)) .page-actions { width: 100%; }
+    .admin-main .detail-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .admin-main form:not(.mailbox-inline-form) .form-grid { grid-template-columns: 1fr; gap: .3rem; }
+    .admin-main form:not(.mailbox-inline-form) .form-section { padding: .85rem; }
+    .admin-main > .card > .card-body { padding: .85rem; }
+    .tabs-nav { flex-wrap: wrap; }
+    .tab-btn { flex: 1 1 auto; }
+}
+@media (max-width: 460px) {
+    .admin-main .detail-grid { grid-template-columns: 1fr; }
+    .admin-main .detail-item.full-width { grid-column: auto; }
+    .admin-main > .page-header:not(:has(.dashboard-eyebrow)) .page-actions { flex-wrap: wrap; }
+    .admin-main > .page-header:not(:has(.dashboard-eyebrow)) .page-actions .btn { flex: 1 1 100%; }
+    .admin-main .form-actions { justify-content: stretch; }
+    .admin-main .form-actions > .btn, .admin-main .form-actions > button { flex: 1; }
+}
+@media (min-width: 761px) and (max-width: 1050px) { .admin-main .excursion-show .detail-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 760px) { .admin-main .excursion-show .detail-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }

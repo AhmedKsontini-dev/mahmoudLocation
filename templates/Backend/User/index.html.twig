@@ -1,0 +1,162 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs - Admin - Location Mahmoud{% endblock %}
+
+{% block header_title %}Utilisateurs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assetsBack/css/user/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="user-index">
+    {# En-tête de page #}
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Gestion des utilisateurs</h1>
+            <p class="page-header-description">
+                Consultez, recherchez et gérez les rôles des utilisateurs enregistrés dans la base de données.
+            </p>
+        </div>
+    </div>
+
+    {# Messages Flash de notification #}
+    {% for label, messages in app.flashes %}
+        {% for flashMessage in messages %}
+            <div class="alert {{ label == 'error' ? 'alert-error' : (label == 'warning' ? 'alert-warning' : 'alert-success') }}" role="alert">
+                <span class="alert-icon">{{ label == 'error' ? '⚠️' : (label == 'warning' ? '🔔' : '✓') }}</span>
+                <span>{{ flashMessage }}</span>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# Cartes statistiques d'ensemble #}
+    <div class="user-stats-grid">
+        <div class="user-stat-card">
+            <div class="user-stat-icon user-stat-icon--primary" aria-hidden="true">👥</div>
+            <div class="user-stat-info">
+                <span class="user-stat-label">Total inscrits</span>
+                <span class="user-stat-value">{{ stats.total }}</span>
+            </div>
+        </div>
+        <div class="user-stat-card">
+            <div class="user-stat-icon user-stat-icon--admin" aria-hidden="true">🛡️</div>
+            <div class="user-stat-info">
+                <span class="user-stat-label">Administrateurs</span>
+                <span class="user-stat-value">{{ stats.admins }}</span>
+            </div>
+        </div>
+        <div class="user-stat-card">
+            <div class="user-stat-icon user-stat-icon--standard" aria-hidden="true">👤</div>
+            <div class="user-stat-info">
+                <span class="user-stat-label">Utilisateurs standards</span>
+                <span class="user-stat-value">{{ stats.users }}</span>
+            </div>
+        </div>
+    </div>
+
+    {# Panneau de recherche au-dessus du tableau #}
+    <div class="user-search-panel">
+        <form method="get" action="{{ path('admin_user_index') }}" class="user-search-form" id="userSearchForm">
+            <div class="user-search-input-wrapper">
+                <span class="user-search-icon" aria-hidden="true">🔍</span>
+                <input type="search"
+                       name="search"
+                       id="userSearchInput"
+                       class="user-search-input"
+                       value="{{ search }}"
+                       placeholder="Rechercher par adresse e-mail ou identifiant ID..."
+                       autocomplete="off"
+                       aria-label="Rechercher un utilisateur">
+            </div>
+
+            <div class="user-search-actions">
+                <button type="submit" class="btn btn-primary" id="btnSearchSubmit">
+                    Rechercher
+                </button>
+                {% if search is not empty %}
+                    <a href="{{ path('admin_user_index') }}" class="user-search-reset" title="Réinitialiser la recherche">
+                        ✕ Réinitialiser
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {# Carte principale contenant le tableau et la pagination #}
+    <div class="card" id="userCard">
+        <div class="card-body" style="padding: 0;">
+            <div id="userTableWrapper">
+                {% include 'Backend/User/_table_content.html.twig' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('userSearchForm');
+            const searchInput = document.getElementById('userSearchInput');
+            const tableWrapper = document.getElementById('userTableWrapper');
+            let debounceTimer = null;
+
+            if (!searchForm || !searchInput || !tableWrapper) {
+                return;
+            }
+
+            // Recherche asynchrone non destructive avec debounce
+            function performLiveSearch(term) {
+                const targetUrl = new URL('{{ path('admin_user_index') }}', window.location.origin);
+                if (term.trim() !== '') {
+                    targetUrl.searchParams.set('search', term.trim());
+                }
+                targetUrl.searchParams.set('page', '1');
+                targetUrl.searchParams.set('ajax', '1');
+
+                tableWrapper.style.opacity = '0.55';
+
+                fetch(targetUrl.toString(), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network error');
+                    }
+                    return response.text();
+                })
+                .then(function(html) {
+                    tableWrapper.innerHTML = html;
+                    tableWrapper.style.opacity = '1';
+
+                    // Met à jour l'URL dans la barre d'adresse pour conserver le contexte
+                    const stateUrl = new URL(window.location.href);
+                    if (term.trim() !== '') {
+                        stateUrl.searchParams.set('search', term.trim());
+                    } else {
+                        stateUrl.searchParams.delete('search');
+                    }
+                    stateUrl.searchParams.delete('page');
+                    stateUrl.searchParams.delete('ajax');
+                    window.history.replaceState({}, '', stateUrl.toString());
+                })
+                .catch(function() {
+                    tableWrapper.style.opacity = '1';
+                });
+            }
+
+            // Écouteur sur la saisie pour actualiser en temps réel
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function() {
+                    performLiveSearch(searchInput.value);
+                }, 350);
+            });
+        });
+    </script>
+{% endblock %}

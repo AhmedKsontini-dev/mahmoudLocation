@@ -45,4 +45,27 @@ class ContactRepository extends ServiceEntityRepository
     {
         return $this->findBy(['isPinned' => true], ['createdAt' => 'DESC']);
     }
+
+    /**
+     * Recent recipient addresses for the compose form autocomplete.
+     *
+     * @return list<string>
+     */
+    public function findRecentRecipientAddresses(int $limit = 30): array
+    {
+        $rows = $this->createQueryBuilder('c')
+            ->select('c.email, MAX(c.createdAt) AS HIDDEN latest')
+            ->groupBy('c.email')
+            ->orderBy('latest', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_values(array_map(static fn (array $row): string => (string) $row['email'], $rows));
+    }
+
+    public function countUnread(): int
+    {
+        return $this->count(['isArchived' => false, 'isRead' => false]);
+    }
 }

@@ -3,3 +3,17 @@ auth:
     password_required: 'Password is required.'
     password_min_length: 'The password must contain at least {{ limit }} characters.'
     accept_terms_error: 'You must accept the terms of use.'
+contact:
+    form:
+        first_name_required: 'First name is required.'
+        last_name_required: 'Last name is required.'
+        email_required: 'Email address is required.'
+        email_invalid: 'Email address is invalid.'
+        phone_required: 'Phone number is required.'
+        request_type_required: 'Please select a request type.'
+        service_category_required: 'Please select a service.'
+        subject_required: 'Subject is required.'
+        subject_invalid: 'The subject cannot contain line breaks or control characters.'
+        message_required: 'Message is required.'
+"Veuillez saisir un numéro WhatsApp valide avec son indicatif international si nécessaire.": 'Please enter a valid WhatsApp number, including its international dialling code where required.'
+"La date de l’excursion ne peut pas être passée.": 'The excursion date cannot be in the past.'

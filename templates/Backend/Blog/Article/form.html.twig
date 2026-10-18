@@ -1,0 +1,317 @@
+{% extends 'Backend/base.html.twig' %}
+
+{% block title %}{{ title }} - Admin{% endblock %}
+{% block header_title %}{{ title }}{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-header-description">Renseignez les informations de l’article, ses médias et son contenu.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ path('admin_blog_article_index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+</div>
+
+{% if errorSummary is not empty %}
+    <div class="alert alert-error form-error-summary" role="alert" aria-labelledby="blog-article-error-title">
+        <strong id="blog-article-error-title">
+            Impossible d’enregistrer l’article. {{ errorSummary|length }} erreur{{ errorSummary|length > 1 ? 's' : '' }} {{ errorSummary|length > 1 ? 'ont été détectées' : 'a été détectée' }}.
+        </strong>
+        <ul>
+            {% for error in errorSummary %}
+                <li><a href="#{{ error.target }}" data-error-section="{{ error.section }}" data-error-locale="{{ error.locale ?? '' }}">{{ error.field }} : {{ error.message }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'class': 'blog-article-form'}}) }}
+
+        {% set activeSection = errorSummary[0].section|default('general') %}
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button type="button" class="tab-btn {{ activeSection == 'general' ? 'active' : '' }}" data-tab="general">📋 Général</button>
+                <button type="button" class="tab-btn {{ activeSection == 'media' ? 'active' : '' }}" data-tab="media">🖼️ Médias</button>
+                <button type="button" class="tab-btn {{ activeSection == 'translations' ? 'active' : '' }}" data-tab="translations">🌍 Traductions</button>
+            </div>
+
+            <div class="tabs-content">
+                <div class="tab-pane {{ activeSection == 'general' ? 'active' : '' }}" id="tab-general">
+                    <div class="form-section">
+                        <h3 class="section-title">Informations générales</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {{ form_label(form.status) }}
+                                {{ form_widget(form.status) }}
+                                {{ form_errors(form.status) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.publishedAt) }}
+                                {{ form_widget(form.publishedAt) }}
+                                {{ form_errors(form.publishedAt) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.authorName) }}
+                                {{ form_widget(form.authorName) }}
+                                {{ form_errors(form.authorName) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.readTime) }}
+                                {{ form_widget(form.readTime) }}
+                                {{ form_errors(form.readTime) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.categories) }}
+                                {{ form_widget(form.categories) }}
+                                {{ form_errors(form.categories) }}
+                            </div>
+                            <div class="form-field checkbox-field">
+                                {{ form_widget(form.isFeatured) }}
+                                {{ form_label(form.isFeatured) }}
+                                {{ form_errors(form.isFeatured) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane {{ activeSection == 'media' ? 'active' : '' }}" id="tab-media">
+                    <div class="form-section">
+                        <h3 class="section-title">Image principale</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                {% if article and article.image %}
+                                    <div class="image-preview-box">
+                                        <img src="{{ asset(article.image) }}" alt="{{ article.imageAlt ?? '' }}" style="max-width:200px;max-height:150px;object-fit:cover;border-radius:8px;display:block;">
+                                    </div>
+                                {% endif %}
+                                {{ form_label(form.mainImageFile) }}
+                                {{ form_widget(form.mainImageFile) }}
+                                {{ form_errors(form.mainImageFile) }}
+                            </div>
+                            <div class="form-field">
+                                {{ form_label(form.imageAlt) }}
+                                {{ form_widget(form.imageAlt) }}
+                                {{ form_errors(form.imageAlt) }}
+                            </div>
+                            <div class="form-field checkbox-field">
+                                {{ form_widget(form.deleteMainImage) }}
+                                {{ form_label(form.deleteMainImage) }}
+                                {{ form_errors(form.deleteMainImage) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Galerie d’images</h3>
+                        <div class="media-collection" data-collection="galleryImages" data-prototype="{{ form_widget(form.galleryImages.vars.prototype)|e('html_attr') }}">
+                            {% for gallery in form.galleryImages %}
+                                <div class="media-item" data-collection-item>
+                                    {% if gallery.vars.data and gallery.vars.data.imagePath %}
+                                        <img src="{{ asset(gallery.vars.data.imagePath) }}" alt="" style="max-width:120px;max-height:90px;object-fit:cover;border-radius:6px;display:block;">
+                                    {% endif %}
+                                    <div class="form-grid compact-grid">
+                                        <div class="form-field">{{ form_row(gallery.imageFile) }}</div>
+                                        <div class="form-field">{{ form_row(gallery.imageAlt) }}</div>
+                                        <div class="form-field">{{ form_row(gallery.position) }}</div>
+                                        <div class="form-field checkbox-field">{{ form_row(gallery.delete) }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-add-collection="galleryImages">Ajouter une image</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Vidéos</h3>
+                        <div class="media-collection" data-collection="videos" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+                            {% for video in form.videos %}
+                                <div class="media-item" data-collection-item>
+                                    <div class="form-grid compact-grid">
+                                        <div class="form-field">{{ form_row(video.title) }}</div>
+                                        <div class="form-field">{{ form_row(video.externalUrl) }}</div>
+                                        <div class="form-field">{{ form_row(video.videoFile) }}</div>
+                                        <div class="form-field">{{ form_row(video.position) }}</div>
+                                        <div class="form-field checkbox-field">{{ form_row(video.delete) }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-add-collection="videos">Ajouter une vidéo</button>
+                    </div>
+                </div>
+
+                <div class="tab-pane {{ activeSection == 'translations' ? 'active' : '' }}" id="tab-translations">
+                    <div class="form-section">
+                        {% set activeLocale = 'fr' %}
+                        {% for error in errorSummary %}
+                            {% if error.section == 'translations' and error.locale %}
+                                {% set activeLocale = error.locale %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="translations-tabs">
+                            {% set locales = ['fr', 'en', 'es', 'de', 'it'] %}
+                            {% for locale in locales %}
+                                <button type="button" class="translation-tab {{ activeLocale == locale ? 'active' : '' }}" data-locale="{{ locale }}">{{ locale|upper }}</button>
+                            {% endfor %}
+                        </div>
+
+                        {% for translation in form.translations %}
+                            <div class="translation-pane {{ translation.vars.data.locale == activeLocale ? 'active' : '' }}" data-locale="{{ translation.vars.data.locale }}">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        {{ form_label(translation.title, translation.vars.data.locale == 'fr' ? 'Titre français*' : 'Titre') }}
+                                        {{ form_widget(translation.title) }}
+                                        {{ form_errors(translation.title) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(translation.slug) }}
+                                        {{ form_widget(translation.slug) }}
+                                        {{ form_errors(translation.slug) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(translation.excerpt) }}
+                                        {{ form_widget(translation.excerpt) }}
+                                        {{ form_errors(translation.excerpt) }}
+                                    </div>
+                                    <div class="form-field full-width">
+                                        {{ form_label(translation.content, translation.vars.data.locale == 'fr' ? 'Contenu français*' : 'Contenu') }}
+                                        <div class="rich-text-editor" data-target-id="{{ translation.content.vars.id }}">
+                                            <div class="editor-toolbar">
+                                                <button type="button" data-command="bold"><strong>B</strong></button>
+                                                <button type="button" data-command="italic"><em>I</em></button>
+                                                <button type="button" data-command="formatBlock" data-value="h2">H2</button>
+                                                <button type="button" data-command="insertUnorderedList">• Liste</button>
+                                                <button type="button" data-command="insertOrderedList">1. Liste</button>
+                                                <button type="button" data-command="createLink" data-link="https://">Lien</button>
+                                            </div>
+                                            <div class="editor-content" contenteditable="true">{{ translation.content.vars.value|raw }}</div>
+                                            {{ form_widget(translation.content, {'attr': {'style': 'display:none;'}}) }}
+                                        </div>
+                                        {{ form_errors(translation.content) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(translation.seoTitle) }}
+                                        {{ form_widget(translation.seoTitle) }}
+                                        {{ form_errors(translation.seoTitle) }}
+                                    </div>
+                                    <div class="form-field">
+                                        {{ form_label(translation.seoDescription) }}
+                                        {{ form_widget(translation.seoDescription) }}
+                                        {{ form_errors(translation.seoDescription) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ path('admin_blog_article_index') }}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    tabBtns.forEach(item => item.classList.remove('active'));
+                    tabPanes.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    const target = document.getElementById('tab-' + this.getAttribute('data-tab'));
+                    if (target) {
+                        target.classList.add('active');
+                    }
+                });
+            });
+
+            const translationTabs = document.querySelectorAll('.translation-tab');
+            const translationPanes = document.querySelectorAll('.translation-pane');
+            translationTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const locale = this.getAttribute('data-locale');
+                    translationTabs.forEach(item => item.classList.remove('active'));
+                    translationPanes.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    const pane = document.querySelector(`.translation-pane[data-locale="${locale}"]`);
+                    if (pane) {
+                        pane.classList.add('active');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.form-error-summary a[data-error-section]').forEach(link => {
+                link.addEventListener('click', function () {
+                    const section = this.dataset.errorSection;
+                    tabBtns.forEach(item => {
+                        item.classList.toggle('active', item.dataset.tab === section);
+                    });
+                    tabPanes.forEach(pane => {
+                        pane.classList.toggle('active', pane.id === 'tab-' + section);
+                    });
+
+                    const locale = this.dataset.errorLocale;
+                    if (section === 'translations' && locale) {
+                        translationTabs.forEach(tab => {
+                            tab.classList.toggle('active', tab.dataset.locale === locale);
+                        });
+                        translationPanes.forEach(pane => {
+                            pane.classList.toggle('active', pane.dataset.locale === locale);
+                        });
+                    }
+                });
+            });
+
+            document.querySelectorAll('.rich-text-editor').forEach(editor => {
+                const content = editor.querySelector('.editor-content');
+                const textarea = editor.querySelector('textarea');
+                const targetId = editor.dataset.targetId;
+                const input = document.getElementById(targetId);
+                if (content && input) {
+                    content.innerHTML = input.value || content.innerHTML;
+                    const sync = () => input.value = content.innerHTML;
+                    content.addEventListener('input', sync);
+                    editor.querySelectorAll('[data-command]').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const command = this.dataset.command;
+                            const value = this.dataset.value || null;
+                            document.execCommand(command, false, value);
+                            sync();
+                            content.focus();
+                        });
+                    });
+                }
+            });
+
+            document.querySelectorAll('[data-add-collection]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const collectionName = this.dataset.addCollection;
+                    const collection = document.querySelector('[data-collection="' + collectionName + '"]');
+                    const prototype = collection.dataset.prototype || '';
+                    if (!collection) {
+                        return;
+                    }
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'media-item';
+                    wrapper.setAttribute('data-collection-item', 'true');
+                    wrapper.innerHTML = prototype;
+                    collection.appendChild(wrapper);
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -9,6 +9,7 @@ use App\Repository\SaisonRepository;
 use App\Repository\ExcursionRepository;
 use App\Service\TransferePriceCalculator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -16,8 +17,10 @@ class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home', requirements: ['_locale' => 'fr|en|it|es|de'], defaults: ['_locale' => 'fr'], methods: ['GET'])]
     #[Route('/{_locale}', name: 'app_home_locale', requirements: ['_locale' => 'fr|en|it|es|de'], methods: ['GET'])]
-    public function index(TransfereRepository $transfereRepository, SaisonRepository $saisonRepository, TransferePriceCalculator $priceCalculator, ExcursionRepository $excursionRepository): Response
+    public function index(Request $request, TransfereRepository $transfereRepository, SaisonRepository $saisonRepository, TransferePriceCalculator $priceCalculator, ExcursionRepository $excursionRepository): Response
     {
+        $locale = $request->getLocale();
+
         $why_items = [
             ['icon' => 'directions_car', 'title' => 'home.why.item1_title', 'desc' => 'home.why.item1_desc'],
             ['icon' => 'schedule', 'title' => 'home.why.item2_title', 'desc' => 'home.why.item2_desc'],
@@ -51,6 +54,9 @@ class HomeController extends AbstractController
             ['name' => 'Tozeur & Chott el-Jérid', 'tag' => 'Grand Sud & Oasis', 'desc' => 'Palmeraies géantes, canyons de Chebika, décors de cinéma et mirages salés.', 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDYWiAI3fj15Cqr-Jn4qcrOsx1IZkhrn3pTLTbzHpwckNQnYfbyMoNn5Phbuu3o-ni1Q_Azy23df0c8qK1E7ms2G0AORI5cha7TElZ-MVGiQNSh_arkbYGkS_8H5SrVnJZtc3EKWgth_EYbUIc5vTGeuIjgmxH-mY_5p9VlEbp7Dnx3yOMilmltTp-sw7Jmy1_d9nCyzdTR-nTfx_D2-EsRF0CGCyxGFgJxDsuCiPFRWK53AzVMbtj0jA']
         ];
 
+        $bookingTransfers = $transfereRepository->findBookingData($locale);
+        $bookingExcursions = $excursionRepository->findBookingData($locale);
+
         $reviews = [
             ['initials' => 'TL', 'color' => 'bg-primary-fixed text-primary', 'tag' => 'Location Voiture', 'text' => '"Excellent service, voiture très propre et transfert aéroport ponctuel. Le chauffeur nous attendait à Tunis-Carthage avec une pancarte. Je recommande vivement !"', 'name' => 'Thomas L.', 'origin' => 'France 🇫🇷 • Voyage familial'],
             ['initials' => 'SM', 'color' => 'bg-secondary-fixed text-secondary', 'tag' => 'Navette VIP', 'text' => '"Smooth car rental experience. The Peugeot 208 was spotless and the handover at the airport took less than 5 minutes. Best mobility service in Tunisia."', 'name' => 'Sarah M.', 'origin' => 'Royaume-Uni 🇬🇧 • Séjour Hammamet'],
@@ -70,6 +76,8 @@ class HomeController extends AbstractController
             'steps' => $steps,
             'destinations' => $destinations,
             'reviews' => $reviews,
+            'bookingTransfers' => $bookingTransfers,
+            'bookingExcursions' => $bookingExcursions,
             'registrationForm' => $this->createForm(RegistrationFormType::class, new User())->createView()
         ]);
     }

@@ -29,6 +29,32 @@ class ContactMessageRepository extends ServiceEntityRepository
     }
 
     /**
+     * Messages that could not be sent, newest first.
+     *
+     * @return ContactMessage[]
+     */
+    public function findFailed(): array
+    {
+        return $this->findBy(['status' => ContactMessageStatus::FAILED], ['updatedAt' => 'DESC']);
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function findContactIdsWithSentMessages(): array
+    {
+        $rows = $this->createQueryBuilder('m')
+            ->select('DISTINCT IDENTITY(m.contact) AS contactId')
+            ->andWhere('m.contact IS NOT NULL')
+            ->andWhere('m.status = :status')
+            ->setParameter('status', ContactMessageStatus::SENT)
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_values(array_map(static fn (array $row): int => (int) $row['contactId'], $rows));
+    }
+
+    /**
      * Brouillons, du plus récemment modifié au plus ancien.
      *
      * @return ContactMessage[]

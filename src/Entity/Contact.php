@@ -65,6 +65,9 @@ class Contact
     #[ORM\Column(options: ['default' => false])]
     private bool $isPinned = false;
 
+    #[ORM\Column(options: ['default' => true])]
+    private bool $isRead = false;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -215,6 +218,18 @@ class Contact
     public function setIsPinned(bool $isPinned): static
     {
         $this->isPinned = $isPinned;
+
+        return $this;
+    }
+
+    public function isRead(): bool
+    {
+        return $this->isRead;
+    }
+
+    public function setIsRead(bool $isRead): static
+    {
+        $this->isRead = $isRead;
 
         return $this;
     }

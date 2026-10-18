@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Config\LocaleConfig;
+use App\Form\EventListener\AlignSubmittedTranslationsByLocaleListener;
 use App\Entity\Category;
 use App\Entity\Destination;
 use App\Repository\CategoryRepository;
@@ -165,10 +166,14 @@ class ExcursionType extends AbstractType
                 'by_reference' => false,
                 'label' => false,
             ]);
+
+            // La locale de chaque traduction existante peut arriver dans un ordre
+            // différent d'une requête à l'autre : on aligne la soumission par locale.
+            $builder->get('translations')->addEventSubscriber(new AlignSubmittedTranslationsByLocaleListener());
             
             // Itinéraire
             $itineraryPrototype = new \App\Entity\ExcursionItinerary();
-            foreach (LocaleConfig::getSupportedLocales() as $locale) {
+            foreach (LocaleConfig::getExcursionFormLocales() as $locale) {
                 $trans = new \App\Entity\ExcursionItineraryTranslation();
                 $trans->setLocale($locale);
                 $itineraryPrototype->addTranslation($trans);
@@ -198,7 +203,7 @@ class ExcursionType extends AbstractType
             
             // Features
             $featurePrototype = new \App\Entity\ExcursionFeature();
-            foreach (LocaleConfig::getSupportedLocales() as $locale) {
+            foreach (LocaleConfig::getExcursionFormLocales() as $locale) {
                 $trans = new \App\Entity\ExcursionFeatureTranslation();
                 $trans->setLocale($locale);
                 $featurePrototype->addTranslation($trans);
@@ -217,7 +222,7 @@ class ExcursionType extends AbstractType
             
             // Inclusions
             $inclusionPrototype = new \App\Entity\ExcursionInclusion();
-            foreach (LocaleConfig::getSupportedLocales() as $locale) {
+            foreach (LocaleConfig::getExcursionFormLocales() as $locale) {
                 $trans = new \App\Entity\ExcursionInclusionTranslation();
                 $trans->setLocale($locale);
                 $inclusionPrototype->addTranslation($trans);
@@ -236,7 +241,7 @@ class ExcursionType extends AbstractType
             
             // FAQs
             $faqPrototype = new \App\Entity\ExcursionFaq();
-            foreach (LocaleConfig::getSupportedLocales() as $locale) {
+            foreach (LocaleConfig::getExcursionFormLocales() as $locale) {
                 $trans = new \App\Entity\ExcursionFaqTranslation();
                 $trans->setLocale($locale);
                 $faqPrototype->addTranslation($trans);
@@ -255,7 +260,7 @@ class ExcursionType extends AbstractType
             
             // Badges
             $badgePrototype = new \App\Entity\ExcursionBadge();
-            foreach (LocaleConfig::getSupportedLocales() as $locale) {
+            foreach (LocaleConfig::getExcursionFormLocales() as $locale) {
                 $trans = new \App\Entity\ExcursionBadgeTranslation();
                 $trans->setLocale($locale);
                 $badgePrototype->addTranslation($trans);
