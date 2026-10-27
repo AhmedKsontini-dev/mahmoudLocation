@@ -110,9 +110,6 @@
                     </td>
                     <td>
                         <strong>{{ excursionTitle }}</strong>
-                        {% if excursion.slug %}<br><small class="text-muted">{{ excursion.slug }}</small>{% endif %}
-                        {% if excursion.isBestSeller %}<br><span class="badge badge-warning">Best-seller</span>{% endif %}
-                        {% if excursion.isFeatured %}<span class="badge badge-primary">À la une</span>{% endif %}
                     </td>
                     <td>{{ excursion.category ? (excursion.category.getNameTranslated('fr') ?? 'Sans catégorie') : 'Sans catégorie' }}</td>
                     <td>{{ excursion.destination ? (excursion.destination.getNameTranslated('fr') ?? 'Sans destination') : 'Sans destination' }}</td>

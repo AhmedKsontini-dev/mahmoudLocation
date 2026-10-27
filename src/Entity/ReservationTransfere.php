@@ -22,22 +22,34 @@ class ReservationTransfere
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
+    #[Assert\NotNull(message: 'reservation.transfer.transfere_required')]
     private ?Transfere $transfere = null;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'reservation.transfer.name_required')]
+    #[Assert\Length(min: 2, max: 100, minMessage: 'reservation.transfer.name_short', maxMessage: 'reservation.transfer.name_long')]
+    #[Assert\Regex(
+        pattern: '/^[\p{L}\p{M}]+(?:[\s\-\x27\x{2019}]+[\p{L}\p{M}]+)*$/u',
+        message: 'reservation.transfer.name_invalid',
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 100)]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 180)]
-    #[Assert\NotBlank]
-    #[Assert\Email]
+    #[Assert\NotBlank(message: 'reservation.transfer.email_required')]
+    #[Assert\Email(message: 'reservation.transfer.email_invalid')]
+    #[Assert\Length(max: 180, maxMessage: 'reservation.transfer.email_long')]
     private ?string $email = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'reservation.transfer.phone_required')]
+    #[Assert\Length(max: 50, maxMessage: 'reservation.transfer.phone_long')]
+    #[Assert\Regex(
+        pattern: '/^\+?[0-9](?:[\s().\-]?[0-9]){5,14}$/u',
+        message: 'reservation.transfer.phone_invalid',
+    )]
     private ?string $telephone = null;
 
     #[ORM\Column(type: Types::STRING, enumType: ReservationTransfereType::class)]
@@ -53,7 +65,8 @@ class ReservationTransfere
     private ?string $dropoffLocation = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    #[Assert\NotNull]
+    #[Assert\NotNull(message: 'reservation.transfer.date_required')]
+    #[Assert\GreaterThanOrEqual('today', message: 'reservation.transfer.date_past', groups: ['frontend_booking'])]
     private ?DateTimeImmutable $pickupDate = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
@@ -73,20 +86,24 @@ class ReservationTransfere
     private ?DateTimeImmutable $returnPickupTime = null;
 
     #[ORM\Column]
-    #[Assert\Positive]
+    #[Assert\Range(min: 1, max: 9, notInRangeMessage: 'reservation.transfer.passengers_invalid')]
     private int $nombrePassagers = 1;
 
     #[ORM\Column]
-    #[Assert\PositiveOrZero]
+    #[Assert\Range(min: 0, max: 9, notInRangeMessage: 'reservation.transfer.luggage_invalid')]
     private int $nombreBagages = 0;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Length(max: 2000, maxMessage: 'reservation.transfer.message_long')]
     private ?string $message = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Regex(pattern: '/^$|^[A-Za-z0-9][A-Za-z0-9 \-]{0,48}$/', message: 'reservation.transfer.flight_invalid')]
     private ?string $numeroVol = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100, maxMessage: 'reservation.transfer.airline_invalid')]
+    #[Assert\Regex(pattern: '/[\r\n\x00-\x1F\x7F]/', match: false, message: 'reservation.transfer.airline_invalid')]
     private ?string $compagnieVol = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
@@ -115,15 +132,41 @@ class ReservationTransfere
 
         foreach (['returnPickupLocation' => $this->returnPickupLocation, 'returnDropoffLocation' => $this->returnDropoffLocation, 'returnPickupDate' => $this->returnPickupDate, 'returnPickupTime' => $this->returnPickupTime] as $field => $value) {
             if ($value === null || $value === '') {
-                $context->buildViolation('Cette information est obligatoire pour un aller-retour.')
+                $context->buildViolation('reservation.transfer.return_required')
                     ->atPath($field)
                     ->addViolation();
             }
         }
 
         if ($this->pickupDate !== null && $this->returnPickupDate !== null && $this->returnPickupDate < $this->pickupDate) {
-            $context->buildViolation('La date de retour doit être postérieure ou égale à la date aller.')
+            $context->buildViolation('reservation.transfer.return_before_departure')
                 ->atPath('returnPickupDate')
+                ->addViolation();
+        }
+    }
+
+    /**
+     * Réservation frontend uniquement : si le départ a lieu aujourd'hui, l'heure
+     * de départ saisie doit encore être dans le futur (règle métier : aucune avance
+     * minimale n'est imposée par le projet). Les dates purement passées sont déjà
+     * rejetées par la contrainte GreaterThanOrEqual('today').
+     */
+    #[Assert\Callback(groups: ['frontend_booking'])]
+    public function validatePickupTimeNotPast(ExecutionContextInterface $context): void
+    {
+        if ($this->pickupDate === null || $this->pickupTime === null) {
+            return;
+        }
+
+        $today = new DateTimeImmutable('today');
+        if ($this->pickupDate->format('Y-m-d') !== $today->format('Y-m-d')) {
+            return;
+        }
+
+        $departure = $this->pickupDate->setTime((int) $this->pickupTime->format('H'), (int) $this->pickupTime->format('i'));
+        if ($departure < new DateTimeImmutable('now')) {
+            $context->buildViolation('reservation.transfer.time_past')
+                ->atPath('pickupTime')
                 ->addViolation();
         }
     }

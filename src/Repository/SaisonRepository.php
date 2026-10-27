@@ -17,4 +17,10 @@ class SaisonRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['actif' => true], ['id' => 'DESC']);
     }
+
+    /** @return list<Saison> */
+    public function findActiveSeasons(): array
+    {
+        return $this->findBy(['actif' => true], ['dateDebutMois' => 'ASC', 'dateDebutJour' => 'ASC']);
+    }
 }

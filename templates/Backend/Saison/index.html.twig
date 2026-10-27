@@ -27,8 +27,8 @@
                 <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Du</th>
-                        <th>Au</th>
+                        <th>Du (jour/mois)</th>
+                        <th>Au (jour/mois)</th>
                         <th>Statut</th>
                         <th></th>
                     </tr>
@@ -37,8 +37,8 @@
                     {% for saison in saisons %}
                         <tr>
                             <td>{{ saison.nom }}</td>
-                            <td>{{ saison.dateDebut ? saison.dateDebut|date('d/m') : '-' }}</td>
-                            <td>{{ saison.dateFin ? saison.dateFin|date('d/m') : '-' }}</td>
+                            <td>{% if saison.dateDebutJour and saison.dateDebutMois %}{{ '%02d/%02d'|format(saison.dateDebutJour, saison.dateDebutMois) }}{% else %}-{% endif %}</td>
+                            <td>{% if saison.dateFinJour and saison.dateFinMois %}{{ '%02d/%02d'|format(saison.dateFinJour, saison.dateFinMois) }}{% else %}-{% endif %}</td>
                             <td>
                                 {% if saison.actif %}
                                     <span class="badge badge-success">Active</span>

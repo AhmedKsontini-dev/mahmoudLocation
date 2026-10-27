@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Excursion;
 use App\Entity\ReservationExcursion;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -19,6 +20,9 @@ class ReservationExcursionType extends AbstractType
         $inputClass = 'w-full h-11 px-4 rounded-lg bg-surface-container-lowest border border-surface-container text-on-surface focus:ring-2 focus:ring-primary outline-none';
         $labelClass = 'block font-label-md text-label-md text-on-surface-variant mb-2';
 
+        // Limite maximale de participants définie par l'excursion (null si aucune excursion transmise).
+        $maxParticipants = $options['excursion']?->getMaxParticipants();
+
         $builder
             ->add('dateExcursion', DateType::class, [
                 'label' => 'excursion.detail.form.date',
@@ -35,12 +39,12 @@ class ReservationExcursionType extends AbstractType
             ->add('nombreAdultes', IntegerType::class, [
                 'label' => 'excursion.detail.form.adults',
                 'label_attr' => ['class' => $labelClass],
-                'attr' => ['class' => $inputClass, 'min' => 1],
+                'attr' => ['class' => $inputClass, 'min' => 1, 'max' => $maxParticipants],
             ])
             ->add('nombreEnfants', IntegerType::class, [
                 'label' => 'excursion.detail.form.children',
                 'label_attr' => ['class' => $labelClass],
-                'attr' => ['class' => $inputClass, 'min' => 0],
+                'attr' => ['class' => $inputClass, 'min' => 0, 'max' => $maxParticipants],
             ])
             ->add('lieuPriseEnCharge', TextType::class, [
                 'label' => 'excursion.detail.form.pickup',
@@ -80,6 +84,8 @@ class ReservationExcursionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => ReservationExcursion::class,
             'validation_groups' => ['Default', 'frontend_booking'],
+            'excursion' => null,
         ]);
+        $resolver->setAllowedTypes('excursion', ['null', Excursion::class]);
     }
 }

@@ -353,6 +353,7 @@
                                 </dd>
                             </div>
                             <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.pickup_location'|trans }}</dt><dd class="text-green-800">{{ reservation.lieu }}</dd></div>
+                            <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.total'|trans }}</dt><dd class="text-green-800 font-semibold">{{ reservation.total|price }}</dd></div>
                             <div><dt class="font-semibold text-green-900">{{ 'excursion_reservation.summary.status'|trans }}</dt><dd class="text-green-800"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">{{ 'excursion_reservation.status.pending'|trans }}</span></dd></div>
                         </dl>
                     </div>
@@ -442,13 +443,18 @@
 
             {# Right Column (Sticky Pricing Sidebar) #}
             <div class="lg:col-span-1">
+                {% set initial_adults = bookingForm.nombreAdultes.vars.value|default(0) %}
+                {% set initial_children = bookingForm.nombreEnfants.vars.value|default(0) %}
+                {# Total initial calculé depuis les valeurs du formulaire et les prix réels en base (TND) #}
+                {% set initial_total = (initial_adults * excursion.priceAdult) + (initial_children * (excursion.priceChild ?: 0)) %}
                 <div class="sticky top-28 bg-surface-container-lowest rounded-2xl shadow-lg border border-surface-container p-6">
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-label-md text-label-md text-on-surface-variant">{{ 'excursion.detail.price_per_person'|trans }}</span>
                         <span class="px-2.5 py-1 rounded-md bg-secondary-container text-on-secondary-container font-label-md text-label-md">{{ ('excursion.detail.type.' ~ excursion.type)|trans }}</span>
                     </div>
                     <div class="flex items-end gap-2 mb-6">
-                        <span class="font-display text-display text-primary leading-none" data-price-base="{{ excursion.priceAdult }}">{{ excursion.priceAdult|price }}</span>
+                        {# Prix principal en bleu = montant total dynamique (toujours synchronisé avec #booking-total) #}
+                        <span id="booking-total-main" class="font-display text-display text-primary leading-none" data-price-base="{{ initial_total|number_format(2, '.', '') }}">{{ initial_total|price }}</span>
                     </div>
                     
                     <div class="space-y-3 mb-6 font-body-md text-body-md text-on-surface-variant pb-6 border-b border-surface-container">
@@ -468,10 +474,14 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-end mb-6">
-                        <span class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.from_price'|trans }}</span>
+                    {# Montant total dynamique : les prix de référence (TND) sont transmis depuis la base via data-attributes, jamais en dur #}
+                    <div id="booking-pricing" class="flex justify-between items-end mb-6" data-adult-price="{{ excursion.priceAdult }}" data-child-price="{{ excursion.priceChild ?: 0 }}">
+                        <div>
+                            <span class="font-title-md text-title-md text-on-surface">{{ 'excursion.detail.total_price'|trans }}</span>
+                            <p class="font-label-sm text-label-sm text-outline mt-1">{{ 'excursion.detail.total_hint'|trans }}</p>
+                        </div>
                         <div class="text-right">
-                            <div class="font-headline-md text-headline-md text-on-surface leading-none mb-1" data-price-base="{{ excursion.priceAdult * excursion.minParticipants }}">{{ (excursion.priceAdult * excursion.minParticipants)|price }}</div>
+                            <div id="booking-total" class="font-headline-md text-headline-md text-on-surface leading-none" data-price-base="{{ initial_total|number_format(2, '.', '') }}">{{ initial_total|price }}</div>
                         </div>
                     </div>
 
@@ -567,7 +577,7 @@
                 {% for destinationData in destinations %}
                     {% set destination = destinationData.destination %}
                     <a href="{{ path('app_liste_excursion', {'_locale': _locale, 'destination': destination.id}) }}" class="destination-card">
-                        <img src="{{ asset('assetsFront/images/destination-placeholder.svg') }}" alt="{{ destination.getNameTranslated(_locale) }}">
+                        <img src="{{ asset('assetsFront/images/yassmineguide-256.webp') }}" alt="{{ destination.getNameTranslated(_locale) }}">
                         <div class="destination-card__info">
                             <h3 class="destination-card__name">{{ destination.getNameTranslated(_locale) }}</h3>
                             <p class="destination-card__count">{{ ('destination.excursion_count.' ~ (destinationData.excursionCount == 1 ? 'one' : 'other'))|trans({'%count%': destinationData.excursionCount}) }}</p>
@@ -604,6 +614,39 @@
                     submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
                 }
             });
+        }
+
+        {# Calcul automatique et temps réel : le prix bleu (#booking-total-main) et la ligne « Montant total » (#booking-total) affichent toujours le même montant #}
+        const pricingPanel = document.getElementById('booking-pricing');
+        const totalEls = ['booking-total-main', 'booking-total']
+            .map((id) => document.getElementById(id))
+            .filter((el) => el !== null);
+        if (pricingPanel && totalEls.length > 0 && typeof refreshPriceValues === 'function') {
+            const adultPrice = parseFloat(pricingPanel.dataset.adultPrice) || 0;
+            const childPrice = parseFloat(pricingPanel.dataset.childPrice) || 0;
+            const adultsInput = document.getElementById('{{ bookingForm.nombreAdultes.vars.id }}');
+            const childrenInput = document.getElementById('{{ bookingForm.nombreEnfants.vars.id }}');
+
+            const participantCount = (input) => {
+                const value = parseInt(input && input.value, 10);
+                return Number.isFinite(value) && value > 0 ? value : 0;
+            };
+
+            const recalculateTotal = () => {
+                const totalBase = participantCount(adultsInput) * adultPrice + participantCount(childrenInput) * childPrice;
+                // Stocke la valeur de référence TND brute : navbar.js applique le taux une seule fois (pas de double conversion)
+                totalEls.forEach((el) => { el.dataset.priceBase = String(totalBase); });
+                refreshPriceValues();
+            };
+
+            [adultsInput, childrenInput].forEach((input) => {
+                if (input) {
+                    input.addEventListener('input', recalculateTotal);
+                    input.addEventListener('change', recalculateTotal);
+                }
+            });
+
+            recalculateTotal();
         }
     });
 </script>

@@ -634,3 +634,57 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Simplification des formulaires d'excursion (Nouvelle + Modifier).
+   Ces règles s'appliquent au <form> portant la classe .excursion-form,
+   présente sur les DEUX formulaires (création et modification), et ce
+   fichier CSS n'est chargé que sur la page du formulaire d'excursion.
+   Aucun champ n'est retiré du DOM : les valeurs existantes (et les valeurs
+   par défaut des entrées ajoutées via le prototype) restent soumises et sont
+   conservées en base. Les champs masqués sont tous optionnels ou portent déjà
+   une valeur, donc aucun ne bloque la validation.
+   ───────────────────────────────────────────────────────────── */
+
+/* 1. Informations générales : Prix converti + section URL (Slug).
+      Les deux champs sont optionnels ; leur valeur est préservée. */
+.excursion-form .form-field:has([name="excursion[priceConverted]"]),
+.excursion-form .form-section:has([name="excursion[slug]"]) {
+    display: none !important;
+}
+
+/* 2. Images : masquer le « Texte alternatif » (champ existant et
+      prototype ajouté dynamiquement), sans toucher à l'upload,
+      à la position, à l'image principale ni à la suppression. */
+.excursion-form [data-collection="images"] .form-field:has([name$="[imageAlt]"]),
+.excursion-form [data-collection="images"] input[name$="[imageAlt]"],
+.excursion-form [data-collection="images"] label[for$="_imageAlt"] {
+    display: none !important;
+}
+
+/* 3 à 8. Masquer toute la traduction italienne des sections
+      (Traductions principales, Itinéraire, Caractéristiques, Inclus/Exclus,
+      FAQ, Badges) : chaque sous-élément porte un champ caché [locale] = "it".
+      Le conteneur reste dans le DOM pour transmettre la valeur existante. */
+.excursion-form .sub-collection-item:has(input[name$="[locale]"][value="it"]) {
+    display: none !important;
+}
+
+/* 4. Caractéristiques : Icône, Position, Sous-titre (FR/EN) ;
+      l'italien complet est déjà masqué par la règle ci-dessus. */
+.excursion-form [data-collection="features"] .form-field:has([name$="[icon]"]),
+.excursion-form [data-collection="features"] .form-field:has([name$="[position]"]),
+.excursion-form [data-collection="features"] .sub-field:has([name$="[subtitle]"]) {
+    display: none !important;
+}
+
+/* 5. Inclus / Exclus : Icône et Position. */
+.excursion-form [data-collection="inclusions"] .form-field:has([name$="[icon]"]),
+.excursion-form [data-collection="inclusions"] .form-field:has([name$="[position]"]) {
+    display: none !important;
+}
+
+/* 6. FAQ : Position. */
+.excursion-form [data-collection="faqs"] .form-field:has([name$="[position]"]) {
+    display: none !important;
+}

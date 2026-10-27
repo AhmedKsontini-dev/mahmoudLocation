@@ -264,6 +264,25 @@ class ReservationExcursion
     }
 
     /**
+     * Montant total recalculé côté serveur à partir des prix enregistrés en base
+     * (devise de référence TND). Never stored, never trusted from the browser.
+     */
+    public function getPrixTotalCalcule(): float
+    {
+        if ($this->excursion === null) {
+            return 0.0;
+        }
+
+        $prixAdulte = (float) $this->excursion->getPriceAdult();
+        $prixEnfant = (float) ($this->excursion->getPriceChild() ?? 0);
+
+        return round(
+            ($this->nombreAdultes ?? 0) * $prixAdulte + ($this->nombreEnfants ?? 0) * $prixEnfant,
+            2
+        );
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function getAvailableStatuses(): array

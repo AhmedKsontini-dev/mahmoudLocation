@@ -35,8 +35,9 @@ class TransfereRepository extends ServiceEntityRepository
 
         foreach ($this->findAvailableTransfers() as $transfer) {
             $location = $transfer->getLieuDepartTranslated($locale) ?? $transfer->getLieuDepart();
-            if ($location !== null && $location !== '') {
-                $locations[$location] = $location;
+            if ($location !== null && trim($location) !== '') {
+                $label = preg_replace('/\s+/u', ' ', trim($location)) ?? trim($location);
+                $locations[$this->normalizeDepartureLocation($label)] ??= $label;
             }
         }
 
@@ -44,12 +45,12 @@ class TransfereRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, array{label: string, value: string, id: int, slug: string|null, departure: string, destination: string, duration: string, price: float}>
+     * @return string[]
      */
-    public function findDestinationsByDeparture(string $departure, string $locale = 'fr'): array
+    public function findDistinctDestinationsByDeparture(string $departure, string $locale = 'fr'): array
     {
-        $departure = trim($departure);
-        if ($departure === '') {
+        $normalizedDeparture = $this->normalizeDepartureLocation($departure);
+        if ($normalizedDeparture === '') {
             return [];
         }
 
@@ -57,28 +58,43 @@ class TransfereRepository extends ServiceEntityRepository
 
         foreach ($this->findAvailableTransfers() as $transfer) {
             $pickupLocation = $transfer->getLieuDepartTranslated($locale) ?? $transfer->getLieuDepart();
-            if ($pickupLocation !== $departure) {
+            if ($pickupLocation === null || $this->normalizeDepartureLocation($pickupLocation) !== $normalizedDeparture) {
                 continue;
             }
 
             $dropoffLocation = $transfer->getLieuArriveeTranslated($locale) ?? $transfer->getLieuArrivee();
-            if ($dropoffLocation === null || $dropoffLocation === '') {
+            if ($dropoffLocation === null || trim($dropoffLocation) === '') {
                 continue;
             }
 
-            $destinations[$dropoffLocation] = [
-                'label' => $dropoffLocation,
-                'value' => $dropoffLocation,
-                'id' => $transfer->getId(),
-                'slug' => $transfer->getSlug(),
-                'departure' => $departure,
-                'destination' => $dropoffLocation,
-                'duration' => $transfer->getDureeTranslated($locale) ?? '',
-                'price' => (float) $transfer->getPrixNormal(),
-            ];
+            $label = preg_replace('/\s+/u', ' ', trim($dropoffLocation)) ?? trim($dropoffLocation);
+            $destinations[$this->normalizeLocation($label)] ??= $label;
         }
 
         return array_values($destinations);
+    }
+
+    public function findAvailableTransferByLocations(string $departure, string $destination, string $locale = 'fr'): ?Transfere
+    {
+        $normalizedDeparture = $this->normalizeDepartureLocation($departure);
+        $normalizedDestination = $this->normalizeLocation($destination);
+        if ($normalizedDeparture === '' || $normalizedDestination === '') {
+            return null;
+        }
+
+        foreach ($this->findAvailableTransfers() as $transfer) {
+            $transferDeparture = $transfer->getLieuDepartTranslated($locale) ?? $transfer->getLieuDepart();
+            $transferDestination = $transfer->getLieuArriveeTranslated($locale) ?? $transfer->getLieuArrivee();
+            if ($transferDeparture !== null
+                && $transferDestination !== null
+                && $this->normalizeDepartureLocation($transferDeparture) === $normalizedDeparture
+                && $this->normalizeLocation($transferDestination) === $normalizedDestination
+            ) {
+                return $transfer;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -108,6 +124,24 @@ class TransfereRepository extends ServiceEntityRepository
         }
 
         return $data;
+    }
+
+    private function normalizeLocation(string $location): string
+    {
+        $normalized = preg_replace('/\s+/u', ' ', trim($location)) ?? trim($location);
+
+        return mb_strtolower($normalized);
+    }
+
+    private function normalizeDepartureLocation(string $location): string
+    {
+        $normalized = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', trim($location));
+        $normalized = mb_strtolower($normalized === false ? trim($location) : $normalized);
+        $normalized = str_replace(["'", '`'], '', $normalized);
+        $normalized = preg_replace('/\b(?:aeroport|airport|aireport|aereport)\b/u', ' airport ', $normalized) ?? $normalized;
+        $normalized = preg_replace('/[^a-z0-9]+/u', ' ', $normalized) ?? $normalized;
+
+        return preg_replace('/\s+/u', ' ', trim($normalized)) ?? trim($normalized);
     }
 
     /**

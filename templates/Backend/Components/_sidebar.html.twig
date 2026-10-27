@@ -1,5 +1,5 @@
 {% set current_route = app.request.attributes.get('_route')|default('') %}
-{% set excursions_open = current_route starts with 'admin_excursion' or current_route starts with 'admin_reservation_excursion' or current_route starts with 'admin_category' or current_route starts with 'admin_destination' %}
+{% set excursions_open = current_route starts with 'admin_excursion' or current_route starts with 'admin_reservation_excursion' %}
 {% set transfers_open = current_route starts with 'admin_transfere' or (current_route starts with 'admin_reservation' and not (current_route starts with 'admin_reservation_excursion')) %}
 {% set blog_open = current_route starts with 'admin_blog' %}
 {% set users_open = current_route starts with 'admin_user' %}
@@ -29,8 +29,6 @@
             <ul class="menu-submenu {{ excursions_open ? 'is-open' : '' }}" id="submenu-excursions" {% if not excursions_open %}inert{% endif %}>
                 <li><a href="{{ path('admin_excursion_index') }}" class="menu-link {{ current_route starts with 'admin_excursion' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_excursion' ? 'page' : 'false' }}">Gestion des excursions</a></li>
                 <li><a href="{{ path('admin_reservation_excursion_index') }}" class="menu-link {{ current_route starts with 'admin_reservation_excursion' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_reservation_excursion' ? 'page' : 'false' }}">Réservations d'excursions</a></li>
-                <li><a href="{{ path('admin_category_index') }}" class="menu-link {{ current_route starts with 'admin_category' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_category' ? 'page' : 'false' }}">Catégories d'excursions</a></li>
-                <li><a href="{{ path('admin_destination_index') }}" class="menu-link {{ current_route starts with 'admin_destination' ? 'active' : '' }}" aria-current="{{ current_route starts with 'admin_destination' ? 'page' : 'false' }}">Destinations</a></li>
             </ul>
         </li>
 

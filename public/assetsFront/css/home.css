@@ -16,3 +16,33 @@
 ::-webkit-scrollbar {
     display: none;
 }
+
+/* ---------- Cartes d'excursions (section « Explorez la Tunisie ») ---------- */
+.home-excursion-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Badge superposé sur l'image — conteneur .relative déjà assuré côté Twig */
+.home-excursion-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+    padding: 5px 12px;
+    border-radius: 9999px;
+    background-color: #00386d;
+    color: #ffffff;
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 2px 6px rgba(0, 56, 109, 0.35);
+}

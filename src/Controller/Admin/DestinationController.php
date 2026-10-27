@@ -159,18 +159,20 @@ class DestinationController extends AbstractController
 
     /**
      * Recherche JSON utilisée par le champ « Destination » du formulaire d'excursion.
+     * Sans requête (q vide), la liste complète des destinations est renvoyée afin
+     * d'être affichée dès l'ouverture du champ, sans obliger l'utilisateur à saisir du texte.
      */
     #[Route('/search', name: 'search', methods: ['GET'])]
     public function search(Request $request): JsonResponse
     {
         $query = trim((string) $request->query->get('q', ''));
 
-        if ('' === $query) {
-            return new JsonResponse(['results' => []]);
-        }
+        $destinations = '' === $query
+            ? $this->repository->findBy([], ['id' => 'ASC'])
+            : $this->repository->searchByTranslatedName($query);
 
         $results = [];
-        foreach ($this->repository->searchByTranslatedName($query) as $destination) {
+        foreach ($destinations as $destination) {
             $results[] = $this->serializeDestination($destination);
         }
 

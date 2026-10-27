@@ -35,19 +35,43 @@
         </div>
         
         <div class="form-section">
-            <h2 class="form-section-title">Période</h2>
-            
-            <div class="form-row form-row-2">
-                <div class="form-group">
-                    {{ form_label(form.dateDebut) }}
-                    {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.dateDebut) }}
+            <h2 class="form-section-title">Période (récurrente chaque année)</h2>
+            <p class="page-header-description">Choisissez uniquement le jour et le mois : la saison se répète automatiquement chaque année, sans année à saisir.</p>
+
+            <div class="form-group">
+                <label class="form-check-label">Début de la saison forte</label>
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        {{ form_label(form.dateDebutJour) }}
+                        {{ form_widget(form.dateDebutJour, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.dateDebutJour) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.dateDebutMois) }}
+                        {{ form_widget(form.dateDebutMois, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.dateDebutMois) }}
+                    </div>
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.dateFin) }}
-                    {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.dateFin) }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-check-label">Fin de la saison forte</label>
+                <div class="form-row form-row-2">
+                    <div class="form-group">
+                        {{ form_label(form.dateFinJour) }}
+                        {{ form_widget(form.dateFinJour, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.dateFinJour) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.dateFinMois) }}
+                        {{ form_widget(form.dateFinMois, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.dateFinMois) }}
+                    </div>
                 </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_errors(form) }}
             </div>
         </div>
         

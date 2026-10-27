@@ -37,13 +37,16 @@ class DetailExcursionController extends AbstractController
             ->setExcursion($excursion)
             ->setStatut(ReservationExcursion::STATUS_PENDING);
 
-        $bookingForm = $this->createForm(ReservationExcursionType::class, $reservation);
+        $bookingForm = $this->createForm(ReservationExcursionType::class, $reservation, ['excursion' => $excursion]);
         $bookingForm->handleRequest($request);
 
         if ($bookingForm->isSubmitted() && $bookingForm->isValid()) {
             $reservation
                 ->setExcursion($excursion)
                 ->setStatut(ReservationExcursion::STATUS_PENDING);
+
+            // Montant total recalculé côté serveur depuis les prix en base : le navigateur n'est jamais crédité.
+            $prixTotal = $reservation->getPrixTotalCalcule();
 
             try {
                 $entityManager->persist($reservation);
@@ -57,6 +60,7 @@ class DetailExcursionController extends AbstractController
                     'heure' => $reservation->getHeureDepart()?->format('H:i'),
                     'adultes' => $reservation->getNombreAdultes(),
                     'enfants' => $reservation->getNombreEnfants(),
+                    'total' => $prixTotal,
                     'lieu' => $reservation->getLieuPriseEnCharge(),
                 ]);
 

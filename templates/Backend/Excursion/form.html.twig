@@ -37,7 +37,7 @@
 
 <div class="card">
     <div class="card-body">
-        {{ form_start(form, {'attr': {'class': 'excursion-form', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'attr': {'class': 'excursion-form' ~ (is_new ? '' : ' is-edit'), 'novalidate': 'novalidate'}}) }}
         
         <div class="tabs-container">
             <div class="tabs-nav">
@@ -74,13 +74,13 @@
                             </div>
                             <div class="form-field">
                                 {{ form_label(form.destination) }}
-                                <div class="searchable-select" data-field="destination" data-url="{{ path('admin_destination_search') }}" data-create-url="{{ path('admin_destination_create') }}" data-create-token="{{ csrf_token('admin_destination_create') }}">
-                                    <input type="text" class="form-control searchable-input" placeholder="Rechercher ou créer une destination..." autocomplete="off">
+                                <div class="searchable-select" data-field="destination" data-show-all="true" data-url="{{ path('admin_destination_search') }}" data-create-url="{{ path('admin_destination_create') }}" data-create-token="{{ csrf_token('admin_destination_create') }}">
+                                    <input type="text" class="form-control searchable-input" placeholder="Sélectionner ou rechercher une destination..." autocomplete="off">
                                     <div class="searchable-results" style="display: none;"></div>
                                 </div>
                                 {{ form_widget(form.destination, {'attr': {'style': 'display: none'}}) }}
                                 {{ form_errors(form.destination) }}
-                                <small class="text-muted">Ce champ est requis. Tapez pour rechercher ou créer une nouvelle destination.</small>
+                                <small class="text-muted">Ce champ est requis. Cliquez pour afficher toutes les destinations, ou tapez pour rechercher.</small>
                             </div>
                             <div class="form-field">
                                 {{ form_label(form.type) }}
@@ -202,11 +202,12 @@
                         <div class="translations-tabs">
                             <button type="button" class="translation-tab active" data-locale="fr">🇫🇷 Français</button>
                             <button type="button" class="translation-tab" data-locale="en">🇬🇧 English</button>
-                            <button type="button" class="translation-tab" data-locale="it">🇮🇹 Italiano</button>
                         </div>
                         
                         {% for translation in form.translations %}
-                            <div class="translation-pane {{ translation.vars.data.locale == 'fr' ? 'active' : '' }}" data-locale="{{ translation.vars.data.locale }}">
+                            {% set locale = translation.vars.data.locale|default('') %}
+                            {% if locale != 'it' %}
+                            <div class="translation-pane {{ locale == 'fr' ? 'active' : '' }}" data-locale="{{ locale }}">
                                 {{ form_widget(translation.locale) }}
                                 <div class="form-field">
                                     {{ form_label(translation.title) }}
@@ -239,6 +240,14 @@
                                     {{ form_errors(translation.metaDescription) }}
                                 </div>
                             </div>
+                            {% else %}
+                            {# Aucun onglet ni bloc italien visible (création comme modification).
+                               Les valeurs italiennes déjà enregistrées en modification restent
+                               transmises via ce conteneur caché, pour ne rien écraser ni supprimer. #}
+                            <div class="translation-pane translation-locale-hidden" data-locale="it" style="display: none;">
+                                {{ form_widget(translation) }}
+                            </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

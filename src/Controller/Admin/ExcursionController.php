@@ -119,6 +119,7 @@ class ExcursionController extends AbstractController
             'form' => $form,
             'excursion' => $excursion,
             'title' => 'Nouvelle excursion',
+            'is_new' => true,
         ]);
     }
 
@@ -161,6 +162,7 @@ class ExcursionController extends AbstractController
             'form' => $form,
             'excursion' => $excursion,
             'title' => 'Modifier l\'excursion',
+            'is_new' => false,
         ]);
     }
 

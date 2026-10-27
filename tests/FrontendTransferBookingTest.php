@@ -20,7 +20,9 @@ class FrontendTransferBookingTest extends WebTestCase
         $slug = 'translator-booking-' . $suffix;
         $email = 'booking-' . $suffix . '@example.test';
 
-        $currency = (new CurrencyRate())
+        // Réutilise la devise TND si déjà présente (d'autres suites peuvent l'avoir insérée) pour rester idempotent.
+        $existingTnd = $entityManager->getRepository(CurrencyRate::class)->findOneBy(['code' => 'TND']);
+        $currency = $existingTnd ?? (new CurrencyRate())
             ->setCode('TND')
             ->setSymbol('DT')
             ->setRate('1.000000');
@@ -32,8 +34,10 @@ class FrontendTransferBookingTest extends WebTestCase
             ->setSlug($slug)
             ->setActif(true);
 
-        $entityManager->persist($currency);
         $entityManager->persist($transfer);
+        if ($existingTnd === null) {
+            $entityManager->persist($currency);
+        }
         $entityManager->flush();
 
         try {
@@ -73,9 +77,11 @@ class FrontendTransferBookingTest extends WebTestCase
             if ($managedTransfer !== null) {
                 $entityManager->remove($managedTransfer);
             }
-            $managedCurrency = $entityManager->getRepository(CurrencyRate::class)->find($currency->getId());
-            if ($managedCurrency !== null) {
-                $entityManager->remove($managedCurrency);
+            if ($existingTnd === null) {
+                $managedCurrency = $entityManager->getRepository(CurrencyRate::class)->find($currency->getId());
+                if ($managedCurrency !== null) {
+                    $entityManager->remove($managedCurrency);
+                }
             }
             $entityManager->flush();
         }

@@ -2,6 +2,8 @@
 
 {% block title %}{{ 'home.hero.title'|trans }} - Yassmine Guide{% endblock %}
 
+{% block meta_description %}<meta name="description" content="{{ 'home.hero.subtitle'|trans|striptags|trim }}">{% endblock %}
+
 {% block stylesheets %}
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -81,15 +83,15 @@
 </button>
 </div>
 {# Transfer Form #}
-<form class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-5 items-end" id="panel-transfer" onsubmit="handleSearchSubmit(event, 'Transfert')">
+<form class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-5 items-end" id="panel-transfer" data-search-url="{{ path('app_transfer_search', {'_locale': app.request.locale}) }}" onsubmit="handleSearchSubmit(event, 'Transfert')">
 <div class="flex flex-col gap-1.5">
 <label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
 <span class="material-symbols-outlined text-primary text-[18px]">flight_land</span>
 <span>{{ 'home.booking.lbl_departure'|trans }}</span>
 </label>
 <div class="relative">
-<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="transfer-departure" data-empty-label="{{ 'home.booking.no_transfer_available'|trans({}, 'messages', app.request.locale)|default('Aucun transfert disponible') }}">
-<option value="">{{ 'home.booking.no_transfer_available'|trans({}, 'messages', app.request.locale)|default('Aucun transfert disponible') }}</option>
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="transfer-departure" data-placeholder-label="{{ 'home.booking.select_departure'|trans }}" data-empty-label="{{ 'home.booking.no_transfer_available'|trans }}" data-invalid-label="{{ 'home.booking.no_transfer_available'|trans }}" required>
+<option value="">{{ 'home.booking.select_departure'|trans }}</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
 </div>
@@ -100,8 +102,8 @@
 <span>{{ 'home.booking.lbl_destination'|trans }}</span>
 </label>
 <div class="relative">
-<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="transfer-destination" data-empty-label="{{ 'home.booking.no_destination_available'|trans({}, 'messages', app.request.locale)|default('Aucune destination disponible') }}">
-<option value="">{{ 'home.booking.no_destination_available'|trans({}, 'messages', app.request.locale)|default('Aucune destination disponible') }}</option>
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="transfer-destination" data-destinations-url="{{ path('app_transfer_destinations', {'_locale': app.request.locale}) }}" data-placeholder-label="{{ 'home.booking.select_departure_first'|trans }}" data-select-label="{{ 'home.booking.select_destination'|trans }}" data-loading-label="{{ 'home.booking.loading_destinations'|trans }}" data-empty-label="{{ 'home.booking.no_destination_available'|trans }}" data-error-label="{{ 'home.booking.destinations_load_error'|trans }}" disabled required>
+<option value="">{{ 'home.booking.select_departure_first'|trans }}</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
 </div>
@@ -128,7 +130,6 @@
 </div>
 </div>
 <div>
-<input id="transfer-slug" name="transfer_slug" type="hidden" value="">
 <button class="w-full h-12 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all font-bold" type="submit">
 <span class="material-symbols-outlined text-[20px]">search</span>
 <span>{{ 'home.booking.btn_search_transfer'|trans }}</span>
@@ -315,7 +316,12 @@
 <a href="{{ path('app_transfer_show_locale', {'_locale': app.request.locale, 'slug': transfere.slug}) }}" 
    class="block relative overflow-hidden rounded-2xl p-6 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group min-h-[320px]" 
    style="background-image: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%), url('{{ transfer_image }}'); background-size: cover; background-position: center;"
-   data-transfer-card data-normal-price="{{ transfere.prixNormal }}" data-season-price="{{ transfere.prixSaisonForte }}"{% if activeSeason %} data-season-start="{{ activeSeason.dateDebut|date('m-d') }}" data-season-end="{{ activeSeason.dateFin|date('m-d') }}"{% endif %}>
+   data-transfer-card
+   data-normal-price="{{ transfere.prixNormal }}"
+   data-season-price="{{ transfere.prixSaisonForte }}"
+   data-season-periods="{{ periodesSaison|json_encode|e('html_attr') }}"
+   data-season-conflict="{{ 'transfer.form.season_overlap'|trans }}"
+   data-price-unavailable="{{ 'transfer.form.price_unavailable'|trans }}">
 <div>
 <div class="flex items-center justify-between mb-4">
 <span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">{{ transfere.getDureeTranslated(app.request.locale) }}</span>
@@ -378,15 +384,19 @@
 {% set included_item = excursion.inclusions|filter(item => item.type == 'included')|first %}
 {% set first_feature = excursion.features|first %}
 {% set unesco_badge = excursion.badges|filter(badge => badge.isActive and (badge.getTextTranslated(excursionLocale)|lower) == 'unesco')|first %}
+{% set image_badge = excursion.badges|filter(badge => badge.isActive and badge.getTextTranslated(excursionLocale))|first %}
 <div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
 <div>
 <div class="relative h-52 w-full bg-cover bg-center overflow-hidden" style="background-image: url('{{ main_image ? asset(main_image.imagePath) : 'https://placehold.co/600x400/e2e8f0/64748b?text=Image+Indisponible' }}');">
-<span class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-bold">{% if excursion.durationHours %}{{ excursion.durationHours }}h{% endif %}{% if excursion.durationMinutes %}{{ excursion.durationHours ? ' ' }}{{ excursion.durationMinutes }}min{% endif %}</span>
-{% if unesco_badge %}<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white font-label-sm text-label-sm font-bold">{{ unesco_badge.getTextTranslated(excursionLocale) }}</span>{% endif %}
+<span class="absolute top-3 left-3">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm font-bold">{% if excursion.durationHours %}{{ excursion.durationHours }}h{% endif %}{% if excursion.durationMinutes %}{{ excursion.durationHours ? ' ' }}{{ excursion.durationMinutes }}min{% endif %}</span>
+</span>
+{% if image_badge %}<span class="home-excursion-badge">{{ image_badge.getTextTranslated(excursionLocale) }}</span>{% endif %}
+{% if unesco_badge and unesco_badge is not same as(image_badge) %}<span class="absolute right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white font-label-sm text-label-sm font-bold" style="top: {{ image_badge ? '44px' : '12px' }};">{{ unesco_badge.getTextTranslated(excursionLocale) }}</span>{% endif %}
 </div>
 <div class="p-5">
 <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-2">{{ excursion.getTitleTranslated(excursionLocale) }}</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-4">{{ excursion.getDescriptionTranslated(excursionLocale) }}</p>
+<p class="home-excursion-desc font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-4">{{ excursion.getDescriptionTranslated(excursionLocale)|striptags }}</p>
 <div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-4">
 <span class="material-symbols-outlined text-[16px] text-primary">location_on</span> {{ excursion.destination.getNameTranslated(excursionLocale) }}
 {% if included_item or first_feature %}
@@ -515,9 +525,9 @@
 
 {% block javascripts %}
 <script>
-  window.transferBookingData = {{ bookingTransfers|json_encode|raw }};
+  window.transferDepartureLocations = {{ bookingDepartures|json_encode|raw }};
   window.excursionBookingData = {{ bookingExcursions|json_encode|raw }};
 </script>
-<script src="{{ asset('assetsFront/js/navbar.js') }}?v=2"></script>
-<script src="{{ asset('assetsFront/js/home.js') }}"></script>
+<script src="{{ asset('assetsFront/js/navbar.js') }}?v=4"></script>
+<script src="{{ asset('assetsFront/js/home.js') }}?v=7"></script>
 {% endblock %}

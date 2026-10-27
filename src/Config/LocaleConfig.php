@@ -6,7 +6,12 @@ final class LocaleConfig
 {
     public const SUPPORTED_LOCALES = ['fr', 'en', 'es', 'de', 'it'];
 
-    public const EXCURSION_FORM_LOCALES = ['fr', 'en', 'it'];
+    // Les formulaires d'excursion (création et modification) n'exposent plus
+    // que le français et l'anglais. L'italien reste une langue supportée du site
+    // (SUPPORTED_LOCALES) et les traductions italiennes déjà enregistrées ne sont
+    // jamais supprimées : en modification elles voyagent dans le formulaire via
+    // un conteneur masqué pour ne pas être écrasées.
+    public const EXCURSION_FORM_LOCALES = ['fr', 'en'];
 
     public const TRANSFERE_FORM_LOCALES = ['fr', 'en'];
 

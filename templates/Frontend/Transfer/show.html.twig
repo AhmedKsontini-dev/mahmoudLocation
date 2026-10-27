@@ -1,6 +1,6 @@
 {% extends 'baseFront.html.twig' %}
 
-{% block title %}{{ transfer.getLieuDepartTranslated(locale) }} - {{ transfer.getLieuArriveeTranslated(locale) }}{% endblock %}
+{% block title %}{{ transfer.getLieuDepartTranslated(locale) }} - {{ transfer.getLieuArriveeTranslated(locale) }} - Yassmine Guide{% endblock %}
 
 {% block stylesheets %}
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -14,6 +14,7 @@
     <style>
         @layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } }
         ::-webkit-scrollbar { display: none; }
+        .reservation-invalid { border-color: #dc2626 !important; box-shadow: 0 0 0 1px #dc2626 !important; }
     </style>
 {% endblock %}
 
@@ -60,6 +61,7 @@
     <div class="max-w-[1240px] mx-auto px-4 md:px-8 xl:px-12 py-6 md:py-8">
         <div class="flex flex-col lg:flex-row gap-8 items-start">
             <div class="w-full lg:w-2/3">
+                {% form_theme reservationForm _self %}
                 {{ form_start(reservationForm, {attr: {class: 'space-y-6', id: 'fast-booking-form'}}) }}
                 {{ form_errors(reservationForm) }}
                 <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 md:p-6 shadow-sm">
@@ -263,10 +265,18 @@
                                 <span class="text-[12px] text-[#1e8e3e] font-semibold mt-0.5 block">{{ 'transfer.form.pay_driver'|trans }}</span>
                             </div>
                             <div class="text-right">
-                                <span class="text-2xl md:text-3xl font-extrabold text-primary price-val" id="side-total-price" data-base="{{ prix }}">{{ prix|price }}</span>
+                                <span
+                                    class="text-xs font-semibold text-primary price-val"
+                                    id="side-total-price"
+                                    data-normal-price="{{ transfer.prixNormal }}"
+                                    data-season-price="{{ transfer.prixSaisonForte }}"
+                                    data-season-periods="{{ periodesSaison|json_encode|e('html_attr') }}"
+                                    aria-live="polite"
+                                >{{ 'transfer.form.price_date_required'|trans }}</span>
                                 <span class="block text-[11px] text-outline mt-1" id="side-equiv">{{ 'transfer.form.conversion_included'|trans }}</span>
                             </div>
                         </div>
+                        <p class="mt-2 text-xs text-error" id="price-message" aria-live="polite"></p>
                     </div>
 
                     <label class="flex items-start gap-2.5 cursor-pointer my-4 text-[12px] text-on-surface-variant leading-snug">
@@ -302,7 +312,7 @@
     </div>
 </main>
 
-<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-4" id="success-modal"><div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl"><div class="text-center mb-5"><div class="w-12 h-12 rounded-full bg-tertiary-container/10 mx-auto flex items-center justify-center text-tertiary mb-3"><span class="material-symbols-outlined text-[28px]">done_all</span></div><h3 class="text-lg font-bold">{{ 'transfer.form.modal_title'|trans }}</h3><p class="text-xs text-on-surface-variant mt-1">{{ 'transfer.form.modal_desc'|trans }}</p></div><div class="bg-surface-container-low rounded-xl p-3.5 mb-5 text-xs space-y-2"><div class="flex justify-between"><span class="text-outline">{{ 'transfer.form.modal_trip'|trans }}</span><span class="font-medium">{{ transfer.getLieuDepartTranslated(locale) }} ➔ {{ transfer.getLieuArriveeTranslated(locale) }}</span></div><div class="flex justify-between font-bold pt-1 border-t border-surface-container-high"><span>{{ 'transfer.form.modal_total'|trans }}</span><span class="text-primary">{{ prix|price }}</span></div></div><button class="w-full h-11 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs" onclick="closeModal()" type="button">{{ 'transfer.form.modal_close'|trans }}</button></div></div>
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-4" id="success-modal"><div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl"><div class="text-center mb-5"><div class="w-12 h-12 rounded-full bg-tertiary-container/10 mx-auto flex items-center justify-center text-tertiary mb-3"><span class="material-symbols-outlined text-[28px]">done_all</span></div><h3 class="text-lg font-bold">{{ 'transfer.form.modal_title'|trans }}</h3><p class="text-xs text-on-surface-variant mt-1">{{ 'transfer.form.modal_desc'|trans }}</p></div><div class="bg-surface-container-low rounded-xl p-3.5 mb-5 text-xs space-y-2"><div class="flex justify-between"><span class="text-outline">{{ 'transfer.form.modal_trip'|trans }}</span><span class="font-medium">{{ transfer.getLieuDepartTranslated(locale) }} ➔ {{ transfer.getLieuArriveeTranslated(locale) }}</span></div><div class="flex justify-between font-bold pt-1 border-t border-surface-container-high"><span>{{ 'transfer.form.modal_total'|trans }}</span><span class="text-primary" id="modal-total-price">{{ 'transfer.form.price_date_required'|trans }}</span></div></div><button class="w-full h-11 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-bold text-xs" onclick="closeModal()" type="button">{{ 'transfer.form.modal_close'|trans }}</button></div></div>
 
 {% include 'Frontend/Components/_footer.html.twig' %}
 {% endblock %}
@@ -313,25 +323,104 @@
     const translations = {
         conversion_included: {{ 'transfer.form.conversion_included'|trans|json_encode|raw }},
         one_way: {{ 'transfer.form.one_way'|trans|json_encode|raw }},
-        return: {{ 'transfer.form.return'|trans|json_encode|raw }}
+        return: {{ 'transfer.form.return'|trans|json_encode|raw }},
+        price_date_required: {{ 'transfer.form.price_date_required'|trans|json_encode|raw }},
+        season_overlap: {{ 'transfer.form.season_overlap'|trans|json_encode|raw }},
+        price_unavailable: {{ 'transfer.form.price_unavailable'|trans|json_encode|raw }}
     };
-    const bookingState = { basePrice: Number({{ prix|json_encode|raw }}), vehicleName: 'Transfert', counts: { adults: 2, luggage: 2, cabin: 1, kids: 0 } };
+    const bookingState = { basePrice: null, vehicleName: 'Transfert', counts: { adults: 2, luggage: 2, cabin: 1, kids: 0 } };
     const transferTypeField = document.getElementById('reservation_transfere_form_transfereType');
     const field = name => document.querySelector(`[name="reservation_transfere_form[${name}]"]`);
-    function formatBookingPrice(value) { return (value * (window.currentCurrency ? window.currentCurrency.rate : 1)).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + (window.currentCurrency ? window.currentCurrency.code : 'TND'); }
+    const priceElement = document.getElementById('side-total-price');
+    const priceMessage = document.getElementById('price-message');
+    const activeSeasons = JSON.parse(priceElement.dataset.seasonPeriods);
+    function formatBookingPrice(value) { const currency = window.currentCurrency || { code: 'TND', symbol: 'DT', rate: 1, position: 'suffix' }; const formatted = (value * currency.rate).toLocaleString(currency.code === 'USD' ? 'en-US' : 'fr-FR', { minimumFractionDigits: currency.code === 'TND' ? 3 : 2, maximumFractionDigits: currency.code === 'TND' ? 3 : 2 }); return currency.position === 'prefix' ? `${currency.symbol}${formatted}` : `${formatted} ${currency.symbol}`; }
+    function priceForDate(date) {
+        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: translations.price_date_required };
+        const matchingPeriods = activeSeasons.filter(period => {
+            const value = Number(date.slice(5, 7)) * 100 + Number(date.slice(8, 10));
+            const start = Number(period.startMonth) * 100 + Number(period.startDay);
+            const end = Number(period.endMonth) * 100 + Number(period.endDay);
+            return start <= end ? (value >= start && value <= end) : (value >= start || value <= end);
+        });
+        if (matchingPeriods.length > 1) return { error: translations.season_overlap };
+        const price = matchingPeriods.length ? priceElement.dataset.seasonPrice : priceElement.dataset.normalPrice;
+        if (price === undefined || price === '') return { error: translations.price_unavailable };
+        const value = Number(price);
+        return Number.isFinite(value) ? { value } : { error: translations.price_unavailable };
+    }
     function updateVehicle(element) { bookingState.basePrice = Number(element.dataset.price); bookingState.vehicleName = element.dataset.name; document.getElementById('side-base-price').dataset.base = bookingState.basePrice; document.getElementById('summary-vehicle').textContent = bookingState.vehicleName; recalculateBooking(); }
     function toggleOpt(type, cost, checkbox) { bookingState[type === 'baby' ? 'babySeat' : 'meetGreet'] = checkbox.checked ? cost : 0; document.getElementById(type === 'baby' ? 'side-baby-row' : 'side-greet-row').classList.toggle('hidden', !checkbox.checked); recalculateBooking(); }
     function adjustFormCount(type, delta) { const input = document.getElementById('reservation_transfere_form_nombre' + (type === 'passengers' ? 'Passagers' : 'Bagages')); const count = document.getElementById('count-' + type); const min = type === 'passengers' ? 1 : 0; const next = Number(input.value || min) + delta; if (next >= min && next <= 9) { input.value = next; count.textContent = next; updateSummary(); } }
-    function recalculateBooking() { const total = bookingState.basePrice * (transferTypeField.value === 'return' ? 2 : 1); document.getElementById('side-total-price').dataset.base = total; document.getElementById('side-total-price').textContent = formatBookingPrice(total); document.getElementById('side-equiv').textContent = translations.conversion_included; updateSummary(); }
-    function updateTypeButtons() { const isReturn = transferTypeField.value === 'return'; document.querySelectorAll('.transfer-type-button').forEach(button => { const active = button.dataset.transferType === transferTypeField.value; button.classList.toggle('border-primary', active); button.classList.toggle('bg-primary/5', active); button.classList.toggle('text-primary', active); button.classList.toggle('border-surface-container-high', !active); }); document.getElementById('return-fields').classList.toggle('hidden', !isReturn); document.getElementById('summary-return-block').classList.toggle('hidden', !isReturn); document.getElementById('summary-type').textContent = isReturn ? translations.return : translations.one_way; }
+    function recalculateBooking() {
+        const outbound = priceForDate(field('pickupDate').value);
+        const returnLeg = transferTypeField.value === 'return' ? priceForDate(field('returnPickupDate').value) : null;
+        const error = outbound.error || returnLeg?.error;
+        if (error) {
+            bookingState.basePrice = null;
+            delete priceElement.dataset.base;
+            priceElement.classList.remove('text-2xl', 'md:text-3xl', 'font-extrabold');
+            priceElement.classList.add('text-xs', 'font-semibold');
+            priceElement.textContent = error;
+            document.getElementById('modal-total-price').textContent = error;
+            priceMessage.textContent = error;
+            updateSummary();
+            return false;
+        }
+        const total = outbound.value + (returnLeg ? returnLeg.value : 0);
+        bookingState.basePrice = total;
+        priceElement.dataset.base = total;
+        priceElement.classList.remove('text-xs', 'font-semibold');
+        priceElement.classList.add('text-2xl', 'md:text-3xl', 'font-extrabold');
+        priceElement.textContent = formatBookingPrice(total);
+        document.getElementById('modal-total-price').textContent = priceElement.textContent;
+        priceMessage.textContent = '';
+        document.getElementById('side-equiv').textContent = translations.conversion_included;
+        updateSummary();
+        return true;
+    }
+    function updateTypeButtons() { const isReturn = transferTypeField.value === 'return'; field('returnPickupDate').required = isReturn; document.querySelectorAll('.transfer-type-button').forEach(button => { const active = button.dataset.transferType === transferTypeField.value; button.classList.toggle('border-primary', active); button.classList.toggle('bg-primary/5', active); button.classList.toggle('text-primary', active); button.classList.toggle('border-surface-container-high', !active); }); document.getElementById('return-fields').classList.toggle('hidden', !isReturn); document.getElementById('summary-return-block').classList.toggle('hidden', !isReturn); document.getElementById('summary-type').textContent = isReturn ? translations.return : translations.one_way; }
     function updateSummary() { const value = name => field(name)?.value || '-'; document.getElementById('summary-client-name').textContent = value('nom'); document.getElementById('summary-client-email').textContent = value('email'); document.getElementById('summary-client-phone').textContent = value('telephone'); document.getElementById('summary-pickup').textContent = value('pickupLocation'); document.getElementById('summary-dropoff').textContent = value('dropoffLocation'); document.getElementById('summary-date').textContent = value('pickupDate'); document.getElementById('summary-time').textContent = value('pickupTime'); document.getElementById('summary-passengers').textContent = value('nombrePassagers'); document.getElementById('summary-luggage').textContent = value('nombreBagages'); document.getElementById('summary-airline').textContent = value('compagnieVol'); document.getElementById('summary-flight-number').textContent = value('numeroVol'); const isReturn = transferTypeField.value === 'return'; if (isReturn) { document.getElementById('summary-return-pickup').textContent = value('returnPickupLocation'); document.getElementById('summary-return-dropoff').textContent = value('returnDropoffLocation'); document.getElementById('summary-return-date').textContent = value('returnPickupDate'); document.getElementById('summary-return-time').textContent = value('returnPickupTime'); } }
     function submitBooking() { document.getElementById('fast-booking-form').requestSubmit(); }
     function closeModal() { document.getElementById('success-modal').classList.add('hidden'); document.getElementById('success-modal').classList.remove('flex'); }
     document.querySelectorAll('.transfer-type-button').forEach(button => button.addEventListener('click', () => { transferTypeField.value = button.dataset.transferType; transferTypeField.dispatchEvent(new Event('change', { bubbles: true })); }));
     transferTypeField.addEventListener('change', () => { updateTypeButtons(); recalculateBooking(); });
     document.querySelectorAll('#fast-booking-form input, #fast-booking-form textarea').forEach(input => input.addEventListener('input', updateSummary));
+    ['pickupDate', 'returnPickupDate'].forEach(name => field(name).addEventListener('change', recalculateBooking));
+    const todayStr = new Date().toISOString().slice(0, 10);
+    function syncReturnMinDate() {
+        const pickup = field('pickupDate').value;
+        field('returnPickupDate').min = (pickup && pickup > todayStr) ? pickup : todayStr;
+    }
+    field('pickupDate').addEventListener('change', syncReturnMinDate);
+    let formSubmitted = false;
+    document.getElementById('fast-booking-form').addEventListener('submit', event => {
+        if (!recalculateBooking()) { event.preventDefault(); formSubmitted = false; return; }
+        if (formSubmitted) { event.preventDefault(); return; }
+        formSubmitted = true;
+        const submitButton = document.querySelector('button[form="fast-booking-form"][type="submit"]');
+        if (submitButton) { submitButton.disabled = true; submitButton.classList.add('opacity-60', 'cursor-not-allowed'); }
+    });
     window.addEventListener('currency:changed', recalculateBooking);
+    syncReturnMinDate();
     updateTypeButtons();
     updateSummary();
+    recalculateBooking();
+    // Marquage visuel des champs invalides renvoyés par le serveur (validation Symfony, source de vérité).
+    document.querySelectorAll('#fast-booking-form .reservation-field-errors').forEach(err => {
+        const scope = err.parentElement;
+        const control = scope && scope.querySelector('input:not([type="hidden"]), select, textarea');
+        if (control) { control.classList.add('reservation-invalid'); control.setAttribute('aria-invalid', 'true'); }
+    });
 </script>
+{% endblock %}
+
+{% block form_errors %}
+    {%- if errors is defined and errors|length > 0 -%}
+    <ul class="reservation-field-errors mt-1 space-y-0.5 list-none p-0">
+        {%- for error in errors -%}
+        <li class="text-[11px] font-semibold text-red-600">{{ error.message }}</li>
+        {%- endfor -%}
+    </ul>
+    {%- endif -%}
 {% endblock %}

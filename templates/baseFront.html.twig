@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
 
         <title>{% block title %} {% endblock %}</title>
+        {% block meta_description %}{% endblock %}
+        {% block meta_robots %}{% endblock %}
 
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">

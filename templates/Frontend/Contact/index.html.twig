@@ -2,6 +2,8 @@
 
 {% block title %}{{ 'contact.page_title'|trans }} - Yassmine Guide{% endblock %}
 
+{% block meta_description %}<meta name="description" content="{{ 'contact.hero.subtitle'|trans|striptags|trim }}">{% endblock %}
+
 {% block stylesheets %}
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -228,41 +230,40 @@
                         {{ 'contact.urgent.subtitle'|trans }}
                     </p>
                     <div class="space-y-3 relative z-10">
-                        <a class="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all group backdrop-blur-sm" href="tel:+21671000000">
+                        {# Téléphone / WhatsApp : le clic ouvre la conversation WhatsApp #}
+                        <a class="flex items-center justify-between p-3 rounded-xl bg-white text-on-secondary-fixed shadow-md hover:bg-surface-container-lowest transition-all group" href="https://wa.me/21624651548" rel="noopener noreferrer" target="_blank">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform">
-                                    <span class="material-symbols-outlined">call</span>
-                                </div>
-                                <div>
-                                    <p class="font-label-sm text-label-sm text-white/80 uppercase tracking-wider">{{ 'contact.urgent.phone_label'|trans }}</p>
-                                    <p class="font-headline-sm text-headline-sm text-white font-bold tracking-tight">+216 71 000 000</p>
-                                </div>
-                            </div>
-                            <span class="material-symbols-outlined text-white/70 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                        </a>
-                        <a class="flex items-center justify-between p-3 rounded-xl bg-white text-on-secondary-fixed shadow-md hover:bg-surface-container-lowest transition-all group" href="https://wa.me/21671000000" rel="noopener" target="_blank">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-[#25D366]/20 text-[#075E54] flex items-center justify-center shrink-0">
+                                <div class="w-10 h-10 rounded-full bg-[#25D366]/20 text-[#075E54] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                                     <span class="material-symbols-outlined text-2xl font-bold">chat</span>
                                 </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <p class="font-label-md text-label-md font-bold text-on-surface">{{ 'contact.urgent.whatsapp_label'|trans }}</p>
-                                        <span class="inline-block w-2 h-2 rounded-full bg-[#25D366]"></span>
-                                    </div>
-                                    <p class="font-label-sm text-label-sm text-on-surface-variant">{{ 'contact.urgent.whatsapp_status'|trans }}</p>
+                                <div class="min-w-0">
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ 'contact.urgent.phone_label'|trans }}</p>
+                                    <p class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">+216 24 651 548</p>
                                 </div>
                             </div>
                             <span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">open_in_new</span>
                         </a>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
-                            <div class="p-3 rounded-xl bg-white/10 backdrop-blur-sm flex flex-col">
-                                <span class="font-label-sm text-label-sm text-white/70">{{ 'contact.urgent.support_general'|trans }}</span>
-                                <span class="font-label-md text-label-md font-semibold text-white truncate">contact@tunisiatravel.com</span>
+                        {# E-mail : le clic ouvre le logiciel de messagerie #}
+                        <a class="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all group backdrop-blur-sm" href="mailto:yassmineGuide@gmail.com">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform">
+                                    <span class="material-symbols-outlined">mail</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-label-sm text-label-sm text-white/80 uppercase tracking-wider">{{ 'contact.urgent.email_label'|trans }}</p>
+                                    <p class="font-headline-sm text-headline-sm text-white font-bold tracking-tight truncate">yassmineGuide@gmail.com</p>
+                                </div>
                             </div>
-                            <div class="p-3 rounded-xl bg-white/10 backdrop-blur-sm flex flex-col">
-                                <span class="font-label-sm text-label-sm text-white/70">{{ 'contact.urgent.support_airport'|trans }}</span>
-                                <span class="font-label-md text-label-md font-semibold text-white truncate">urgence@tunisiatravel.com</span>
+                            <span class="material-symbols-outlined text-white/70 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </a>
+                        {# Disponibilité : Assistance 24/7 #}
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
+                                <span class="material-symbols-outlined">support_agent</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-label-sm text-label-sm text-white/80 uppercase tracking-wider">{{ 'contact.urgent.availability_label'|trans }}</p>
+                                <p class="font-headline-sm text-headline-sm text-white font-bold tracking-tight">{{ 'contact.urgent.availability_value'|trans }}</p>
                             </div>
                         </div>
                     </div>

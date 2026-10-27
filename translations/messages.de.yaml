@@ -54,6 +54,9 @@ transfer:
         total_due: Gesamtbetrag
         pay_driver: "Bezahlen beim Fahrer"
         conversion_included: "Umrechnung enthalten"
+        price_date_required: "Wählen Sie ein Datum, um den Preis anzuzeigen."
+        season_overlap: "Dieses Datum fällt in mehrere aktive Saisons. Bitte kontaktieren Sie unser Team."
+        price_unavailable: "Der geltende Preis ist nicht konfiguriert. Die Buchung kann nicht gesendet werden."
         accept_conditions: "Ich akzeptiere die Bedingungen (kostenlose Stornierung bis 12h vor Reise)."
         confirm_booking: "Meine Buchung bestätigen"
         no_payment_required: "Heute keine Onlinezahlung erforderlich"
@@ -110,6 +113,11 @@ home:
         tab_excursion: "Touren & Ausflüge"
         lbl_departure: Abholort
         lbl_destination: Zielort
+        select_departure: "Abholort auswählen"
+        select_departure_first: "Bitte zuerst einen Abholort auswählen"
+        select_destination: "Zielort auswählen"
+        loading_destinations: "Ziele werden geladen..."
+        destinations_load_error: "Ziele konnten nicht geladen werden"
         no_transfer_available: "Kein Transfer verfügbar"
         no_destination_available: "Kein Ziel verfügbar"
         no_excursion_available: "Keine Tour verfügbar"
@@ -192,32 +200,17 @@ navbar:
     contact: Kontakt
 footer:
     brand: "Yassmine Guide"
-    description: "Executive Mobilität, Premium-Mietwagen und sichere private Transfers in Tunesien. Nationale Lizenz & ISO-zertifizierter Transport."
-    license: "Lizenz A n°7482"
-    insurance: "AXA Pro Versicherung"
-    services_title: Dienste
-    service_rental: Mietwagen
-    service_transfers: "Flughafen- & Stadttransfers"
-    service_excursions: "Private Ausflüge & Touren"
-    service_vip: VIP-Chauffeur-Service
-    service_corp: "Corporate & Event Mobilität"
-    dest_title: Reiseziele
-    dest_tunis: "Tunis & Karthago"
-    dest_sousse: "Sousse & Port El Kantaoui"
-    dest_hammamet: "Hammamet & Nabeul"
-    dest_monastir: "Monastir & Enfidha"
-    dest_djerba: "Insel Djerba"
-    dest_tozeur: "Tozeur & Tiefer Süden"
+    description: "Entdecken Sie Tunesien neu mit Yassmine Guide: Transfers, private Ausflüge und personalisierte Rundreisen für sorgloses Reisen."
+    services_title: "Unsere Leistungen"
+    service_transfers: "Flughafen- und Stadttransfers"
+    service_circuits: "Rundreisen"
+    service_excursions: "Private Ausflüge"
+    links_title: "Schnelllinks"
+    link_blog: "Blog"
     support_title: "24/7 Support"
-    support_callcenter: Callcenter
-    support_whatsapp: "VIP Direct WhatsApp"
-    support_client: Kundenservice
-    support_hq: Hauptsitz
-    support_address: "Avenue Habib Bourguiba, Tunis"
-    copyright: "Copyright © 2026 Yassmine Guide. Alle Rechte vorbehalten."
-    legal: Impressum
-    cgv: AGB
-    privacy: Datenschutz
+    support_phone: "Telefon"
+    support_email: "E-Mail"
+    copyright: "Copyright © %year% Yassmine Guide. Alle Rechte vorbehalten."
 auth:
     account: "Mein Konto"
     connect: Anmelden
@@ -314,7 +307,10 @@ contact:
         badge: "Prioritätskanal 24/7"
         title: "Benötigen Sie sofortige Hilfe?"
         subtitle: "Unerwartete Flugverspätung, Fahrerlokalisierung am Terminal oder letzte Minute Änderung? Unsere Bodenteams reagieren ohne Verzögerung."
-        phone_label: "24/7 Notfallleitung"
+        phone_label: "Telefon / WhatsApp"
+        email_label: "E-Mail"
+        availability_label: "Verfügbarkeit"
+        availability_value: "24/7 Support"
         whatsapp_label: "Direkter WhatsApp Chat"
         whatsapp_status: "Derzeit online • Antwort ~2 min"
         support_general: "Allgemeiner Support"

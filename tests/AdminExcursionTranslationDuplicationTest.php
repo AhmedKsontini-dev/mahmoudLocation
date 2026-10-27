@@ -463,21 +463,24 @@ class AdminExcursionTranslationDuplicationTest extends WebTestCase
             $html = (string) $client->getResponse()->getContent();
 
             // Panneaux principaux rendus depuis l'entité : une entrée cachée par locale.
-            preg_match_all('/name="excursion\[translations\]\[\d+\]\[locale\]" value="(fr|en|it)"/', $html, $matches);
+            // Les formulaires d'excursion n'exposent plus que FR et EN (l'italien a
+            // été retiré des formulaires ; les traductions italiennes existantes ne
+            // sont ni créées ni écrasées par ce formulaire).
+            preg_match_all('/name="excursion\[translations\]\[\d+\]\[locale\]" value="(fr|en)"/', $html, $matches);
             $mainLocales = $matches[1];
             sort($mainLocales);
-            self::assertSame(['en', 'fr', 'it'], $mainLocales, 'Les trois panneaux principaux portent un champ caché de locale non vide.');
+            self::assertSame(['en', 'fr'], $mainLocales, 'Les deux panneaux principaux portent un champ caché de locale non vide.');
 
-            // Prototypes JS : chaque section imbriquée doit embarquer les trois locales.
+            // Prototypes JS : chaque section imbriquée doit embarquer les deux locales.
             foreach (['itineraries', 'features', 'inclusions', 'faqs', 'badges'] as $section) {
                 $node = $crawler->filter('.collection-container[data-collection="'.$section.'"]')->first();
                 self::assertSame(1, $node->count(), 'Le conteneur de collection '.$section.' existe.');
                 $prototype = (string) $node->attr('data-prototype');
 
-                preg_match_all('/name="excursion\['.$section.'\]\[__name__\]\[translations\]\[\d+\]\[locale\]" value="(fr|en|it)"/', $prototype, $matches);
+                preg_match_all('/name="excursion\['.$section.'\]\[__name__\]\[translations\]\[\d+\]\[locale\]" value="(fr|en)"/', $prototype, $matches);
                 $prototypeLocales = $matches[1];
                 sort($prototypeLocales);
-                self::assertSame(['en', 'fr', 'it'], $prototypeLocales, 'Le prototype '.$section.' poste toujours une locale valide pour chaque traduction.');
+                self::assertSame(['en', 'fr'], $prototypeLocales, 'Le prototype '.$section.' poste toujours une locale valide pour chaque traduction.');
             }
 
             // Page d'édition : idem pour les entités existantes (panneaux rendus).

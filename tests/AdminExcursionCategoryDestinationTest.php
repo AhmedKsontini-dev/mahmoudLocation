@@ -273,10 +273,43 @@ class AdminExcursionCategoryDestinationTest extends WebTestCase
     }
 
     /**
-     * Le champ Catégorie porte l'attribut d'ouverture immédiate ; Destination
-     * conserve son comportement initial (aucun attribut ajouté).
+     * Le champ Destination doit afficher toutes les destinations dès le premier clic,
+     * sans saisie préalable : la recherche sans requête renvoie la liste complète en JSON.
      */
-    public function testCategoryFieldOpensFullListOnClickWithoutTouchingDestination(): void
+    public function testDestinationListIsServedWithoutQuery(): void
+    {
+        [$client, $entityManager, $admin] = $this->createAdmin($suffix = bin2hex(random_bytes(4)));
+        [, $destinationToken] = $this->openExcursionForm($client);
+
+        try {
+            $name = 'Destination liste '.$suffix;
+            $client->jsonRequest('POST', '/admin/destinations/create', ['name' => $name, '_token' => $destinationToken]);
+            $created = $this->assertJsonResponse($client->getResponse(), Response::HTTP_CREATED);
+
+            // Sans aucune saisie (q vide), la liste complète est fournie.
+            $client->jsonRequest('GET', '/admin/destinations/search?q=');
+            $search = $this->assertJsonResponse($client->getResponse(), Response::HTTP_OK);
+            self::assertNotEmpty($search['results'], 'La liste complète des destinations doit être servie dès le premier clic.');
+
+            $match = null;
+            foreach ($search['results'] as $result) {
+                if ($result['id'] === $created['id']) {
+                    $match = $result;
+                    break;
+                }
+            }
+            self::assertNotNull($match, 'La destination créée figure dans la liste sans avoir à rechercher.');
+            self::assertSame($name, $match['name'], 'Le nom de la destination est fourni pour l’affichage.');
+        } finally {
+            $this->cleanupDestinations($entityManager, $admin, $created ?? null);
+        }
+    }
+
+    /**
+     * Les champs Catégorie et Destination doivent tous deux porter l'attribut
+     * d'ouverture immédiate de la liste complète au clic.
+     */
+    public function testCategoryAndDestinationFieldsOpenFullListOnClick(): void
     {
         [$client, $entityManager, $admin] = $this->createAdmin($suffix = bin2hex(random_bytes(4)));
 
@@ -289,8 +322,8 @@ class AdminExcursionCategoryDestinationTest extends WebTestCase
                 'Le champ Catégorie doit afficher la liste complète dès le clic.');
 
             $destinationField = $crawler->filter('.searchable-select[data-field="destination"]')->first();
-            self::assertNull($destinationField->attr('data-show-all'),
-                'Le champ Destination doit conserver son comportement initial.');
+            self::assertSame('true', $destinationField->attr('data-show-all'),
+                'Le champ Destination doit afficher la liste complète dès le clic.');
         } finally {
             $this->cleanup($entityManager, $admin, null);
         }

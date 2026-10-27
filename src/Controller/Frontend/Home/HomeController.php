@@ -5,10 +5,10 @@ namespace App\Controller\Frontend\Home;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\TransfereRepository;
-use App\Repository\SaisonRepository;
 use App\Repository\ExcursionRepository;
 use App\Service\TransferePriceCalculator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +17,7 @@ class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home', requirements: ['_locale' => 'fr|en|it|es|de'], defaults: ['_locale' => 'fr'], methods: ['GET'])]
     #[Route('/{_locale}', name: 'app_home_locale', requirements: ['_locale' => 'fr|en|it|es|de'], methods: ['GET'])]
-    public function index(Request $request, TransfereRepository $transfereRepository, SaisonRepository $saisonRepository, TransferePriceCalculator $priceCalculator, ExcursionRepository $excursionRepository): Response
+    public function index(Request $request, TransfereRepository $transfereRepository, TransferePriceCalculator $priceCalculator, ExcursionRepository $excursionRepository): Response
     {
         $locale = $request->getLocale();
 
@@ -54,7 +54,7 @@ class HomeController extends AbstractController
             ['name' => 'Tozeur & Chott el-Jérid', 'tag' => 'Grand Sud & Oasis', 'desc' => 'Palmeraies géantes, canyons de Chebika, décors de cinéma et mirages salés.', 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDYWiAI3fj15Cqr-Jn4qcrOsx1IZkhrn3pTLTbzHpwckNQnYfbyMoNn5Phbuu3o-ni1Q_Azy23df0c8qK1E7ms2G0AORI5cha7TElZ-MVGiQNSh_arkbYGkS_8H5SrVnJZtc3EKWgth_EYbUIc5vTGeuIjgmxH-mY_5p9VlEbp7Dnx3yOMilmltTp-sw7Jmy1_d9nCyzdTR-nTfx_D2-EsRF0CGCyxGFgJxDsuCiPFRWK53AzVMbtj0jA']
         ];
 
-        $bookingTransfers = $transfereRepository->findBookingData($locale);
+        $bookingDepartures = $transfereRepository->findDepartureLocations($locale);
         $bookingExcursions = $excursionRepository->findBookingData($locale);
 
         $reviews = [
@@ -67,7 +67,7 @@ class HomeController extends AbstractController
             'why_items' => $why_items,
             'vehicles' => $vehicles,
             'transferts' => $transferts,
-            'activeSeason' => $saisonRepository->findActive(),
+            'periodesSaison' => $priceCalculator->getPeriodesActives(),
             'transfertPrices' => array_reduce($transferts, function (array $prices, $transfere) use ($priceCalculator): array {
                 $prices[$transfere->getId()] = $priceCalculator->getPrixPourDate($transfere);
                 return $prices;
@@ -76,9 +76,22 @@ class HomeController extends AbstractController
             'steps' => $steps,
             'destinations' => $destinations,
             'reviews' => $reviews,
-            'bookingTransfers' => $bookingTransfers,
+            'bookingDepartures' => $bookingDepartures,
             'bookingExcursions' => $bookingExcursions,
             'registrationForm' => $this->createForm(RegistrationFormType::class, new User())->createView()
+        ]);
+    }
+
+    #[Route('/{_locale}/transfers/destinations', name: 'app_transfer_destinations', requirements: ['_locale' => 'fr|en|it|es|de'], methods: ['GET'])]
+    public function transferDestinations(Request $request, TransfereRepository $transfereRepository): JsonResponse
+    {
+        $departure = trim($request->query->getString('departure'));
+        if ($departure === '') {
+            return $this->json(['error' => 'A departure location is required.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json([
+            'destinations' => $transfereRepository->findDistinctDestinationsByDeparture($departure, $request->getLocale()),
         ]);
     }
 }

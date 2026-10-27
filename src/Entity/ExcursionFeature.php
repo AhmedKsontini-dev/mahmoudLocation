@@ -23,7 +23,7 @@ class ExcursionFeature
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Excursion $excursion = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $icon = null;
 
     #[ORM\Column]

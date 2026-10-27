@@ -18,7 +18,6 @@
     </div>
     <div class="page-actions">
         <a href="{{ path('admin_excursion_index') }}" class="btn btn-secondary">← Retour à la liste</a>
-        <a href="{{ path('admin_excursion_edit', {id: excursion.id}) }}" class="btn btn-primary">✏️ Modifier</a>
     </div>
 </div>
 
@@ -32,11 +31,23 @@
             <div class="detail-grid">
                 <div class="detail-item">
                     <span class="detail-label">Catégorie</span>
-                    <span class="detail-value">{{ excursion.category?.name ?? '-' }}</span>
+                    <span class="detail-value">
+                        {% if excursion.category %}
+                            <span class="badge badge-primary">{% if excursion.category.icon %}{{ excursion.category.icon }} {% endif %}{{ excursion.category.getNameTranslated('fr') ?? excursion.category.slug }}</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Aucune catégorie</span>
+                        {% endif %}
+                    </span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Destination</span>
-                    <span class="detail-value">{{ excursion.destination?.name ?? '-' }}</span>
+                    <span class="detail-value">
+                        {% if excursion.destination %}
+                            <span class="badge badge-info">📍 {{ excursion.destination.getNameTranslated('fr') ?? excursion.destination.slug }}</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Aucune destination</span>
+                        {% endif %}
+                    </span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Type</span>
@@ -107,6 +118,18 @@
                 <div class="detail-item">
                     <span class="detail-label">Slug</span>
                     <span class="detail-value">{{ excursion.slug ?? '-' }}</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="detail-label">Badges</span>
+                    <span class="detail-value badges-value">
+                        {% if excursion.badges|length > 0 %}
+                            {% for badge in excursion.badges %}
+                                <span class="badge {{ badge.isActive ? 'badge-primary' : 'badge-secondary' }}">{{ badge.getTranslation('fr')?.text ?? (badge.badgeType|replace({'_': ' '})|capitalize) }}{% if not badge.isActive %} · inactif{% endif %}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="badge badge-secondary">Aucun badge</span>
+                        {% endif %}
+                    </span>
                 </div>
             </div>
         </div>
@@ -255,44 +278,6 @@
             {% else %}
                 <p class="text-muted">Aucune FAQ</p>
             {% endif %}
-        </div>
-    </div>
-
-    <!-- Badges -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">🏷️ Badges ({{ excursion.badges|length }})</h3>
-        </div>
-        <div class="card-body">
-            {% if excursion.badges|length > 0 %}
-                <div class="badges-list">
-                    {% for badge in excursion.badges %}
-                        <div class="badge-item {{ badge.isActive ? '' : 'inactive' }}">
-                            <span class="badge-type">{{ badge.badgeType|replace({'_': ' '})|capitalize }}</span>
-                            {% if badge.getTranslation('fr')?.text %}
-                                <span class="badge-text">{{ badge.getTranslation('fr').text }}</span>
-                            {% endif %}
-                            {% if not badge.isActive %}<span class="badge-status">Inactive</span>{% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-muted">Aucun badge</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="card">
-        <div class="card-body">
-            <div class="detail-actions">
-                <a href="{{ path('admin_excursion_edit', {id: excursion.id}) }}" class="btn btn-primary">✏️ Modifier</a>
-                <form method="post" action="{{ path('admin_excursion_delete', {id: excursion.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette excursion ?');" class="inline-form">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ excursion.id) }}">
-                    <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
-                </form>
-                <a href="{{ path('admin_excursion_index') }}" class="btn btn-secondary">← Retour à la liste</a>
-            </div>
         </div>
     </div>
 </div>
