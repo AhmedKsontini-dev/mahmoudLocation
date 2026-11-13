@@ -8,6 +8,7 @@ use App\Entity\Destination;
 use App\Entity\Excursion;
 use App\Entity\ExcursionTranslation;
 use App\Entity\ReservationExcursion;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -18,6 +19,12 @@ class FrontendExcursionBookingTest extends WebTestCase
         $client = static::createClient();
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $fixture = $this->createExcursion($entityManager);
+        $user = (new User())
+            ->setEmail($fixture['email'])
+            ->setPassword('test-password');
+        $entityManager->persist($user);
+        $entityManager->flush();
+        $client->loginUser($user);
 
         try {
             $crawler = $client->request('GET', '/fr/excursion/'.$fixture['slug']);
@@ -68,8 +75,14 @@ class FrontendExcursionBookingTest extends WebTestCase
             self::assertNotNull($reservations[0]->getDateExcursion());
             self::assertNotNull($reservations[0]->getHeureDepart());
             self::assertNotNull($reservations[0]->getCreatedAt());
+            self::assertSame($user->getId(), $reservations[0]->getUser()?->getId());
         } finally {
             $this->removeExcursionFixture($entityManager, $fixture);
+            $storedUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $fixture['email']]);
+            if ($storedUser !== null) {
+                $entityManager->remove($storedUser);
+                $entityManager->flush();
+            }
         }
     }
 

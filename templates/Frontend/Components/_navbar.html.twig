@@ -1,21 +1,72 @@
-<header class="fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,78,162,0.06)]">
-    <div class="h-20 w-full px-margin-desktop flex items-center justify-between">
-        <div class="flex items-center gap-3">
+<header class="frontend-navbar-header fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,78,162,0.06)]">
+    <div class="frontend-navbar-content {{ app.user ? 'frontend-navbar-authenticated' : 'frontend-navbar-guest' }} h-20 w-full px-margin-desktop flex items-center justify-between">
+        <button class="frontend-menu-overlay" data-frontend-menu-overlay type="button" aria-label="{{ 'navbar.close_menu'|trans }}"></button>
+        <div class="frontend-header-brand flex items-center gap-3">
             <a href="{{ path('app_home_locale', {'_locale': app.request.locale}) }}" aria-label="{{ 'navbar.home'|trans }}" class="flex items-center gap-2 sm:gap-2.5 transition-transform hover:scale-[1.03]">
-                <img alt="Yassmine Guide" class="h-10 sm:h-12 md:h-14 w-auto object-contain" src="{{ asset('assetsFront/images/yassmineguide-256.webp') }}">
+                <img alt="Yassmine Guide - Transferts privés et excursions en Tunisie" class="h-10 sm:h-12 md:h-14 w-auto object-contain" src="{{ asset('assetsFront/images/yassmineguide-256.webp') }}">
                 <span class="navbar-brand-name font-bold leading-none text-base sm:text-xl md:text-2xl"><span class="navbar-brand-name-primary">Yassmine</span> <span class="navbar-brand-name-accent">Guide</span></span>
             </a>
         </div>
-        <nav class="hidden xl:flex items-center gap-6" data-active-classes="text-primary font-title-md">
+        <nav class="frontend-nav hidden xl:flex items-center gap-6" id="frontendNavigation" data-frontend-nav aria-label="Navigation principale" data-active-classes="text-primary font-title-md">
+            <button class="frontend-menu-close" data-frontend-menu-close type="button" aria-label="{{ 'navbar.close_menu'|trans }}">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
+            <a class="frontend-nav-brand" href="{{ path('app_home_locale', {'_locale': app.request.locale}) }}" aria-label="{{ 'navbar.home'|trans }}">
+                <img alt="Yassmine Guide" src="{{ asset('assetsFront/images/yassmineguide-256.webp') }}">
+            </a>
             <a aria-current="page" class="transition-colors text-primary font-title-md" href="{{ path('app_home_locale', {'_locale': app.request.locale}) }}">{{ 'navbar.home'|trans }}</a>
             <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="{{ path('app_liste_excursion', {'_locale': app.request.locale}) }}">{{ 'navbar.excursions'|trans }}</a>
             <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">{{ 'navbar.about'|trans }}</a>
             <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="{{ path('app_contact_locale', {'_locale': app.request.locale}) }}">{{ 'navbar.contact'|trans }}</a>
             <a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="{{ path('app_blog_index', {'_locale': app.request.locale}) }}">Blog</a>
+            {% if app.user %}
+                <div class="frontend-nav-auth relative" data-user-menu>
+                    <button aria-expanded="false" aria-haspopup="true" aria-label="{{ 'auth.account'|trans }}" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm hover:scale-105 transition-transform" data-user-menu-toggle type="button">
+                        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+                    </button>
+                    <div class="auth-user-menu" data-user-menu-panel hidden>
+                        <a href="{{ path('app_profile_locale', {'_locale': app.request.locale}) }}">{{ 'auth.profile'|trans }}</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_transfere_index') }}">Admin</a>
+                        {% endif %}
+                        <a href="{{ logout_path() }}">{{ 'auth.logout'|trans }}</a>
+                    </div>
+                </div>
+            {% else %}
+                <button class="frontend-nav-auth frontend-nav-connect auth-connect-button" data-auth-open="login" type="button">{{ 'auth.connect'|trans }}</button>
+            {% endif %}
+            <div class="frontend-nav-contact" aria-label="Contact">
+                <a href="mailto:yassmineGuide@gmail.com" aria-label="Envoyer un e-mail">
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M3.5 6.5h17v11h-17z"></path>
+                        <path d="m4 7 8 6 8-6"></path>
+                    </svg>
+                </a>
+                <a href="https://wa.me/21624651548" target="_blank" rel="noopener noreferrer" aria-label="Contacter sur WhatsApp">
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.6Z"></path>
+                        <path d="M9 8.5c.3-.5.6-.5.9-.5l.7 1.7-.7.9c.5 1 1.3 1.8 2.4 2.3l.8-.8 1.7.8c0 .4-.1.8-.5 1.1-.6.5-1.5.6-2.7.1a8.3 8.3 0 0 1-3.8-3.6C7.2 9.5 8.1 8.7 9 8.5Z"></path>
+                    </svg>
+                </a>
+            </div>
         </nav>
-        <div class="flex items-center gap-4">
+        <div class="frontend-desktop-actions flex items-center gap-4">
             <div class="relative" data-navbar-dropdown>
                 <button aria-expanded="false" aria-haspopup="true" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant" data-navbar-dropdown-toggle type="button">
+                    <span class="font-semibold text-on-surface" data-navbar-currency-label>{{ current_currency().symbol }}</span>
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+                <div class="absolute right-0 mt-2 w-32 py-2 bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(11,78,162,0.12)] opacity-0 pointer-events-none transition-all flex flex-col z-50" data-navbar-dropdown-menu>
+                    {% for currency in currency_options() %}
+                        <button data-currency-code="{{ currency.code }}" data-currency-rate="{{ currency.rate }}" data-currency-symbol="{{ currency.symbol }}" data-currency-position="{{ currency.code == 'USD' ? 'prefix' : 'suffix' }}" data-currency-selected="{{ currency.code == current_currency().code ? 'true' : 'false' }}" data-currency-url="{{ path('app_currency_set', {code: currency.code}) }}" class="flex items-center justify-between px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors w-full text-left" type="button">
+                            <span>{{ currency.code }}</span><span class="text-outline font-normal">{{ currency.symbol }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="relative" data-navbar-dropdown>
+                <button aria-expanded="false" aria-haspopup="true" aria-label="{{ 'navbar.language'|trans }}" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant" data-navbar-dropdown-toggle type="button">
                     <span class="font-semibold text-on-surface">{{ app.request.locale|upper }}</span>
                     <span class="material-symbols-outlined text-[16px]">expand_more</span>
                 </button>
@@ -46,40 +97,18 @@
                         {% set enLanguageUrl = path('app_blog_show', {'_locale': 'en', 'slug': currentSlug}) %}
                     {% endif %}
                     <a href="{{ frLanguageUrl }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'fr' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
-                        <span class="">🇫🇷</span><span class="">Français</span>
+                        <span>🇫🇷</span><span>Français</span>
                     </a>
                     <a href="{{ enLanguageUrl }}" class="flex items-center gap-2.5 px-4 py-2 font-label-md text-label-md {{ app.request.locale == 'en' ? 'text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }} transition-colors w-full text-left">
-                        <span class="">🇬🇧</span><span class="">English</span>
+                        <span>🇬🇧</span><span>English</span>
                     </a>
                 </div>
             </div>
-            <div class="relative" data-navbar-dropdown>
-                <button aria-expanded="false" aria-haspopup="true" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant" data-navbar-dropdown-toggle type="button">
-                    <span class="font-semibold text-on-surface" data-navbar-currency-label>{{ current_currency().symbol }}</span>
-                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
-                </button>
-                <div class="absolute right-0 mt-2 w-32 py-2 bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(11,78,162,0.12)] opacity-0 pointer-events-none transition-all flex flex-col z-50" data-navbar-dropdown-menu>
-                    {% for currency in currency_options() %}
-                        <button data-currency-code="{{ currency.code }}" data-currency-rate="{{ currency.rate }}" data-currency-symbol="{{ currency.symbol }}" data-currency-position="{{ currency.code == 'USD' ? 'prefix' : 'suffix' }}" data-currency-selected="{{ currency.code == current_currency().code ? 'true' : 'false' }}" data-currency-url="{{ path('app_currency_set', {code: currency.code}) }}" class="flex items-center justify-between px-4 py-2 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors w-full text-left" type="button">
-                            <span>{{ currency.code }}</span><span class="text-outline font-normal">{{ currency.symbol }}</span>
-                        </button>
-                    {% endfor %}
-                </div>
-            </div>
-            {% if app.user %}
-                <div class="relative" data-user-menu>
-                    <button aria-expanded="false" aria-haspopup="true" aria-label="{{ 'auth.account'|trans }}" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm hover:scale-105 transition-transform" data-user-menu-toggle type="button">
-                        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
-                    </button>
-                    <div class="auth-user-menu" data-user-menu-panel hidden>
-                        <a href="{{ path('app_profile') }}">{{ 'auth.profile'|trans }}</a>
-                        <a href="{{ path('admin_transfere_index') }}">Admin</a>
-                        <a href="{{ logout_path() }}">{{ 'auth.logout'|trans }}</a>
-                    </div>
-                </div>
-            {% else %}
-                <button class="auth-connect-button" data-auth-open="login" type="button">{{ 'auth.connect'|trans }}</button>
-            {% endif %}
         </div>
+        <button class="frontend-menu-toggle" data-frontend-menu-toggle data-open-label="{{ 'navbar.open_menu'|trans }}" data-close-label="{{ 'navbar.close_menu'|trans }}" type="button" aria-label="{{ 'navbar.open_menu'|trans }}" aria-controls="frontendNavigation" aria-expanded="false">
+            <span class="frontend-menu-toggle-line" aria-hidden="true"></span>
+            <span class="frontend-menu-toggle-line" aria-hidden="true"></span>
+            <span class="frontend-menu-toggle-line" aria-hidden="true"></span>
+        </button>
     </div>
 </header>

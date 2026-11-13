@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ReservationExcursion;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,30 @@ class ReservationExcursionRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ReservationExcursion::class);
+    }
+
+    /**
+     * @return ReservationExcursion[]
+     */
+    public function findForUser(User $user, ?string $statut = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->leftJoin('r.excursion', 'e')
+            ->addSelect('e')
+            ->where('r.user = :user')
+            ->setParameter('user', $user);
+
+        if ($statut !== null) {
+            $queryBuilder
+                ->andWhere('r.statut = :statut')
+                ->setParameter('statut', $statut);
+        }
+
+        return $queryBuilder
+            ->orderBy('r.createdAt', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Reservation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,6 +41,30 @@ class ReservationRepository extends ServiceEntityRepository
             ->where('r.status = :status')
             ->setParameter('status', $status)
             ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Reservation[]
+     */
+    public function findForUser(User $user, ?string $status = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->leftJoin('r.excursion', 'e')
+            ->addSelect('e')
+            ->where('r.user = :user')
+            ->setParameter('user', $user);
+
+        if ($status !== null) {
+            $queryBuilder
+                ->andWhere('r.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $queryBuilder
+            ->orderBy('r.createdAt', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
             ->getQuery()
             ->getResult();
     }

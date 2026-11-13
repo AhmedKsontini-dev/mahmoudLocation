@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ReservationTransfere;
+use App\Entity\User;
 use App\Enum\ReservationStatus;
 use App\Enum\ReservationTransfereType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,6 +17,30 @@ class ReservationTransfereRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ReservationTransfere::class);
+    }
+
+    /**
+     * @return ReservationTransfere[]
+     */
+    public function findForUser(User $user, ?ReservationStatus $status = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->leftJoin('r.transfere', 't')
+            ->addSelect('t')
+            ->where('r.user = :user')
+            ->setParameter('user', $user);
+
+        if ($status !== null) {
+            $queryBuilder
+                ->andWhere('r.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $queryBuilder
+            ->orderBy('r.createdAt', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

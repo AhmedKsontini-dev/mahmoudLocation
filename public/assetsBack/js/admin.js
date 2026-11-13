@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function initSidebarToggle() {
     const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarClose = document.getElementById('sidebarClose');
     const sidebar = document.getElementById('adminSidebar');
     const overlay = document.querySelector('.sidebar-overlay');
     
@@ -27,30 +28,61 @@ function initSidebarToggle() {
     }
     
     const sidebarOverlay = document.querySelector('.sidebar-overlay');
-    
+    let bodyOverflowBeforeOpen = '';
+
+    function setSidebarOpen(isOpen) {
+        const wasOpen = sidebar.classList.contains('open');
+        if (wasOpen === isOpen) return;
+
+        if (isOpen) {
+            bodyOverflowBeforeOpen = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = bodyOverflowBeforeOpen;
+            bodyOverflowBeforeOpen = '';
+        }
+
+        sidebar.classList.toggle('open', isOpen);
+        sidebarOverlay.classList.toggle('active', isOpen);
+        sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+        sidebarToggle.setAttribute('aria-label', isOpen ? 'Fermer le menu de navigation' : 'Ouvrir le menu de navigation');
+    }
+
     sidebarToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('open');
-        sidebarOverlay.classList.toggle('active');
-        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+        setSidebarOpen(!sidebar.classList.contains('open'));
     });
+
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', function() {
+            setSidebarOpen(false);
+            sidebarToggle.focus();
+        });
+    }
     
     // Fermer la sidebar en cliquant sur l'overlay
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            document.body.style.overflow = '';
+            setSidebarOpen(false);
         });
     }
+
+    sidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            setSidebarOpen(false);
+        });
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+            setSidebarOpen(false);
+            sidebarToggle.focus();
+        }
+    });
     
     // Fermer la sidebar lors du redimensionnement de la fenêtre
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
-            sidebar.classList.remove('open');
-            if (sidebarOverlay) {
-                sidebarOverlay.classList.remove('active');
-            }
-            document.body.style.overflow = '';
+            setSidebarOpen(false);
         }
     });
 }

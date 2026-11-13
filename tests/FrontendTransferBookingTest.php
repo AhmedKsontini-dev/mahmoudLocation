@@ -5,6 +5,7 @@ namespace App\Tests;
 use App\Entity\CurrencyRate;
 use App\Entity\ReservationTransfere;
 use App\Entity\Transfere;
+use App\Entity\User;
 use App\Enum\ReservationStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -19,6 +20,12 @@ class FrontendTransferBookingTest extends WebTestCase
         $suffix = bin2hex(random_bytes(5));
         $slug = 'translator-booking-' . $suffix;
         $email = 'booking-' . $suffix . '@example.test';
+        $user = (new User())
+            ->setEmail($email)
+            ->setPassword('test-password');
+        $entityManager->persist($user);
+        $entityManager->flush();
+        $client->loginUser($user);
 
         // Réutilise la devise TND si déjà présente (d'autres suites peuvent l'avoir insérée) pour rester idempotent.
         $existingTnd = $entityManager->getRepository(CurrencyRate::class)->findOneBy(['code' => 'TND']);
@@ -69,6 +76,7 @@ class FrontendTransferBookingTest extends WebTestCase
             self::assertSame(ReservationStatus::PENDING, $reservations[0]->getStatus());
             self::assertSame($transfer->getId(), $reservations[0]->getTransfere()->getId());
             self::assertSame($email, $reservations[0]->getEmail());
+            self::assertSame($user->getId(), $reservations[0]->getUser()?->getId());
         } finally {
             $entityManager->createQuery('DELETE FROM App\Entity\ReservationTransfere r WHERE r.email = :email')
                 ->setParameter('email', $email)
@@ -82,6 +90,10 @@ class FrontendTransferBookingTest extends WebTestCase
                 if ($managedCurrency !== null) {
                     $entityManager->remove($managedCurrency);
                 }
+            }
+            $managedUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+            if ($managedUser !== null) {
+                $entityManager->remove($managedUser);
             }
             $entityManager->flush();
         }

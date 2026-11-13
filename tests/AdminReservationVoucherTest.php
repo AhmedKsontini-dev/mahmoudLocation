@@ -86,9 +86,9 @@ class AdminReservationVoucherTest extends WebTestCase
         $em->persist($res);
         $em->flush();
 
-        // 1. Visiteur non connecté -> redirection login
+        // 1. Visiteur non connecté -> redirection vers l'accueil
         $client->request('GET', '/admin/reservations/' . $res->getId() . '/voucher');
-        $this->assertResponseRedirects('/login');
+        $this->assertResponseRedirects('/');
 
         // 2. Utilisateur standard -> 403 Forbidden
         $user = $this->createStandardUser($em);

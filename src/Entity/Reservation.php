@@ -29,6 +29,10 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'legacyReservations')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Excursion $excursion = null;
@@ -101,6 +105,24 @@ class Reservation
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        if ($this->user === $user) {
+            return $this;
+        }
+
+        $this->user?->removeLegacyReservation($this);
+        $this->user = $user;
+        $user?->addLegacyReservation($this);
+
+        return $this;
     }
 
     public function getExcursion(): ?Excursion

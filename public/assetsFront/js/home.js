@@ -124,6 +124,31 @@ function updateTransferPrices(dateValue) {
       }
     }
   });
+
+  document.querySelectorAll('[data-transfer-destination]').forEach(destination => {
+    const priceElement = destination.querySelector('.destination-price-val');
+    if (!priceElement) return;
+
+    const prices = Array.from(destination.querySelectorAll('[data-transfer-card] .price-val'))
+      .map(element => element.dataset.base)
+      .filter(price => price !== undefined && price !== '' && Number.isFinite(Number(price)))
+      .map(Number);
+
+    if (prices.length) {
+      priceElement.dataset.base = Math.min(...prices).toFixed(2);
+      priceElement.removeAttribute('title');
+      priceElement.removeAttribute('aria-label');
+    } else {
+      const unavailablePrice = destination.querySelector('[data-transfer-card] .price-val[title]');
+      delete priceElement.dataset.base;
+      priceElement.textContent = '—';
+      if (unavailablePrice) {
+        priceElement.title = unavailablePrice.title;
+        priceElement.setAttribute('aria-label', unavailablePrice.title);
+      }
+    }
+  });
+
   if (typeof refreshPriceValues === 'function') refreshPriceValues();
 }
 
@@ -132,6 +157,19 @@ if (transferDateInput) {
   transferDateInput.addEventListener('change', () => updateTransferPrices(transferDateInput.value));
   updateTransferPrices(transferDateInput.value);
 }
+
+document.querySelectorAll('[data-home-date-placeholder]').forEach((input) => {
+  const wrapper = input.closest('.home-date-input');
+  if (!wrapper) return;
+
+  const updatePlaceholderVisibility = () => {
+    wrapper.classList.toggle('is-empty', input.value === '');
+  };
+
+  input.addEventListener('input', updatePlaceholderVisibility);
+  input.addEventListener('change', updatePlaceholderVisibility);
+  updatePlaceholderVisibility();
+});
 
 function openDetails(carName) {
   openModal("Fiche technique : " + carName, "Kilométrage illimité, climatisation, franchise rachetable et assistance 24/7 incluse.", carName, "Détails contractuels");
@@ -287,6 +325,12 @@ function populateExcursionOptions() {
   }
 
   destinationSelect.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = destinationSelect.dataset.placeholderLabel || 'Choose your destination';
+  placeholder.disabled = true;
+  destinationSelect.appendChild(placeholder);
+
   const uniqueDestinations = [...new Map(excursionBookingData.map(item => [item.destination, item])).values()];
 
   if (!uniqueDestinations.length) {
@@ -295,6 +339,12 @@ function populateExcursionOptions() {
     emptyOption.textContent = destinationSelect.dataset.emptyLabel || 'Aucune excursion disponible';
     destinationSelect.appendChild(emptyOption);
     choiceSelect.innerHTML = '';
+    const choicePlaceholder = document.createElement('option');
+    choicePlaceholder.value = '';
+    choicePlaceholder.textContent = choiceSelect.dataset.placeholderLabel || 'Choose your destination first';
+    choicePlaceholder.disabled = true;
+    choicePlaceholder.selected = true;
+    choiceSelect.appendChild(choicePlaceholder);
     if (excursionHidden) excursionHidden.value = '';
     return;
   }
@@ -306,6 +356,7 @@ function populateExcursionOptions() {
     destinationSelect.appendChild(option);
   });
 
+  destinationSelect.value = '';
   destinationSelect.addEventListener('change', () => populateExcursionChoices());
   populateExcursionChoices();
 }
@@ -321,6 +372,17 @@ function populateExcursionChoices() {
 
   const selectedDestinationId = destinationSelect.value;
   choiceSelect.innerHTML = '';
+
+  if (!selectedDestinationId) {
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = choiceSelect.dataset.placeholderLabel || 'Choose your destination first';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    choiceSelect.appendChild(placeholder);
+    if (excursionHidden) excursionHidden.value = '';
+    return;
+  }
 
   const matches = excursionBookingData.filter((item) => String(item.destinationId) === String(selectedDestinationId));
   const excursions = matches.length ? matches[0].excursions : [];

@@ -4,6 +4,7 @@ namespace App\Controller\Frontend\Transfer;
 
 use App\Entity\ReservationTransfere;
 use App\Entity\Transfere;
+use App\Entity\User;
 use App\Enum\ReservationTransfereType;
 use App\Form\ReservationTransfereFormType;
 use App\Repository\TransfereRepository;
@@ -93,6 +94,11 @@ class TransferController extends AbstractController
                 $currency = $currencyService->getCurrent();
                 $reservation->setPrixTotal(number_format($currencyService->convert($basePrice, $currency), 2, '.', ''));
                 $reservation->setDevise($currency->getCode());
+                $currentUser = $this->getUser();
+                if ($currentUser instanceof User) {
+                    $reservation->setUser($currentUser);
+                }
+
                 $entityManager->persist($reservation);
                 $entityManager->flush();
 

@@ -121,6 +121,7 @@ home:
         no_transfer_available: "Kein Transfer verfügbar"
         no_destination_available: "Kein Ziel verfügbar"
         no_excursion_available: "Keine Tour verfügbar"
+        select_excursion_destination_first: "Wählen Sie zuerst Ihr Reiseziel"
         lbl_date: "Datum & Uhrzeit"
         lbl_passengers: Passagiere
         btn_search_transfer: "Transfer Suchen"
@@ -132,6 +133,10 @@ home:
         lbl_excursion_date: Wunschdatum
         lbl_participants: Reisende
         btn_search_excursions: "Tour Entdecken"
+        guarantee_free_cancellation: "Kostenlose Stornierung bis 24 Stunden vor Abfahrt"
+        guarantee_flight_tracking: "Live-Flugverfolgung"
+        guarantee_whatsapp_support: "24/7 WhatsApp-Unterstützung"
+        secure_payment_notice: "Sichere Zahlung oder Zahlung vor Ort in Tunesien"
     services:
         pill: "Umfassende Mobilität"
         title: "Unsere Dienste"
@@ -198,6 +203,10 @@ navbar:
     excursions: Ausflüge
     about: "Über Uns"
     contact: Kontakt
+    quote: Angebot
+    language: Sprache
+    open_menu: "Menü öffnen"
+    close_menu: "Menü schließen"
 footer:
     brand: "Yassmine Guide"
     description: "Entdecken Sie Tunesien neu mit Yassmine Guide: Transfers, private Ausflüge und personalisierte Rundreisen für sorgloses Reisen."
@@ -211,6 +220,49 @@ footer:
     support_phone: "Telefon"
     support_email: "E-Mail"
     copyright: "Copyright © %year% Yassmine Guide. Alle Rechte vorbehalten."
+profile:
+    page_title: "Mein Konto"
+    eyebrow: "Ihr persönlicher Bereich"
+    intro: "Sehen Sie Ihre Angaben ein und verfolgen Sie Ihre Buchungen."
+    navigation: "Profilnavigation"
+    personal_information: "Persönliche Angaben"
+    my_reservations: "Meine Buchungen"
+    account: "Mein Konto"
+    booking_history: "Ihre Aktivitäten"
+    first_name: "Vorname"
+    last_name: "Nachname"
+    phone: "Telefon"
+    email: "E-Mail-Adresse"
+    save: "Angaben speichern"
+    saved: "Ihre Angaben wurden aktualisiert."
+    filter_reservations: "Buchungen filtern"
+    filter:
+        all: "Alle"
+        confirmed: "Bestätigt"
+        pending: "Ausstehend"
+        cancelled: "Storniert"
+        completed: "Abgeschlossen"
+    empty_title: "Keine Buchungen vorhanden"
+    empty_description: "Buchungen, die mit diesem Konto verknüpft sind, werden hier angezeigt."
+    discover_excursions: "Ausflüge entdecken"
+    reference: "Buchung"
+    type:
+        excursion: "Ausflug"
+        transfer: "Transfer"
+    service_date: "Servicedatum"
+    return_date: "Rückfahrt:"
+    participants: "Personen"
+    total_price: "Gesamtpreis"
+    booking_date: "Buchungsdatum"
+    not_available: "Nicht verfügbar"
+    price_estimate: "Schätzung nach aktuellen Preisen"
+    status:
+        confirmed: "Bestätigt"
+        pending: "Ausstehend"
+        cancelled: "Storniert"
+        completed: "Abgeschlossen"
+    unknown_excursion: "Ausflug"
+    return_transfer: "Hin- und Rücktransfer"
 auth:
     account: "Mein Konto"
     connect: Anmelden

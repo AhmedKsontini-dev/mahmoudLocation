@@ -35,7 +35,37 @@ class HomeController extends AbstractController
             ['name' => 'Dacia Duster 4x4', 'cat' => 'SUV Aventure', 'badge' => 'Recommandé Sud', 'badge_color' => 'bg-tertiary text-on-tertiary', 'year' => 'Modèle 2025', 'desc' => 'Garde au sol surélevée, spacieux pour les familles et adapté aux pistes du Sud.', 'seats' => '5 Places', 'bags' => '4 Valises', 'trans' => 'Transmission 4x4', 'trans_icon' => 'terrain', 'clim' => 'Clim A/C', 'price' => 180, 'extra' => 'Prêt pour le désert', 'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCPHmuXdi5jVXvR6FXbvgDofpieZeq55LHyrcCQ5rQWJNDdH5m-qeuFianvSAMSIo6yCLr4ztBLrngApF-93HvIaXMkR6IsBF3lodvKpoWXnHXhjCdP64TDcY2hQ8dGh61uvXO5QUTZN0xcTofTCMN30Q_Jb6smH3JvnOTGAiZR1X5Q8Oub97Qo3rvlwb0AkHAs8SuiizDBmXPnNGdSUKnInpNZhc_jq8D-x8arRrqBunb9pJIb30pW3A']
         ];
 
-        $transferts = $transfereRepository->findBy(['actif' => true], ['id' => 'DESC'], 6);
+        $transferts = $transfereRepository->findBy(['actif' => true], ['id' => 'DESC']);
+        $transfertsParDestination = [];
+        $transfertPrices = [];
+        foreach ($transferts as $transfere) {
+            $destination = trim($transfere->getLieuArriveeTranslated($locale) ?? $transfere->getLieuArrivee() ?? '');
+            if ($destination === '') {
+                continue;
+            }
+
+            $destinationKey = mb_strtolower(preg_replace('/\s+/u', ' ', $destination) ?? $destination);
+            $price = $priceCalculator->getPrixPourDate($transfere);
+            $transfertPrices[$transfere->getId()] = $price;
+
+            if (!isset($transfertsParDestination[$destinationKey])) {
+                $transfertsParDestination[$destinationKey] = [
+                    'key' => $destinationKey,
+                    'name' => $destination,
+                    'image' => null,
+                    'startingPrice' => $price,
+                    'routes' => [],
+                ];
+            } elseif ((float) $price < (float) $transfertsParDestination[$destinationKey]['startingPrice']) {
+                $transfertsParDestination[$destinationKey]['startingPrice'] = $price;
+            }
+
+            if ($transfertsParDestination[$destinationKey]['image'] === null && $transfere->getImage() !== null) {
+                $transfertsParDestination[$destinationKey]['image'] = $transfere->getImage();
+            }
+
+            $transfertsParDestination[$destinationKey]['routes'][] = $transfere;
+        }
 
         $excursions = $excursionRepository->findLatestActive(4);
 
@@ -66,12 +96,9 @@ class HomeController extends AbstractController
         return $this->render('Frontend/Home/index.html.twig', [
             'why_items' => $why_items,
             'vehicles' => $vehicles,
-            'transferts' => $transferts,
+            'transfertsParDestination' => array_values($transfertsParDestination),
             'periodesSaison' => $priceCalculator->getPeriodesActives(),
-            'transfertPrices' => array_reduce($transferts, function (array $prices, $transfere) use ($priceCalculator): array {
-                $prices[$transfere->getId()] = $priceCalculator->getPrixPourDate($transfere);
-                return $prices;
-            }, []),
+            'transfertPrices' => $transfertPrices,
             'excursions' => $excursions,
             'steps' => $steps,
             'destinations' => $destinations,

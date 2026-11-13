@@ -121,7 +121,10 @@ home:
         no_transfer_available: "No transfer available"
         no_destination_available: "No destination available"
         no_excursion_available: "No excursion available"
+        select_excursion_destination_first: "Choose your destination first"
+        excursion_destination_placeholder: "Choose your destination"
         lbl_date: "Date & Time"
+        transfer_datetime_placeholder: "Choose date and time"
         lbl_passengers: Passengers
         btn_search_transfer: "Search Transfer"
         lbl_pickup: "Car Pickup Location"
@@ -130,8 +133,14 @@ home:
         btn_search_cars: "Find Vehicles"
         lbl_excursion_choice: "Tour / Theme"
         lbl_excursion_date: "Preferred Date"
+        excursion_date_placeholder: "Choose a date"
         lbl_participants: Travelers
+        participants_placeholder: "Choose the number of participants"
         btn_search_excursions: "Discover Tour"
+        guarantee_free_cancellation: "Free cancellation up to 24 hours before departure"
+        guarantee_flight_tracking: "Live flight tracking"
+        guarantee_whatsapp_support: "24/7 WhatsApp support"
+        secure_payment_notice: "Secure payment or pay locally in Tunisia"
     services:
         pill: "Comprehensive Mobility"
         title: "Our Services"
@@ -203,6 +212,10 @@ navbar:
     excursions: Excursions
     about: "About Us"
     contact: Contact
+    quote: Quote
+    language: Language
+    open_menu: "Open menu"
+    close_menu: "Close menu"
 footer:
     brand: "Yassmine Guide"
     description: "Discover Tunisia a different way with Yassmine Guide: transfers, private excursions and tailored tours to travel with complete peace of mind."
@@ -216,6 +229,49 @@ footer:
     support_phone: "Phone"
     support_email: "Email"
     copyright: "Copyright © %year% Yassmine Guide. All rights reserved."
+profile:
+    page_title: "My account"
+    eyebrow: "Your personal space"
+    intro: "Review your details and keep track of your bookings."
+    navigation: "Profile navigation"
+    personal_information: "Personal information"
+    my_reservations: "My bookings"
+    account: "My account"
+    booking_history: "Your activity"
+    first_name: "First name"
+    last_name: "Last name"
+    phone: "Phone"
+    email: "Email address"
+    save: "Save my details"
+    saved: "Your details have been updated."
+    filter_reservations: "Filter bookings"
+    filter:
+        all: "All"
+        confirmed: "Confirmed"
+        pending: "Pending"
+        cancelled: "Cancelled"
+        completed: "Completed"
+    empty_title: "No bookings to show"
+    empty_description: "Bookings linked to this account will appear here."
+    discover_excursions: "Explore excursions"
+    reference: "Booking"
+    type:
+        excursion: "Excursion"
+        transfer: "Transfer"
+    service_date: "Service date"
+    return_date: "Return:"
+    participants: "People"
+    total_price: "Total price"
+    booking_date: "Booking date"
+    not_available: "Not available"
+    price_estimate: "Estimate at current rates"
+    status:
+        confirmed: "Confirmed"
+        pending: "Pending"
+        cancelled: "Cancelled"
+        completed: "Completed"
+    unknown_excursion: "Excursion"
+    return_transfer: "Return transfer"
 auth:
     account: "My account"
     connect: "Sign in"
@@ -252,13 +308,12 @@ contact:
         badge: "Customer Support & National Network"
         title: "Contact Our Teams & Find Your Agency in Tunisia"
         subtitle: "Have a question about a booking, urgent airport transfer, or custom tour? Our advisors based in Tunisia are available 24/7 with Mediterranean hospitality."
-        response_time: 'Average response time: <strong class="text-primary font-semibold">&lt; 15 min</strong>'
-        feature1_title: "Guaranteed response &lt; 15 min"
+        feature1_title: "Guaranteed response < 15 min"
         feature1_desc: "Priority handling of your request"
         feature2_title: "24/7 Phone & WhatsApp Assistance"
         feature2_desc: "Bilingual French & English staff"
         feature3_title: "Counters at all airports"
-        feature3_desc: "Tunis, Enfidha, Djerba & Monastir"
+        feature3_desc: "Tunis & Enfidha  "
     form:
         badge: "Express Form"
         title: "Send us your message"
@@ -274,7 +329,7 @@ contact:
         email: "Email address"
         email_placeholder: contact@domain.com
         phone: "Phone / WhatsApp"
-        phone_placeholder: "98 123 456"
+        phone_placeholder: "+123 456 789 012"
         service_category: "Service concerned"
         service_location: "Vehicle rental"
         service_transfer: "VIP Airport Transfer"

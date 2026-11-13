@@ -1,0 +1,183 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}{{ 'profile.page_title'|trans }} - Yassmine Guide{% endblock %}
+
+{% block stylesheets %}
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    <link href="{{ asset('assetsFront/css/home.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsFront/css/profile.css') }}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('assetsFront/js/tailwind.config.js') }}"></script>
+{% endblock %}
+
+{% block body_class %}bg-surface text-on-surface antialiased{% endblock %}
+
+{% block body %}
+    {% include 'Frontend/Components/_navbar.html.twig' %}
+
+    <main class="profile-page">
+        <section class="profile-hero">
+            <div class="profile-shell">
+                <p class="profile-eyebrow">{{ 'profile.eyebrow'|trans }}</p>
+                <h1>{{ 'profile.page_title'|trans }}</h1>
+                <p>{{ 'profile.intro'|trans }}</p>
+                <nav aria-label="{{ 'profile.navigation'|trans }}" class="profile-page-nav">
+                    <a href="#account-details"><span class="material-symbols-outlined" aria-hidden="true">person</span>{{ 'profile.personal_information'|trans }}</a>
+                    <a href="#my-reservations"><span class="material-symbols-outlined" aria-hidden="true">luggage</span>{{ 'profile.my_reservations'|trans }}</a>
+                </nav>
+            </div>
+        </section>
+
+        <div class="profile-shell profile-content">
+            {% for message in app.flashes('success') %}
+                <p class="profile-alert" role="status">{{ message|trans }}</p>
+            {% endfor %}
+
+            <section id="account-details" class="profile-section">
+                <div class="profile-section-heading">
+                    <div>
+                        <p class="profile-eyebrow">{{ 'profile.account'|trans }}</p>
+                        <h2>{{ 'profile.personal_information'|trans }}</h2>
+                    </div>
+                    <span class="profile-section-icon material-symbols-outlined" aria-hidden="true">manage_accounts</span>
+                </div>
+
+                <div class="profile-account-grid">
+                    <div class="profile-account-summary">
+                        <div class="profile-avatar" aria-hidden="true">
+                            <span class="material-symbols-outlined">person</span>
+                        </div>
+                        <h3>{{ (user.firstName ~ ' ' ~ user.lastName)|trim ?: user.email }}</h3>
+                        <p>{{ user.email }}</p>
+                    </div>
+
+                    <div class="profile-form-panel">
+                        {{ form_start(profileForm, {'attr': {'class': 'profile-form'}}) }}
+                            <div class="profile-form-grid">
+                                <div class="profile-field">
+                                    {{ form_label(profileForm.firstName) }}
+                                    {{ form_widget(profileForm.firstName, {'attr': {'class': 'profile-input'}}) }}
+                                    {{ form_errors(profileForm.firstName) }}
+                                </div>
+                                <div class="profile-field">
+                                    {{ form_label(profileForm.lastName) }}
+                                    {{ form_widget(profileForm.lastName, {'attr': {'class': 'profile-input'}}) }}
+                                    {{ form_errors(profileForm.lastName) }}
+                                </div>
+                                <div class="profile-field">
+                                    {{ form_label(profileForm.phone) }}
+                                    {{ form_widget(profileForm.phone, {'attr': {'class': 'profile-input'}}) }}
+                                    {{ form_errors(profileForm.phone) }}
+                                </div>
+                                <div class="profile-field">
+                                    <label for="profile-email">{{ 'profile.email'|trans }}</label>
+                                    <input id="profile-email" class="profile-input" type="email" value="{{ user.email }}" readonly>
+                                </div>
+                            </div>
+                            {{ form_errors(profileForm) }}
+                            {{ form_widget(profileForm.save, {'attr': {'class': 'profile-save-button'}}) }}
+                        {{ form_end(profileForm) }}
+                    </div>
+                </div>
+            </section>
+
+            <section id="my-reservations" class="profile-section">
+                <div class="profile-section-heading">
+                    <div>
+                        <p class="profile-eyebrow">{{ 'profile.booking_history'|trans }}</p>
+                        <h2>{{ 'profile.my_reservations'|trans }}</h2>
+                    </div>
+                    <span class="profile-section-icon material-symbols-outlined" aria-hidden="true">event_note</span>
+                </div>
+
+                <nav aria-label="{{ 'profile.filter_reservations'|trans }}" class="profile-filters">
+                    {% for filter, label in {
+                        'all': 'profile.filter.all',
+                        'confirmed': 'profile.filter.confirmed',
+                        'pending': 'profile.filter.pending',
+                        'cancelled': 'profile.filter.cancelled',
+                        'completed': 'profile.filter.completed'
+                    } %}
+                        <a href="{{ path('app_profile_locale', {'_locale': app.request.locale, 'filter': filter}) }}"
+                           class="{{ activeFilter == filter ? 'is-active' : '' }}"
+                           {% if activeFilter == filter %}aria-current="page"{% endif %}>{{ label|trans }}</a>
+                    {% endfor %}
+                </nav>
+
+                {% if reservations is empty %}
+                    <div class="profile-empty-state">
+                        <span class="material-symbols-outlined" aria-hidden="true">event_busy</span>
+                        <h3>{{ 'profile.empty_title'|trans }}</h3>
+                        <p>{{ 'profile.empty_description'|trans }}</p>
+                        <a href="{{ path('app_liste_excursion', {'_locale': app.request.locale}) }}">{{ 'profile.discover_excursions'|trans }}</a>
+                    </div>
+                {% else %}
+                    <div class="profile-reservation-list">
+                        {% for reservation in reservations %}
+                            <article class="profile-reservation-card">
+                                <div class="profile-reservation-heading">
+                                    <div>
+                                        <span class="profile-reservation-type">{{ reservation.type|trans }}</span>
+                                        <h3>{{ reservation.title ?: ('profile.unknown_excursion'|trans) }}</h3>
+                                        <p class="profile-reservation-reference">{{ 'profile.reference'|trans }} #{{ reservation.reference }}</p>
+                                    </div>
+                                    <span class="profile-status {{ reservation.statusClass }}">
+                                        <span class="material-symbols-outlined" aria-hidden="true">{{ reservation.statusIcon }}</span>
+                                        {{ reservation.statusClass == 'profile-status--other' ? reservation.statusValue : (reservation.statusLabel|trans) }}
+                                    </span>
+                                </div>
+
+                                <dl class="profile-reservation-details">
+                                    <div>
+                                        <dt><span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>{{ 'profile.service_date'|trans }}</dt>
+                                        <dd>
+                                            {% if reservation.serviceDate %}{{ reservation.serviceDate|date('d/m/Y') }}{% else %}{{ 'profile.not_available'|trans }}{% endif %}
+                                            {% if reservation.serviceTime %}<span>{{ reservation.serviceTime }}</span>{% endif %}
+                                            {% if reservation.returnDate %}<span>{{ 'profile.return_date'|trans }} {{ reservation.returnDate|date('d/m/Y') }}</span>{% endif %}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt><span class="material-symbols-outlined" aria-hidden="true">group</span>{{ 'profile.participants'|trans }}</dt>
+                                        <dd>{% if reservation.participants is not null %}{{ reservation.participants }}{% else %}{{ 'profile.not_available'|trans }}{% endif %}</dd>
+                                    </div>
+                                    <div>
+                                        <dt><span class="material-symbols-outlined" aria-hidden="true">payments</span>{{ 'profile.total_price'|trans }}</dt>
+                                        <dd>
+                                            {% if reservation.price is not null %}
+                                                {{ reservation.price|number_format(2, ',', ' ') }}{% if reservation.currency %} {{ reservation.currency }}{% endif %}
+                                                {% if reservation.priceIsEstimate %}<span class="profile-estimate">{{ 'profile.price_estimate'|trans }}</span>{% endif %}
+                                            {% else %}
+                                                {{ 'profile.not_available'|trans }}
+                                            {% endif %}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt><span class="material-symbols-outlined" aria-hidden="true">history</span>{{ 'profile.booking_date'|trans }}</dt>
+                                        <dd>{% if reservation.createdAt %}{{ reservation.createdAt|date('d/m/Y') }}{% else %}{{ 'profile.not_available'|trans }}{% endif %}</dd>
+                                    </div>
+                                </dl>
+
+                                {% if reservation.details %}
+                                    <p class="profile-reservation-note">
+                                        <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                                        {% if reservation.detailsIsTranslation %}{{ reservation.details|trans }}{% else %}{{ reservation.details }}{% endif %}
+                                    </p>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+
+    {% include 'Frontend/Components/_footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('assetsFront/js/navbar.js') }}?v=4"></script>
+{% endblock %}

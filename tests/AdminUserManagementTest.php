@@ -35,12 +35,12 @@ class AdminUserManagementTest extends WebTestCase
         return $user;
     }
 
-    public function testAnonymousAccessIsRedirectedToLogin(): void
+    public function testAnonymousAccessIsRedirectedToHomepage(): void
     {
         $client = static::createClient();
         $client->request('GET', '/admin/users');
 
-        self::assertResponseRedirects('/login');
+        self::assertResponseRedirects('/');
     }
 
     public function testStandardUserCannotAccessAdminUsers(): void

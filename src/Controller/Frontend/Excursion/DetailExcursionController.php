@@ -49,6 +49,11 @@ class DetailExcursionController extends AbstractController
             $prixTotal = $reservation->getPrixTotalCalcule();
 
             try {
+                $currentUser = $this->getUser();
+                if ($currentUser instanceof User) {
+                    $reservation->setUser($currentUser);
+                }
+
                 $entityManager->persist($reservation);
                 $entityManager->flush();
 

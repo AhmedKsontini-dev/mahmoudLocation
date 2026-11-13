@@ -92,12 +92,12 @@ class AdminReservationManagementTest extends WebTestCase
         return $res;
     }
 
-    public function testAnonymousAccessIsRedirectedToLogin(): void
+    public function testAnonymousAccessIsRedirectedToHomepage(): void
     {
         $client = static::createClient();
         $client->request('GET', '/admin/reservations');
 
-        self::assertResponseRedirects('/login');
+        self::assertResponseRedirects('/');
     }
 
     public function testStandardUserCannotAccessAdminReservations(): void

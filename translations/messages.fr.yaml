@@ -121,7 +121,10 @@ home:
         no_transfer_available: "Aucun transfert disponible"
         no_destination_available: "Aucune destination disponible"
         no_excursion_available: "Aucune excursion disponible"
+        select_excursion_destination_first: "Choisissez d'abord votre destination"
+        excursion_destination_placeholder: "Choisir votre destination"
         lbl_date: "Date & Heure"
+        transfer_datetime_placeholder: "Choisir la date et l'heure"
         lbl_passengers: Passagers
         btn_search_transfer: Rechercher
         lbl_pickup: "Lieu de prise en charge"
@@ -130,8 +133,14 @@ home:
         btn_search_cars: "Voir les véhicules"
         lbl_excursion_choice: "Destination ou Thème"
         lbl_excursion_date: "Date souhaitée"
+        excursion_date_placeholder: "Choisir la date"
         lbl_participants: Participants
+        participants_placeholder: "Choisir le nombre de participants"
         btn_search_excursions: "Découvrir l'excursion"
+        guarantee_free_cancellation: "Annulation gratuite jusqu'à 24 h avant le départ"
+        guarantee_flight_tracking: "Suivi de vol en direct"
+        guarantee_whatsapp_support: "Assistance 24/7 par WhatsApp"
+        secure_payment_notice: "Paiement sécurisé ou sur place en Tunisie"
     services:
         pill: "Mobilité Intégrale"
         title: "Nos services"
@@ -152,7 +161,7 @@ home:
         pill: "Excellence & Fiabilité"
         title: "Pourquoi nous choisir ?"
         rating: "Note 4.9/5 sur 2,400+ avis voyageurs"
-        rating_sub: "Recommandé par 98.4% de nos clients internationaux en 2026"
+        recommended: "Recommandé par 98.4% de nos clients internationaux en 2026"
         item2_title: "Transferts ponctuels et confortables"
         item2_desc: "Un chauffeur professionnel vous attend à l’aéroport avec une pancarte portant votre nom pour vous accueillir dès votre arrivée."
         item3_title: "Excursions dans toute la Tunisie"
@@ -203,6 +212,10 @@ navbar:
     excursions: Excursions
     about: "À propos"
     contact: Contact
+    quote: Devis
+    language: Langue
+    open_menu: "Ouvrir le menu"
+    close_menu: "Fermer le menu"
 footer:
     brand: "Yassmine Guide"
     description: "Découvrez la Tunisie autrement avec Yassmine Guide : transferts, excursions privées et circuits personnalisés pour voyager en toute sérénité."
@@ -216,6 +229,49 @@ footer:
     support_phone: "Téléphone"
     support_email: "E-mail"
     copyright: "Copyright © %year% Yassmine Guide. Tous droits réservés."
+profile:
+    page_title: "Mon compte"
+    eyebrow: "Votre espace personnel"
+    intro: "Consultez vos informations et suivez vos réservations."
+    navigation: "Navigation du profil"
+    personal_information: "Informations personnelles"
+    my_reservations: "Mes réservations"
+    account: "Mon compte"
+    booking_history: "Votre activité"
+    first_name: "Prénom"
+    last_name: "Nom"
+    phone: "Téléphone"
+    email: "Adresse e-mail"
+    save: "Enregistrer mes informations"
+    saved: "Vos informations ont été mises à jour."
+    filter_reservations: "Filtrer les réservations"
+    filter:
+        all: "Toutes"
+        confirmed: "Confirmées"
+        pending: "En attente"
+        cancelled: "Annulées"
+        completed: "Terminées"
+    empty_title: "Aucune réservation à afficher"
+    empty_description: "Vos réservations associées à ce compte apparaîtront ici."
+    discover_excursions: "Découvrir les excursions"
+    reference: "Réservation"
+    type:
+        excursion: "Excursion"
+        transfer: "Transfert"
+    service_date: "Date du service"
+    return_date: "Retour :"
+    participants: "Personnes"
+    total_price: "Prix total"
+    booking_date: "Date de réservation"
+    not_available: "Non disponible"
+    price_estimate: "Estimation au tarif actuel"
+    status:
+        confirmed: "Confirmée"
+        pending: "En attente"
+        cancelled: "Annulée"
+        completed: "Terminée"
+    unknown_excursion: "Excursion"
+    return_transfer: "Transfert aller-retour"
 auth:
     account: "Mon compte"
     connect: Connecter
@@ -252,13 +308,12 @@ contact:
         badge: "Support Client & Réseau National"
         title: "Contactez Nos Équipes & Trouvez Votre Agence en Tunisie"
         subtitle: "Une question sur une réservation, un transfert aéroport urgent ou un circuit sur-mesure ? Nos conseillers basés en Tunisie vous répondent 24h/24 et 7j/7 avec rigueur et hospitalité méditerranéenne."
-        response_time: 'Temps moyen de réponse : <strong class="text-primary font-semibold">&lt; 15 min</strong>'
-        feature1_title: "Réponse garantie &lt; 15 min"
+        feature1_title: "Réponse garantie < 15 min"
         feature1_desc: "Prise en compte prioritaire de votre demande"
         feature2_title: "Assistance 24/7 Téléphone & WhatsApp"
         feature2_desc: "Interlocuteurs bilingues français & anglais"
         feature3_title: "Comptoirs dans tous les aéroports"
-        feature3_desc: "Tunis, Enfidha, Djerba & Monastir"
+        feature3_desc: "Tunis & Enfidha "
     form:
         badge: "Formulaire Express"
         title: "Transmettez-nous votre message"
@@ -274,7 +329,7 @@ contact:
         email: "Adresse e-mail"
         email_placeholder: contact@domaine.com
         phone: "Téléphone / WhatsApp"
-        phone_placeholder: "98 123 456"
+        phone_placeholder: "+123 456 789 012"
         service_category: "Service concerné"
         service_location: "Location de véhicules"
         service_transfer: "Transfert Aéroport VIP"

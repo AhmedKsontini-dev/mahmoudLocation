@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -24,6 +26,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email(message: 'auth.invalid_email')]
     private ?string $email = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100)]
+    private ?string $firstName = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $phone = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -36,9 +50,64 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /** @var Collection<int, ReservationExcursion> */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ReservationExcursion::class)]
+    private Collection $excursionReservations;
+
+    /** @var Collection<int, ReservationTransfere> */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ReservationTransfere::class)]
+    private Collection $transferReservations;
+
+    /** @var Collection<int, Reservation> */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Reservation::class)]
+    private Collection $legacyReservations;
+
+    public function __construct()
+    {
+        $this->excursionReservations = new ArrayCollection();
+        $this->transferReservations = new ArrayCollection();
+        $this->legacyReservations = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): static
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): static
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -49,6 +118,81 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /** @return Collection<int, ReservationExcursion> */
+    public function getExcursionReservations(): Collection
+    {
+        return $this->excursionReservations;
+    }
+
+    public function addExcursionReservation(ReservationExcursion $reservation): static
+    {
+        if (!$this->excursionReservations->contains($reservation)) {
+            $this->excursionReservations->add($reservation);
+            $reservation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExcursionReservation(ReservationExcursion $reservation): static
+    {
+        if ($this->excursionReservations->removeElement($reservation) && $reservation->getUser() === $this) {
+            $reservation->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, ReservationTransfere> */
+    public function getTransferReservations(): Collection
+    {
+        return $this->transferReservations;
+    }
+
+    public function addTransferReservation(ReservationTransfere $reservation): static
+    {
+        if (!$this->transferReservations->contains($reservation)) {
+            $this->transferReservations->add($reservation);
+            $reservation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransferReservation(ReservationTransfere $reservation): static
+    {
+        if ($this->transferReservations->removeElement($reservation) && $reservation->getUser() === $this) {
+            $reservation->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Reservation> */
+    public function getLegacyReservations(): Collection
+    {
+        return $this->legacyReservations;
+    }
+
+    public function addLegacyReservation(Reservation $reservation): static
+    {
+        if (!$this->legacyReservations->contains($reservation)) {
+            $this->legacyReservations->add($reservation);
+            $reservation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLegacyReservation(Reservation $reservation): static
+    {
+        if ($this->legacyReservations->removeElement($reservation) && $reservation->getUser() === $this) {
+            $reservation->setUser(null);
+        }
 
         return $this;
     }

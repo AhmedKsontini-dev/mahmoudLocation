@@ -2,15 +2,16 @@
 <html class="light" lang="fr">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{% block title %} {% endblock %}</title>
         {% block meta_description %}{% endblock %}
         {% block meta_robots %}{% endblock %}
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
+        <link rel="icon" type="image/webp" sizes="256x256" href="{{ asset('assetsFront/images/yassmineguide-256.webp') }}">
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
         <link href="{{ asset('assetsFront/css/auth.css') }}" rel="stylesheet">
+        <link href="{{ asset('assetsFront/css/navbar.css') }}?v=16" rel="stylesheet">
         
         {% block stylesheets %}
             
@@ -24,6 +25,7 @@
         {% include 'Frontend/Components/_auth_modal.html.twig' %}
 
         <script src="{{ asset('assetsFront/js/auth-modal.js') }}"></script>
+        <script src="{{ asset('assetsFront/js/mobile-navbar.js') }}?v=3"></script>
         {% block javascripts %}
         {% endblock %}
     </body>

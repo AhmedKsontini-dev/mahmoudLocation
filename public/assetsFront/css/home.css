@@ -46,3 +46,218 @@
     text-overflow: ellipsis;
     box-shadow: 0 2px 6px rgba(0, 56, 109, 0.35);
 }
+
+.transfer-destination-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.transfer-destination-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #e4e9f1;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(7, 59, 122, 0.06);
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.transfer-destination-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(7, 59, 122, 0.14);
+}
+
+.transfer-destination-image {
+    display: flex;
+    min-height: 12.5rem;
+    align-items: flex-end;
+    background-color: #173c60;
+    background-position: center;
+    background-size: cover;
+}
+
+.transfer-destination-heading {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem;
+    color: #fff;
+}
+
+.transfer-destination-heading h3 {
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+.transfer-starting-price {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    text-align: right;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+.transfer-starting-price strong {
+    font-size: 1.125rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.transfer-routes {
+    padding: 0.25rem 1rem;
+}
+
+.transfer-route-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 1rem 0.25rem;
+    color: #17324d;
+    text-decoration: none;
+}
+
+.transfer-route-row + .transfer-route-row {
+    border-top: 1px solid #e9edf3;
+}
+
+.transfer-route-row:hover .transfer-route-details strong {
+    color: #0758a5;
+}
+
+.transfer-route-information {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 0.625rem;
+}
+
+.transfer-route-icon {
+    flex: 0 0 auto;
+    color: #0758a5;
+    font-size: 1.25rem;
+}
+
+.transfer-route-details {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.transfer-route-details strong {
+    overflow-wrap: anywhere;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.35;
+    transition: color 180ms ease;
+}
+
+.transfer-route-details > span {
+    color: #64748b;
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.transfer-route-price {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+    text-align: right;
+}
+
+.transfer-route-price > span {
+    color: #64748b;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.transfer-route-price strong {
+    color: #0758a5;
+    font-size: 1rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+    .transfer-destination-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 639px) {
+    .transfer-destination-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+    }
+
+    .transfer-destination-image {
+        min-height: 11rem;
+    }
+
+    .transfer-destination-heading {
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+
+    .transfer-destination-heading h3 {
+        font-size: 1.25rem;
+    }
+
+    .transfer-starting-price strong {
+        font-size: 1rem;
+    }
+
+    .transfer-routes {
+        padding: 0.15rem 0.75rem;
+    }
+
+    .transfer-route-row {
+        gap: 0.5rem;
+        padding: 0.9rem 0.15rem;
+    }
+
+    .transfer-route-details strong {
+        font-size: 0.85rem;
+    }
+
+    .transfer-route-price strong {
+        font-size: 0.9rem;
+    }
+}
+
+.home-date-input {
+    position: relative;
+}
+
+.home-date-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 0.875rem;
+    display: none;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 0.875rem;
+    pointer-events: none;
+}
+
+.home-date-input.is-empty .home-date-placeholder {
+    display: block;
+}

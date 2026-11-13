@@ -44,6 +44,6 @@ final class AuthenticationFailureHandler implements AuthenticationFailureHandler
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_login'));
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 }

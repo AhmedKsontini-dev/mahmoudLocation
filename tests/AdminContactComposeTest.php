@@ -14,7 +14,7 @@ class AdminContactComposeTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/admin/contacts/new-message');
 
-        self::assertResponseRedirects('/login');
+        self::assertResponseRedirects('/');
     }
 
     public function testStandardUserCannotOpenComposePage(): void

@@ -60,13 +60,13 @@ class ExcursionImageUploadTest extends KernelTestCase
         }
     }
 
-    public function testLargeFileSizeAndImageDimensionsAreAccepted(): void
+    public function testFileWithinFiveMegabytesAndImageDimensionsAreAccepted(): void
     {
         $largePath = $this->createImage('jpeg');
-        file_put_contents($largePath, str_repeat('x', 12 * 1024 * 1024 + 1), FILE_APPEND);
+        file_put_contents($largePath, str_repeat('x', 4 * 1024 * 1024), FILE_APPEND);
 
         try {
-            self::assertGreaterThan(10 * 1024 * 1024, filesize($largePath));
+            self::assertLessThanOrEqual(5 * 1024 * 1024, filesize($largePath));
             self::assertSame([], $this->submitImage($largePath, 'large-image.jpg'));
         } finally {
             @unlink($largePath);

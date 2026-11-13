@@ -20,6 +20,10 @@ class ReservationTransfere
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'transferReservations')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     #[Assert\NotNull(message: 'reservation.transfer.transfere_required')]
@@ -172,6 +176,19 @@ class ReservationTransfere
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getUser(): ?User { return $this->user; }
+    public function setUser(?User $user): static
+    {
+        if ($this->user === $user) {
+            return $this;
+        }
+
+        $this->user?->removeTransferReservation($this);
+        $this->user = $user;
+        $user?->addTransferReservation($this);
+
+        return $this;
+    }
     public function getTransfere(): ?Transfere { return $this->transfere; }
     public function setTransfere(?Transfere $transfere): static { $this->transfere = $transfere; return $this; }
     public function getNom(): ?string { return $this->nom; }

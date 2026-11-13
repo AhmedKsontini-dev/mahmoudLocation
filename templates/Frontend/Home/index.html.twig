@@ -10,7 +10,7 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
-    <link href="{{ asset('assetsFront/css/home.css') }}" rel="stylesheet">
+    <link href="{{ asset('assetsFront/css/home.css') }}?v=6" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('assetsFront/js/tailwind.config.js') }}"></script>
 {% endblock %}
@@ -113,7 +113,10 @@
 <span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
 <span>{{ 'home.booking.lbl_date'|trans }}</span>
 </label>
-<input class="w-full h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all" id="transfer-date" type="datetime-local" value="{{ "now"|date_modify('+1 day')|date('Y-m-d\\TH:i') }}">
+<div class="home-date-input">
+<input class="w-full h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all" id="transfer-date" type="datetime-local" placeholder="{{ 'home.booking.transfer_datetime_placeholder'|trans }}" >
+<span class="home-date-placeholder" aria-hidden="true">{{ 'home.booking.transfer_datetime_placeholder'|trans }}</span>
+</div>
 </div>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
@@ -122,9 +125,9 @@
 </label>
 <div class="relative">
 <select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
-<option>1 à 3 personnes (Berline VIP)</option>
-<option>4 à 7 personnes (Minivan Mercedes)</option>
-<option>8 à 15 personnes (Minibus Exécutif)</option>
+<option>1 à 3 pers</option>
+<option>4 à 7 pers</option>
+<option>8 à 15 pers</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
 </div>
@@ -145,8 +148,8 @@
 <span>{{ 'home.booking.lbl_destination'|trans }}</span>
 </label>
 <div class="relative">
-<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="excursion-destination" data-empty-label="{{ 'home.booking.no_excursion_available'|trans({}, 'messages', app.request.locale)|default('Aucune excursion disponible') }}">
-<option value="">{{ 'home.booking.no_excursion_available'|trans({}, 'messages', app.request.locale)|default('Aucune excursion disponible') }}</option>
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="excursion-destination" data-placeholder-label="{{ 'home.booking.excursion_destination_placeholder'|trans }}" data-empty-label="{{ 'home.booking.no_excursion_available'|trans({}, 'messages', app.request.locale)|default('Aucune excursion disponible') }}">
+<option value="" selected disabled>{{ 'home.booking.excursion_destination_placeholder'|trans }}</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
 </div>
@@ -157,8 +160,8 @@
 <span>{{ 'home.booking.lbl_excursion_choice'|trans }}</span>
 </label>
 <div class="relative">
-<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="excursion-choice" data-empty-label="{{ 'home.booking.no_excursion_available'|trans({}, 'messages', app.request.locale)|default('Aucune excursion disponible') }}">
-<option value="">{{ 'home.booking.no_excursion_available'|trans({}, 'messages', app.request.locale)|default('Aucune excursion disponible') }}</option>
+<select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none" id="excursion-choice" data-placeholder-label="{{ 'home.booking.select_excursion_destination_first'|trans }}" data-empty-label="{{ 'home.booking.no_excursion_available'|trans({}, 'messages', app.request.locale)|default('Aucune excursion disponible') }}">
+<option value="" selected disabled>{{ 'home.booking.select_excursion_destination_first'|trans }}</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
 </div>
@@ -168,7 +171,10 @@
 <span class="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
 <span>{{ 'home.booking.lbl_excursion_date'|trans }}</span>
 </label>
-<input class="w-full h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all" type="date" value="{{ "now"|date_modify('+2 days')|date('Y-m-d') }}">
+<div class="home-date-input">
+<input class="w-full h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all" type="date" placeholder="{{ 'home.booking.excursion_date_placeholder'|trans }}" data-home-date-placeholder value="">
+
+</div>
 </div>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-md text-label-md text-on-surface-variant font-semibold flex items-center gap-1.5">
@@ -177,10 +183,10 @@
 </label>
 <div class="relative">
 <select class="w-full h-12 pl-3.5 pr-8 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer appearance-none">
-<option>2 Adultes (Couple)</option>
-<option>1 Adulte (Voyageur Solo)</option>
-<option>Famille (2 Adultes + 2 Enfants)</option>
-<option>Groupe Privé (5 à 12 personnes)</option>
+<option value="" selected disabled>{{ 'home.booking.participants_placeholder'|trans }}</option>
+<option>1-3</option>
+<option>4-7</option>
+<option>8-13</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-3 pointer-events-none text-outline">unfold_more</span>
 </div>
@@ -196,12 +202,12 @@
 {# Guarantee Bar #}
 <div class="mt-4 pt-3 flex flex-wrap items-center justify-between gap-4 text-outline font-label-sm text-label-sm">
 <div class="flex items-center gap-4">
-<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> Annulation gratuite jusqu'à 24h</span>
-<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> Suivi de vol en direct</span>
-<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> Assistance 24/7 par WhatsApp</span>
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> {{ 'home.booking.guarantee_free_cancellation'|trans }}</span>
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> {{ 'home.booking.guarantee_flight_tracking'|trans }}</span>
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-tertiary-container text-[16px]">check_circle</span> {{ 'home.booking.guarantee_whatsapp_support'|trans }}</span>
 </div>
 <div class="text-primary font-semibold flex items-center gap-1">
-<span>Paiement sécurisé ou sur place en Tunisie</span>
+<span>{{ 'home.booking.secure_payment_notice'|trans }}</span>
 <span class="material-symbols-outlined text-[16px]">lock</span>
 </div>
 </div>
@@ -262,7 +268,7 @@
 <section class="w-full py-section-gap-md px-margin-mobile md:px-margin-desktop bg-surface-container-low">
 <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 <div class="lg:col-span-6 relative">
-<div class="relative rounded-3xl overflow-hidden shadow-2xl h-[480px] w-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFwJbIZcXsbU6rKUqIi7Pobj31bR7yxgzRxM_tN5ehD2BjOSc2wSqCuQ1WFYfB8b7oxC5IEyfl0BkQv4AX1wnSR-PaXDMTF1OU0geK4vy2rPgFUzqKMu69OxvmKV6Bc4Glz7VdjX3eQuj9u_QYjiagO5zWl97nC4-pWXc14sVZ1PS80B03Hpyox6sDdMt9CzuzLkxRl3OYuNGuL7cItZoFjYQVxKKomS1uMHe63EBtUZyis5iWypSDKw');">
+<div class="relative rounded-3xl overflow-hidden shadow-2xl h-[480px] w-full bg-cover bg-center" style="background-image: url('{{ asset('assetsFront/images/images.webp') }}');">
 <div class="absolute inset-0 bg-gradient-to-t from-on-background/70 via-transparent to-transparent"></div>
 <div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-surface-container-lowest/95 backdrop-blur-md shadow-xl flex items-center gap-4">
 <div class="w-12 h-12 rounded-xl bg-tertiary-container text-on-tertiary flex items-center justify-center shrink-0">
@@ -309,45 +315,48 @@
 <h2 class="font-headline-lg text-headline-lg text-on-surface mt-1 font-bold">{{ 'home.transfers.title'|trans }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'home.transfers.sub'|trans }}</p>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="transfer-destination-grid">
 
-{% for transfere in transferts %}
-{% set transfer_image = transfere.image ? asset(transfere.image) : 'https://placehold.co/600x400/1e293b/cbd5e1?text=Transfert' %}
-<a href="{{ path('app_transfer_show_locale', {'_locale': app.request.locale, 'slug': transfere.slug}) }}" 
-   class="block relative overflow-hidden rounded-2xl p-6 shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group min-h-[320px]" 
-   style="background-image: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%), url('{{ transfer_image }}'); background-size: cover; background-position: center;"
+{% for destinationCard in transfertsParDestination %}
+<article class="transfer-destination-card" data-transfer-destination data-destination-key="{{ destinationCard.key }}">
+<div class="transfer-destination-image"
+     style="background-image: linear-gradient(to top, rgba(4, 28, 54, 0.88), rgba(4, 28, 54, 0.08)){% if destinationCard.image %}, url('{{ asset(destinationCard.image) }}'){% endif %};">
+<div class="transfer-destination-heading">
+<h3>{{ destinationCard.name }}</h3>
+<div class="transfer-starting-price">
+<span>À partir de</span>
+<strong class="destination-price-val price-val" data-base="{{ destinationCard.startingPrice }}">{{ destinationCard.startingPrice|price }}</strong>
+</div>
+</div>
+</div>
+<div class="transfer-routes">
+{% for transfere in destinationCard.routes %}
+<a href="{{ path('app_transfer_show_locale', {'_locale': app.request.locale, 'slug': transfere.slug}) }}"
+   class="transfer-route-row"
    data-transfer-card
    data-normal-price="{{ transfere.prixNormal }}"
    data-season-price="{{ transfere.prixSaisonForte }}"
    data-season-periods="{{ periodesSaison|json_encode|e('html_attr') }}"
    data-season-conflict="{{ 'transfer.form.season_overlap'|trans }}"
-   data-price-unavailable="{{ 'transfer.form.price_unavailable'|trans }}">
-<div>
-<div class="flex items-center justify-between mb-4">
-<span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">{{ transfere.getDureeTranslated(app.request.locale) }}</span>
-<span class="font-label-sm text-label-sm text-white font-semibold flex items-center gap-1 drop-shadow-md"><span class="material-symbols-outlined text-[14px]">flight_land</span> Transfert</span>
-</div>
-<div class="flex items-center gap-3 my-4">
-<div class="flex flex-col items-center">
-<span class="w-3 h-3 rounded-full bg-white shadow-sm"></span>
-<span class="w-0.5 h-8 bg-white/50"></span>
-<span class="w-3 h-3 rounded-full bg-white shadow-sm"></span>
-</div>
-<div class="flex flex-col justify-between h-14">
-<span class="font-title-md text-title-md text-white font-semibold drop-shadow-md">{{ transfere.getLieuDepartTranslated(app.request.locale) }}</span>
-<span class="font-title-md text-title-md text-white font-semibold drop-shadow-md">{{ transfere.getLieuArriveeTranslated(app.request.locale) }}</span>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-white/90 mb-4 drop-shadow-md">{{ 'home.transfers.card_desc'|trans }}</p>
-</div>
-<div class="pt-4 border-t border-white/20 flex items-center justify-between mt-auto">
-<div>
-<span class="font-body-sm text-body-sm text-white/80">Prix par véhicule</span>
-<div class="price-val font-headline-sm text-headline-sm text-white font-bold drop-shadow-md" data-base="{{ transfertPrices[transfere.id] }}">{{ transfertPrices[transfere.id]|price }}</div>
-</div>
-<span class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold group-hover:bg-primary-container transition-all shadow-md">Réserver</span>
-</div>
+   data-price-unavailable="{{ 'transfer.form.price_unavailable'|trans }}"
+   aria-label="Réserver {{ transfere.getLieuDepartTranslated(app.request.locale) }} vers {{ destinationCard.name }}">
+<span class="transfer-route-information">
+<span class="material-symbols-outlined transfer-route-icon" aria-hidden="true">flight_takeoff</span>
+<span class="transfer-route-details">
+<strong>{{ transfere.getLieuDepartTranslated(app.request.locale) }}</strong>
+{% if transfere.getDureeTranslated(app.request.locale) %}
+<span>{{ transfere.getDureeTranslated(app.request.locale) }}</span>
+{% endif %}
+</span>
+</span>
+<span class="transfer-route-price">
+<span>Prix fixe</span>
+<strong class="price-val" data-base="{{ transfertPrices[transfere.id] }}">{{ transfertPrices[transfere.id]|price }}</strong>
+</span>
 </a>
+{% endfor %}
+</div>
+</article>
 {% else %}
 <p class="col-span-full text-center font-body-md text-body-md text-on-surface-variant">Aucun transfert disponible pour le moment.</p>
 {% endfor %}
@@ -529,5 +538,5 @@
   window.excursionBookingData = {{ bookingExcursions|json_encode|raw }};
 </script>
 <script src="{{ asset('assetsFront/js/navbar.js') }}?v=4"></script>
-<script src="{{ asset('assetsFront/js/home.js') }}?v=7"></script>
+<script src="{{ asset('assetsFront/js/home.js') }}?v=14"></script>
 {% endblock %}

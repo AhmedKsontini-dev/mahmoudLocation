@@ -20,6 +20,10 @@ class ReservationExcursion
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'excursionReservations')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     #[ORM\ManyToOne(inversedBy: 'reservationExcursions')]
     #[ORM\JoinColumn(name: 'excursion_id', nullable: false, onDelete: 'RESTRICT')]
     #[Assert\NotNull]
@@ -87,6 +91,24 @@ class ReservationExcursion
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        if ($this->user === $user) {
+            return $this;
+        }
+
+        $this->user?->removeExcursionReservation($this);
+        $this->user = $user;
+        $user?->addExcursionReservation($this);
+
+        return $this;
     }
 
     public function getExcursion(): ?Excursion
